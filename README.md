@@ -1,5 +1,15 @@
 # ACC IDE
 
+## Recent Updates (2025-05)
+
+- Switched core editor to **flutter_code_editor 0.3.x** for better mobile experience.
+- Implemented:
+  - Smart auto-indent (VS Code-style)  
+  - Bracket/parenthesis matching & highlighting  
+  - Focus/onKey interception to avoid duplicate new-lines on soft-keyboard Enter  
+  - Theme / font customisation fully preserved
+- Next step: decide whether to migrate to **WebView + Monaco** for desktop-grade completion & LSP.
+
 An Android IDE focused on competitive programming.
 
 - [中文介绍](README_zh.md)
@@ -39,3 +49,43 @@ samples, guidance on mobile development, and a full API reference.
 - **Multi-language Support**: Features a language switch in the settings, allowing users to choose between English and Chinese.
 - **Comprehensive Localization**: All key UI elements, including the settings page, new file dialog, I/O panel, sidebar title and subtitle, and the welcome page, are fully localized based on the selected language.
 - **System Language Default**: The application intelligently defaults to the system's preferred language upon first launch.
+
+## Code Editor Features
+
+### Completed Features
+- Code syntax highlighting with multiple themes:
+  - GitHub
+  - Monokai
+  - Atom One Dark
+  - Atom One Light
+  - VS
+  - VS2015
+  - Dracula
+- Customizable font settings:
+  - Font size
+  - Font weight
+  - Font family
+- Line numbers
+- Horizontal and vertical scrolling
+- Basic cursor position tracking
+
+### Known Issues
+1. Cursor position mismatch with editing position, especially when moving right
+2. View auto-scrolling issues when switching lines with overflow text
+
+### TODO
+1. Refactor code editor using `flutter_code_editor` package for better:
+   - Cursor position accuracy
+   - Scroll behavior
+   - Line wrapping
+   - Code folding
+   - Auto-indentation
+   - Bracket matching
+2. Add more editor features:
+   - Search and replace
+   - Multiple cursors
+   - Code completion
+   - Error highlighting
+   - Git integration
+   - File tree view
+   - Terminal integration

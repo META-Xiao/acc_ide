@@ -37,6 +37,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'ACC IDE',
+      debugShowCheckedModeBanner: false,
       locale: Locale(_appSettings.languageCode), // Set the locale based on user settings
       supportedLocales: const [
         Locale('en', ''), // English

@@ -7,9 +7,11 @@ import 'package:flutter_highlight/themes/vs.dart';
 import 'package:flutter_highlight/themes/vs2015.dart';
 import 'package:flutter_highlight/themes/dracula.dart';
 import 'package:acc_ide/settings_page.dart';
-import 'package:acc_ide/welcome_page.dart';
-import 'package:acc_ide/code_editor.dart';
-import 'package:acc_ide/settings_manager.dart';
+import 'widgets/io/io_panel.dart';
+import 'widgets/side_drawer.dart';
+import 'widgets/welcome/welcome_page.dart';
+import 'settings_manager.dart';
+import 'widgets/editor/app_code_editor.dart';
 
 class HomePage extends StatefulWidget {
   final AppSettings appSettings;
@@ -200,161 +202,23 @@ class _HomePageState extends State<HomePage> {
   void _showIoPanel() {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true, // Allows the sheet to take full height
-      backgroundColor: Theme.of(context).colorScheme.surface, // Use theme's surface color for the sheet background
+      isScrollControlled: true,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       builder: (BuildContext context) {
         return DraggableScrollableSheet(
-          initialChildSize: 0.4, // Start at 40% of screen height
-          minChildSize: 0.4, // Minimum height is 40%
-          maxChildSize: 0.8, // Maximum height is 80%
-          expand: false, // Do not expand to full height initially
+          initialChildSize: 0.4,
+          minChildSize: 0.4,
+          maxChildSize: 0.85,
+          expand: false,
           builder: (BuildContext context, ScrollController scrollController) {
-            return Container(
-              padding: const EdgeInsets.all(16.0),
-              child: SingleChildScrollView( // Make the entire content scrollable and draggable
-                controller: scrollController, // Attach the DraggableScrollableSheet's controller
-                child: Column(
-                  children: <Widget>[
-                    // Run button and status display
-                    Row(
-                      children: <Widget>[
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            // TODO: Implement actual code execution
-                            print('Run button pressed');
-                          },
-                          icon: const Icon(Icons.play_arrow), // Add run icon
-                          label: Text(_translate('run')),
-                        ),
-                        const SizedBox(width: 16.0),
-                        // Status display (e.g., AC, WA, TLE)
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primaryContainer, // A subtle background color
-                            borderRadius: BorderRadius.circular(4.0),
-                          ),
-                          child: Text(
-                            '${_translate('status')}: ${_translate('notRunning')}', // Initial status
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onPrimaryContainer, // Text color contrasting with primaryContainer
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16.0),
-                    // Input area
-                    Text(
-                      _translate('input'),
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 160, // Increased height for input
-                      child: TextField(
-                        maxLines: null, // Allow multiple lines
-                        expands: true, // Take all available vertical space within SizedBox
-                        decoration: InputDecoration(
-                          hintText: _translate('enterInput'),
-                          contentPadding: EdgeInsets.zero, // Remove default content padding
-                          fillColor: Theme.of(context).colorScheme.background, // Use theme's background color
-                          filled: true,
-                          hintStyle: TextStyle(color: Theme.of(context).colorScheme.onBackground.withOpacity(0.4)), // Adjusted opacity for more faded hint
-                          isDense: true, // Reduce overall height to remove extra padding
-                          // Add rounded corners to the input field
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide.none,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                        style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
-                      ),
-                    ),
-                    const SizedBox(height: 16.0),
-                    // Current Output area
-                    Text(
-                      _translate('currentOutput'),
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 160, // Increased height for output area
-                      child: Scrollbar(
-                        child: TextField(
-                          readOnly: true, // Make it read-only
-                          maxLines: null, // Allow multiple lines
-                          expands: true, // Take all available vertical space within SizedBox
-                          decoration: InputDecoration(
-                            hintText: _translate('currentOutputWillBeDisplayedHere'), // Placeholder hint text
-                            contentPadding: EdgeInsets.zero, // Remove default content padding
-                            fillColor: Theme.of(context).colorScheme.background,
-                            filled: true,
-                            hintStyle: TextStyle(color: Theme.of(context).colorScheme.onBackground.withOpacity(0.4)), // Adjusted opacity for more faded hint
-                            isDense: true, // Reduce overall height to remove extra padding
-                            // Add rounded corners to the current output field
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                              borderSide: BorderSide.none,
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                              borderSide: BorderSide.none,
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                              borderSide: BorderSide.none,
-                            ),
-                          ),
-                          style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16.0),
-                    // Answer Output area
-                    Text(
-                      _translate('answerOutput'),
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 160, // Increased height for output area
-                      child: TextField(
-                        maxLines: null, // Allow multiple lines
-                        expands: true, // Take all available vertical space within SizedBox
-                        decoration: InputDecoration(
-                          hintText: _translate('enterExpectedAnswer'), // Hint text
-                          contentPadding: EdgeInsets.zero, // Remove default content padding
-                          fillColor: Theme.of(context).colorScheme.background,
-                          filled: true,
-                          hintStyle: TextStyle(color: Theme.of(context).colorScheme.onBackground.withOpacity(0.4)), // Adjusted opacity for more faded hint
-                          isDense: true, // Reduce overall height to remove extra padding
-                          // Add rounded corners to the answer output field
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide.none,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                        style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            return IoPanel(
+              languageCode: _appSettings.languageCode,
+              localizedStrings: _localizedStrings,
+              onRun: () {
+                // TODO: Implement actual code execution
+                print('Run button pressed');
+              },
+              scrollController: scrollController,
             );
           },
         );
@@ -521,7 +385,7 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: _files.isEmpty ? Colors.white : (_currentHighlightTheme['root']?.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor), // Conditional Scaffold background
       body: _files.isEmpty
           ? WelcomePage(onStartCoding: () => _createNewFile('cpp', '// Write your code here'), appSettings: _appSettings)
-          : CodeEditor(
+          : AppCodeEditor(
               code: _currentCode,
               language: _currentLanguage,
               onChanged: (value) {
