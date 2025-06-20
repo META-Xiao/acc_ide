@@ -1,0 +1,20 @@
+ACC IDE - Version 1.1.0 File Checksums
+===================================
+
+These checksums can be used to verify the integrity of the downloaded files.
+
+MD5 Checksums:
+-------------
+acc_ide-1.1.0-unsigned.apk: <placeholder for MD5 checksum>
+sign_apk.bat: <placeholder for MD5 checksum>
+sign_apk.sh: <placeholder for MD5 checksum>
+README.txt: <placeholder for MD5 checksum>
+
+SHA-256 Checksums:
+----------------
+acc_ide-1.1.0-unsigned.apk: <placeholder for SHA-256 checksum>
+sign_apk.bat: <placeholder for SHA-256 checksum>
+sign_apk.sh: <placeholder for SHA-256 checksum>
+README.txt: <placeholder for SHA-256 checksum>
+
+Note: Actual checksums will be generated during the final build process. 

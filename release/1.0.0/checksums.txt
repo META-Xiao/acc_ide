@@ -1,0 +1,17 @@
+ACC IDE - Version 1.0.0 Checksums
+==============================
+
+File: acc_ide-1.0.0-unsigned.apk
+Size: 5,589,398 bytes
+Date: June 19, 2025
+
+SHA256: 96345A167F17824529FF1C25EDBBFBEA0FD33102DD3E581FD9D4D3458BCA33AE
+
+To verify the SHA256 checksum on Windows:
+Get-FileHash -Algorithm SHA256 acc_ide-1.0.0-unsigned.apk | Format-List
+
+To verify the SHA256 checksum on macOS/Linux:
+shasum -a 256 acc_ide-1.0.0-unsigned.apk
+
+If the checksums match, the file is identical to the original release.
+If they don't match, the file may have been corrupted or tampered with. 
