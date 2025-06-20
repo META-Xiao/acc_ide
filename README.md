@@ -1,5 +1,8 @@
 # ACC IDE
 
+- [English](README.md)
+- [简体中文](README_cn.md)
+
 ACC IDE is an Android-based integrated development environment specifically designed for algorithmic competitions and coding challenges. Built to enhance the competitive programming experience on mobile devices, ACC IDE provides a feature-rich environment for writing, testing, and submitting algorithmic solutions.
 
 ## Overview
@@ -69,8 +72,7 @@ User preferences configuration:
 - Language preferences
 - Editor behavior options
 
-#### Welcome Fragment (`WelcomeFragment.kt`)
-Initial welcome screen displayed when no files are open.
+
 
 #### Dialog Components
 Various dialog fragments for user interactions:
@@ -109,12 +111,13 @@ Classes in the `util` package:
 - **Language Selection**: Interface language can be changed in settings
 - **Theme Selection**: Toggle between dark and light themes
 - **Font Size Control**: Adjust editor font size from settings or with gestures
+- **Cursor Width**: Enhanced visual experience on mobile devices (actually the author was too lazy to adjust the cursor😫)
 - **Editor Preferences**: Customize editor behavior through settings
 
-### Input/Output Panel
+### Input/Output Panel (Not fully implemented yet🤫)
 - **Test Input**: Enter test data to validate algorithm outputs
 - **Output Display**: View execution results
-- **Side-by-side Testing**: Test algorithm functionality directly within the IDE
+- **Parallel Testing**: Test algorithm functionality directly within the IDE
 
 ## Planned Features
 
@@ -148,7 +151,7 @@ Classes in the `util` package:
 
 ## Installation
 
-Coming soon - The application will be available on Google Play Store.
+[releases](https://github.com/META-Xiao/acc_ide/releases/latest)
 
 ## Contributing
 

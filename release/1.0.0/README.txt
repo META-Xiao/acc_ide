@@ -7,8 +7,6 @@ Build Type: Release (Unsigned)
 This package contains:
 - acc_ide-1.0.0-unsigned.apk: Unsigned release APK
 
-Note: This APK is unsigned and needs to be signed with your own key before publishing
-to Google Play or other app stores.
 
 Installation Instructions:
 1. For direct installation on developer devices:
@@ -31,6 +29,6 @@ Known Issues:
 - Some deprecated methods are used and will be updated in future releases
 
 For more information, please refer to the project documentation at:
-https://github.com/yourusername/acc_ide_android
+https://github.com/META-Xiao/acc_ide
 
 Copyright © 2024 ACC IDE Project. 
