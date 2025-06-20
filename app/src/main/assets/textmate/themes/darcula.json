@@ -1,0 +1,79 @@
+{
+    "name": "Darcula",
+    "uuid": "d1dc649e-5c98-4b2c-a993-f5a23c531f16",
+    "tokenColors": [
+        {
+            "settings": {
+                "foreground": "#A9B7C6",
+                "background": "#2B2B2B"
+            }
+        },
+        {
+            "name": "Comments",
+            "scope": "comment",
+            "settings": {
+                "fontStyle": "italic",
+                "foreground": "#629755"
+            }
+        },
+        {
+            "name": "Constants",
+            "scope": "constant",
+            "settings": {
+                "foreground": "#9876AA"
+            }
+        },
+        {
+            "name": "Keywords",
+            "scope": "keyword",
+            "settings": {
+                "foreground": "#CC7832",
+                "fontStyle": "bold"
+            }
+        },
+        {
+            "name": "Strings",
+            "scope": "string",
+            "settings": {
+                "foreground": "#6A8759"
+            }
+        },
+        {
+            "name": "Variables",
+            "scope": "variable",
+            "settings": {
+                "foreground": "#A9B7C6"
+            }
+        },
+        {
+            "name": "Functions",
+            "scope": "entity.name.function",
+            "settings": {
+                "foreground": "#FFC66D"
+            }
+        },
+        {
+            "name": "Classes",
+            "scope": "entity.name.type, entity.name.class",
+            "settings": {
+                "foreground": "#A9B7C6",
+                "fontStyle": "bold"
+            }
+        },
+        {
+            "name": "Numbers",
+            "scope": "constant.numeric",
+            "settings": {
+                "foreground": "#6897BB"
+            }
+        }
+    ],
+    "colors": {
+        "editor.foreground": "#A9B7C6",
+        "editor.background": "#2B2B2B",
+        "editor.selectionBackground": "#214283",
+        "editor.lineHighlightBackground": "#323232",
+        "editorCursor.foreground": "#BBBBBB",
+        "editorWhitespace.foreground": "#505050"
+    }
+} 

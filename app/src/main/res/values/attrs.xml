@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="colorPrimaryContainer" format="color" />
+    <attr name="colorOnPrimaryContainer" format="color" />
+    <attr name="code_background_light" format="color" />
+    <attr name="code_text_light" format="color" />
+    <attr name="sidebar_highlight_light" format="color" />
+</resources> 

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ACC IDE</string>
+    <string name="app_subtitle">用于算法竞赛的Android IDE</string>
+    <string name="navigation_drawer_open">打开导航抽屉</string>
+    <string name="navigation_drawer_close">关闭导航抽屉</string>
+    <string name="new_file">新建文件</string>
+    <string name="settings">设置</string>
+    <string name="files">文件</string>
+    <string name="actions">操作</string>
+    <string name="no_files">没有文件，请创建新文件</string>
+    <string name="run">运行</string>
+    <string name="save">保存</string>
+    <string name="input">输入:</string>
+    <string name="current_output">当前输出:</string>
+    <string name="answer_output">参考输出（可选）:</string>
+    <string name="cpp">C++</string>
+    <string name="python">Python</string>
+    <string name="java">Java</string>
+    <string name="welcome_message">欢迎使用 ACC IDE</string>
+    <string name="start_coding">开始编程</string>
+    <string name="theme">深色模式</string>
+    <string name="language">语言</string>
+    <string name="font_size">字体大小</string>
+    <string name="cursor_width">光标粗细</string>
+    <string name="file_options">文件选项</string>
+    <string name="file_name_empty">文件名不能为空</string>
+    <string name="delete">删除</string>
+    <string name="rename">重命名</string>
+    <string name="rename_file">重命名文件</string>
+    <string name="enter_new_filename">输入新文件名</string>
+    <string name="empty_files_list">暂无文件</string>
+    <string name="create_first_file">创建你的第一个文件</string>
+    <string name="delete_file">删除文件</string>
+    <string name="delete_file_confirm">确定要删除文件 "%1$s" 吗？</string>
+    <string name="file_exists">文件 "%1$s" 已存在</string>
+    <string name="file_renamed">文件 "%1$s" 已重命名为 "%2$s"</string>
+    <string name="file_deleted">文件 "%1$s" 已删除</string>
+    <string name="file_not_exist">文件不存在</string>
+    <string name="language_changed">语言切换成功，正在应用新语言...</string>
+    <string name="language_change_failed">语言切换失败: %1$s</string>
+    <string name="editor">编辑器</string>
+    <string name="close">关闭</string>
+    <string name="actual_output">实际输出:</string>
+    <string name="expected_output">答案输出:</string>
+    <string name="copy">复制</string>
+    <string name="status_ac">通过</string>
+    <string name="status_wa">答案错误</string>
+    <string name="status_tle">超时</string>
+    <string name="status_mle">内存超限</string>
+    <string name="status_ce">编译错误</string>
+    <string name="file_saved">文件 "%1$s" 保存成功</string>
+    
+    <!-- 存储权限字符串 -->
+    <string name="storage_permission_title">需要存储权限</string>
+    <string name="storage_permission_message">ACC IDE 需要存储权限来保存您的代码文件。如果没有此权限，您的文件将不会被永久保存，当您关闭应用或切换语言设置时将会丢失。</string>
+    <string name="storage_permission_denied">存储权限被拒绝。您的文件只会保存在内存中，应用关闭后将会丢失。</string>
+    
+    <!-- 菜单字符串 -->
+    <string name="action_refresh_files">刷新文件列表</string>
+    <string name="action_clear_all_files">清除所有文件</string>
+    <string name="clear_all_files_title">清除所有文件</string>
+    <string name="clear_all_files_message">确定要删除所有文件吗？此操作不可撤销。</string>
+    <string name="clear_all_files_success">所有文件已删除</string>
+    <string name="clear_all_files_failure">删除所有文件失败</string>
+    <string name="files_refreshed">文件列表已刷新</string>
+    <string name="show_storage_path">显示存储路径</string>
+    <string name="storage_path_title">文件存储路径</string>
+    <string name="storage_path_message">您的文件存储在:\n%1$s\n\n您可以通过文件管理器访问此路径</string>
+    <string name="theme_system">跟随系统</string>
+    <string name="theme_light">浅色</string>
+    <string name="theme_dark">深色</string>
+    <string name="auto_complete_switch_label">智能提示</string>
+    <string name="symbol_panel_switch_label">符号面板</string>
+</resources> 

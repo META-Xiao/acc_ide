@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/symbol_grid"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:columnCount="9"
+    android:rowCount="2"
+    android:orientation="horizontal"
+    android:useDefaultMargins="true"
+    android:alignmentMode="alignBounds"
+    android:padding="4dp">
+
+    <!-- Buttons will be added dynamically -->
+
+</GridLayout> 

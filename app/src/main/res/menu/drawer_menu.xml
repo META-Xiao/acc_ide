@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <item 
+        android:id="@+id/nav_files"
+        android:title="@string/files">
+        <menu>
+            <group android:id="@+id/file_group" />
+        </menu>
+    </item>
+
+    <item android:title="@string/actions">
+        <menu>
+            <item
+                android:id="@+id/nav_new_file"
+                android:icon="@android:drawable/ic_menu_add"
+                android:title="@string/new_file" />
+            <item
+                android:id="@+id/nav_settings"
+                android:icon="@android:drawable/ic_menu_preferences"
+                android:title="@string/settings" />
+        </menu>
+    </item>
+
+</menu> 

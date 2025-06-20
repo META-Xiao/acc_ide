@@ -1,0 +1,79 @@
+{
+    "name": "Light",
+    "uuid": "a9541a66-58c9-4c82-8a1e-1616c1f42965",
+    "tokenColors": [
+        {
+            "settings": {
+                "foreground": "#333333",
+                "background": "#FFFFFF"
+            }
+        },
+        {
+            "name": "Comments",
+            "scope": "comment",
+            "settings": {
+                "fontStyle": "italic",
+                "foreground": "#009900"
+            }
+        },
+        {
+            "name": "Constants",
+            "scope": "constant",
+            "settings": {
+                "foreground": "#8500FF"
+            }
+        },
+        {
+            "name": "Keywords",
+            "scope": "keyword",
+            "settings": {
+                "foreground": "#0000FF",
+                "fontStyle": "bold"
+            }
+        },
+        {
+            "name": "Strings",
+            "scope": "string",
+            "settings": {
+                "foreground": "#FF0000"
+            }
+        },
+        {
+            "name": "Variables",
+            "scope": "variable",
+            "settings": {
+                "foreground": "#7C4DFF"
+            }
+        },
+        {
+            "name": "Functions",
+            "scope": "entity.name.function",
+            "settings": {
+                "foreground": "#0066BB"
+            }
+        },
+        {
+            "name": "Classes",
+            "scope": "entity.name.type, entity.name.class",
+            "settings": {
+                "foreground": "#007700",
+                "fontStyle": "bold"
+            }
+        },
+        {
+            "name": "Numbers",
+            "scope": "constant.numeric",
+            "settings": {
+                "foreground": "#AA00AA"
+            }
+        }
+    ],
+    "colors": {
+        "editor.foreground": "#333333",
+        "editor.background": "#FFFFFF",
+        "editor.selectionBackground": "#DDDDFF",
+        "editor.lineHighlightBackground": "#F0F0F0",
+        "editorCursor.foreground": "#000000",
+        "editorWhitespace.foreground": "#AAAAAA"
+    }
+} 

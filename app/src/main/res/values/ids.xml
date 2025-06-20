@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tags for storing view-specific data -->
+    <item name="tag_autocomplete_enabled" type="id" />
+</resources> 

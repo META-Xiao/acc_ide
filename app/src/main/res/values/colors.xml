@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
+    
+    <!-- Custom Theme Colors -->
+    <color name="title_background">#fef7ff</color>
+    <color name="content_background">#fef7ff</color>
+    
+    <!-- Material Blue Colors -->
+    <color name="blue_500">#2196F3</color>
+    
+    <!-- Light Theme Colors -->
+    <color name="primaryContainer_light">#fef7ff</color>
+    <color name="onPrimaryContainer_light">#1A1A1A</color>
+    <color name="background_light">#FFFFFF</color>
+    <color name="onBackground_light">#1A1A1A</color>
+    <color name="surface_light">#F8F8F8</color>
+    <color name="onSurface_light">#1A1A1A</color>
+    <color name="primary_light">#674fa4</color>
+    <color name="onPrimary_light">#FFFFFF</color>
+    <color name="secondary_light">#0288D1</color>
+    <color name="onSecondary_light">#FFFFFF</color>
+    <color name="code_background_light">#FAFAFA</color>
+    <color name="code_text_light">#212121</color>
+    <color name="sidebar_highlight_light">#E3F2FD</color>
+    <color name="surfaceVariant_light">#E0E0E0</color>
+    <color name="onSurfaceVariant_light">#1A1A1A</color>
+    
+    <!-- Dark Theme Colors -->
+    <color name="primaryContainer_dark">#1E1E1E</color>
+    <color name="onPrimaryContainer_dark">#FFFFFF</color>
+    <color name="background_dark">#121212</color>
+    <color name="onBackground_dark">#FFFFFF</color>
+    <color name="surface_dark">#1E1E1E</color>
+    <color name="onSurface_dark">#FFFFFF</color>
+    <color name="primary_dark">#674fa4</color>
+    <color name="onPrimary_dark">#FFFFFF</color>
+    <color name="secondary_dark">#29B6F6</color>
+    <color name="onSecondary_dark">#000000</color>
+    <color name="code_background_dark">#1E1E1E</color>
+    <color name="code_text_dark">#EEEEEE</color>
+    <color name="sidebar_highlight_dark">#0D47A1</color>
+    <color name="surfaceVariant_dark">#2C2C2C</color>
+    <color name="onSurfaceVariant_dark">#EEEEEE</color>
+
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    
+    <!-- Syntax Highlighting Colors - Light Mode -->
+    <color name="keyword_light">#D32F2F</color>
+    <color name="comment_light">#757575</color>
+    <color name="string_light">#2E7D32</color>
+    <color name="number_light">#1565C0</color>
+    <color name="operator_light">#EF6C00</color>
+    <color name="identifier_light">#0277BD</color>
+    <color name="type_name_light">#6A1B9A</color>
+    <color name="function_name_light">#00695C</color>
+    
+    <!-- Syntax Highlighting Colors - Dark Mode -->
+    <color name="keyword_dark">#FF5252</color>
+    <color name="comment_dark">#9E9E9E</color>
+    <color name="string_dark">#81C784</color>
+    <color name="number_dark">#64B5F6</color>
+    <color name="operator_dark">#FFB74D</color>
+    <color name="identifier_dark">#4FC3F7</color>
+    <color name="type_name_dark">#CE93D8</color>
+    <color name="function_name_dark">#4DB6AC</color>
+    
+    <!-- 通用语法高亮颜色 -->
+    <color name="keyword">#D32F2F</color>
+    <color name="comment">#9E9E9E</color>
+    <color name="string">#388E3C</color>
+    <color name="number">#1976D2</color>
+    <color name="operator">#F57C00</color>
+    
+    <!-- 编辑器特殊元素颜色 -->
+    <color name="line_number_light">#757575</color>
+    <color name="line_number_dark">#9E9E9E</color>
+    <color name="current_line_light">#F5F5F5</color>
+    <color name="current_line_dark">#2A2A2A</color>
+    <color name="selection_light">#D0D0D0</color>
+    <color name="selection_dark">#4A4A4A</color>
+    <color name="block_line_light">#E0E0E0</color>
+    <color name="block_line_dark">#505050</color>
+
+    <color name="symbol_panel_bg">#f5f5f5</color>
+    <color name="symbol_panel_text">#5a2ea6</color>
+
+    <color name="switch_thumb_on">#674fa4</color>
+    <color name="switch_thumb_off">#BDBDBD</color>
+</resources>

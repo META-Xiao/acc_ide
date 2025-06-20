@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 深色模式下覆盖背景色 -->
+    <color name="content_background">@color/background_dark</color>
+    <color name="title_background">@color/surface_dark</color>
+    
+    <!-- 明确指定侧边栏深色颜色 -->
+    <color name="surface_light">@color/surface_dark</color>
+    <color name="primaryContainer_light">@color/primaryContainer_dark</color>
+    <color name="onPrimaryContainer_light">@color/onPrimaryContainer_dark</color>
+    <color name="onBackground_light">@color/onBackground_dark</color>
+    <color name="onSurface_light">@color/onSurface_dark</color>
+    <color name="onSurfaceVariant_light">@color/onSurfaceVariant_dark</color>
+    <color name="surfaceVariant_light">@color/surfaceVariant_dark</color>
+    <color name="symbol_panel_bg">#1A1A1A</color>
+    <color name="symbol_panel_text">#674fa4</color>
+    <color name="switch_thumb_on">#674fa4</color>
+    <color name="switch_thumb_off">#BDBDBD</color>
+</resources> 

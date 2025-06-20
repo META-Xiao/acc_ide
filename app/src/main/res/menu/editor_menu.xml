@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <item
+        android:id="@+id/action_run"
+        android:icon="@android:drawable/ic_media_play"
+        android:title="@string/run"
+        app:showAsAction="always" />
+        
+    <item
+        android:id="@+id/action_toggle_symbol_panel"
+        android:icon="@android:drawable/ic_menu_sort_by_size"
+        android:title="@string/toggle_symbol_panel"
+        app:showAsAction="always" />
+</menu> 

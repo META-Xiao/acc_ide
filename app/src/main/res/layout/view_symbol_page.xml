@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="1dp">
+
+    <!-- 第一行符号按钮 -->
+    <LinearLayout
+        android:id="@+id/symbol_buttons_row1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="1dp"
+        android:weightSum="9" />
+
+    <!-- 第二行符号按钮 -->
+    <LinearLayout
+        android:id="@+id/symbol_buttons_row2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="9"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="-2dp" />
+
+</LinearLayout> 
