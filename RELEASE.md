@@ -2,7 +2,7 @@
 
 本文档记录ACC IDE的所有正式版本发布信息。
 
-## 版本 1.1.1 (2025-06-25)
+## 版本 1.1.1 (2025-06-20)
 
 - **下载链接**: [acc_ide-1.1.1-unsigned.apk](release/1.1.1/acc_ide-1.1.1-unsigned.apk)
 - **更新日志**: [CHANGELOG.md](release/1.1.1/CHANGELOG.md)

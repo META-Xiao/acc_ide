@@ -1,7 +1,8 @@
 # ACC IDE
 
+- [Version list](RELEASE.md)
 - [English](README.md)
-- [简体中文](README_zh.md)
+- [简体中文](README_cn.md)
 
 ACC IDE 是一个专为算法竞赛和编程比赛设计的，基于 Android 的原生集成开发环境。它旨在增强移动设备上的竞赛编程体验，为编写、测试和提交算法解决方案提供功能丰富的环境。
 

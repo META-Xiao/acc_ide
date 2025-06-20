@@ -1,30 +1,36 @@
-# ACC IDE Changelog
+# ACC IDE 更新日志
 
-## Version 1.1.0 (June 20, 2025)
+## [1.1.1] - 2025-06-20
 
-### New Features
-- Added cursor width customization (2dp-14dp) in settings
-- Improved symbol panel layout with reduced height
+### 新增
+- 添加了全新图标，提升了整体视觉体验
 
-### Improvements
-- Enhanced UI responsiveness
-- Optimized editor performance
-- Improved cursor visibility in both dark and light modes
+### 改进
+- 优化了符号面板的布局，减小了面板高度
+- 调整了用户界面细节，提升了整体美观度
 
-### Bug Fixes
-- Fixed symbol panel layout issues
-- Various minor UI and performance improvements
+### 修复
+- 修复了一些UI渲染问题
+- 提升了应用整体性能
 
-### Known Issues
-- CTRL key functionality in symbol panel not fully implemented
+## [1.1.0] - 2025-06-20
 
-## Version 1.0.0 (June 19, 2025)
+### 新增
+- 添加了光标宽度自定义设置（2dp-14dp）
+- 改进了符号面板布局
 
-### Features
-- Initial release
-- Code editing with syntax highlighting
-- File management system
-- Light/Dark theme support
-- Support for multiple programming languages
-- Input/Output testing panel
-- Symbol panel for code input 
+### 改进
+- 优化了编辑器性能
+- 改进了自动完成功能的稳定性
+
+### 修复
+- 修复了多个UI和功能问题
+
+## [1.0.0] - 2025-06-01
+
+### 首次发布
+- 代码编辑器支持语法高亮
+- 文件管理系统
+- 明/暗主题支持
+- 支持多种编程语言
+- 输入/输出测试面板 

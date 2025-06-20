@@ -165,7 +165,7 @@ class SettingsFragment : Fragment() {
                 (activity as? MainActivity)?.updateEditorFontSize(value)
             }
         }
-        
+
         // 从SharedPreferences加载光标宽度设置
         val savedCursorWidth = prefs.getFloat(PREF_CURSOR_WIDTH, DEFAULT_CURSOR_WIDTH)
         

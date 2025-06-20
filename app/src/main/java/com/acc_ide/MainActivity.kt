@@ -1402,10 +1402,10 @@ class MainActivity : AppCompatActivity() {
     fun updateEditorFontSize(fontSize: Float) {
         try {
             // 查找当前活动的EditorFragment
-            val currentFragment = supportFragmentManager.findFragmentById(R.id.content_frame)
-            if (currentFragment is EditorFragment) {
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.content_frame)
+        if (currentFragment is EditorFragment) {
                 // 更新编辑器字体大小
-                currentFragment.updateFontSize(fontSize)
+            currentFragment.updateFontSize(fontSize)
                 android.util.Log.d("MainActivity", "已更新编辑器字体大小为 $fontSize")
             }
         } catch (e: Exception) {
