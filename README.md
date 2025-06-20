@@ -1,183 +1,185 @@
+![展示1](img/Display1.png)
+
 # ACC IDE
 
 - [Version list](RELEASE.md)
-- [English](README.md)
-- [简体中文](README_cn.md)
+- [English](README_en.md)
+- [简体中文](README.md)
 
-ACC IDE is an Android-based integrated development environment specifically designed for algorithmic competitions and coding challenges. Built to enhance the competitive programming experience on mobile devices, ACC IDE provides a feature-rich environment for writing, testing, and submitting algorithmic solutions.
+如果你对OJ平台自带的IDE对手机不友好，如果你也想在手机上把灵光一现的算法写出来，那么你应该试试ACC IDE🤗。
 
-## Overview
+ACC IDE 是一个专为算法竞赛和编程比赛设计的，基于 Android 的原生集成开发环境。它旨在增强移动设备上的竞赛编程体验，为编写、测试和提交算法解决方案提供功能丰富的环境😋。
 
-ACC IDE aims to be a comprehensive mobile solution for competitive programmers who need to code and test algorithms on the go. The application provides syntax highlighting, code completion, file management, and other essential IDE features tailored for competitive programming challenges.
+## 概述
 
-## Project Structure
+ACC IDE 致力于为需要随时随地编码和测试算法的竞赛程序员提供全面的移动解决方案。该应用程序提供语法高亮、代码补全、文件管理等基本功能，专为算法竞赛量身定制。
 
-The project follows a standard Android application architecture with a focus on modular components:
+## 项目结构
 
-### Core Structure
+该项目遵循标准的 Android 应用程序架构，注重模块化组件：
+
+### 核心结构
 ```
 acc_ide_android/
 ├── app/
 │   ├── src/
 │   │   ├── main/
 │   │   │   ├── java/com/acc_ide/
-│   │   │   │   ├── adapter/       # RecyclerView adapters
-│   │   │   │   ├── dialog/        # Dialog fragments
-│   │   │   │   ├── model/         # Data models
-│   │   │   │   ├── util/          # Utility classes
-│   │   │   │   ├── view/          # Custom views
-│   │   │   │   ├── ui/            # UI components
-│   │   │   │   ├── MainActivity.kt # Main application entry point
-│   │   │   │   ├── EditorFragment.kt # Code editor implementation
-│   │   │   │   ├── IOPanelFragment.kt # Input/output panel
-│   │   │   │   ├── SettingsFragment.kt # Application settings
-│   │   │   │   ├── WelcomeFragment.kt # Welcome screen
-│   │   │   │   └── NewFileDialogFragment.kt # New file creation dialog
-│   │   │   ├── res/              # Android resources
+│   │   │   │   ├── adapter/       # RecyclerView 适配器
+│   │   │   │   ├── dialog/        # 对话框组件
+│   │   │   │   ├── model/         # 数据模型
+│   │   │   │   ├── util/          # 工具类
+│   │   │   │   ├── view/          # 自定义视图
+│   │   │   │   ├── ui/            # UI 组件
+│   │   │   │   ├── MainActivity.kt # 主应用程序入口点
+│   │   │   │   ├── EditorFragment.kt # 代码编辑器实现
+│   │   │   │   ├── IOPanelFragment.kt # 输入/输出面板
+│   │   │   │   ├── SettingsFragment.kt # 应用程序设置
+│   │   │   │   ├── WelcomeFragment.kt # 欢迎屏幕
+│   │   │   │   └── NewFileDialogFragment.kt # 新文件创建对话框
+│   │   │   ├── res/              # Android 资源文件
 │   │   │   └── AndroidManifest.xml
-│   ├── build.gradle             # Module-level build config
-├── gradle/                      # Gradle wrapper files
-└── build.gradle                # Project-level build config
+│   ├── build.gradle             # 模块级构建配置
+├── gradle/                      # Gradle 包装器文件
+└── build.gradle                # 项目级构建配置
 ```
 
-### Key Components
+### 关键组件
 
-#### Main Activity (`MainActivity.kt`)
-The central component of the application that manages:
-- File navigation drawer
-- Fragment transactions
-- Storage permissions
-- File operations (create, open, save, rename, delete)
-- Application language and theme settings
+#### 主活动 (`MainActivity.kt`)
+应用程序的中心组件，负责管理：
+- 文件导航抽屉
+- Fragment 事务处理
+- 存储权限管理
+- 文件操作（创建、打开、保存、重命名、删除）
+- 应用程序语言和主题设置
 
-#### Editor Fragment (`EditorFragment.kt`)
-A powerful code editor with:
-- Syntax highlighting for multiple languages
-- Code completion
-- Line numbering
-- Code block indication
-- Font size control via gestures
-- Theme-aware styling
-- Automatic indentation
+#### 编辑器 Fragment (`EditorFragment.kt`)
+功能强大的代码编辑器，具有：
+- 多语言语法高亮
+- 代码补全功能
+- 行号显示
+- 代码块指示
+- 通过手势控制字体大小
+- 主题感知样式
+- 自动缩进
 
-#### IO Panel Fragment (`IOPanelFragment.kt`)
-An interface for:
-- Input/output testing
-- Viewing execution results
-- Running code
+#### IO 面板 Fragment (`IOPanelFragment.kt`)
+一个用于：
+- 输入/输出测试
+- 查看执行结果
+- 运行代码的接口
 
-#### Settings Fragment (`SettingsFragment.kt`)
-User preferences configuration:
-- Theme selection (dark/light mode)
-- Font size adjustment
-- Language preferences
-- Editor behavior options
+#### 设置 Fragment (`SettingsFragment.kt`)
+用户首选项配置：
+- 主题选择（深色/浅色模式）
+- 字体大小调整
+- 语言偏好设置
+- 编辑器行为选项
 
+#### 对话框组件
+用于用户交互的各种对话框 Fragment：
+- `NewFileDialogFragment.kt`：用于创建新代码文件
+- dialog 包中的对话框类用于确认和输入
 
+#### 工具层
+`util` 包中的类：
+- `FileStorageManager`：管理应用程序的文件操作
+- `LocaleHelper`：处理本地化和语言切换
 
-#### Dialog Components
-Various dialog fragments for user interactions:
-- `NewFileDialogFragment.kt`: For creating new code files
-- Dialog classes in the dialog package for confirmation and input
+## 已实现功能
 
-#### Utility Layer
-Classes in the `util` package:
-- `FileStorageManager`: Manages the app's file operations
-- `LocaleHelper`: Handles localization and language switching
+### 编辑器功能
+- **强大的代码编辑**：基于 Sora Editor 库，并进行了性能优化
+- **语法高亮**：支持 Java，对其他语言提供基本支持
+- **代码补全**：根据上下文提供输入建议
+- **主题支持**：深色和浅色模式，具有适当的语法着色
+- **手势控制**：通过缩放手势调整字体大小
+- **行号和代码块缩进**：提供代码结构视觉辅助
+- **符号面板**：极简风格，移动端友好，支持一键输入常用编程符号，自动适配深浅主题。
 
-## Implemented Features
+### 文件管理
+- **创建、打开、保存文件**：通过直观界面进行基本文件操作
+- **文件浏览器**：带有可用文件列表的侧边抽屉
+- **重命名和删除**：带有确认对话框的文件管理工具
+- **自动保存**：自动保存更改，防止数据丢失
 
-### Editor Capabilities
-- **Robust Code Editing**: Based on the Sora Editor library with performance optimizations
-- **Syntax Highlighting**: Support for Java, with basic support for other languages
-- **Code Completion**: Context-aware suggestions as you type
-- **Theme Support**: Dark and light modes with appropriate syntax coloring
-- **Gesture Controls**: Zoom in/out for font size adjustment
-- **Line Numbers and Block Indentation**: Visual aids for code structure
-- **Symbol Panel**: Minimalist, mobile-friendly panel for quick input of common programming symbols, auto-adapts to dark and light themes.
+### 用户界面
+- **响应式设计**：适用于不同大小的 Android 设备
+- **导航抽屉**：轻松访问文件列表和设置
+- **工具栏操作**：基于当前 Fragment 的上下文敏感操作
+- **基于 Fragment 的导航**：不同屏幕之间的平滑过渡
 
-### File Management
-- **Create, Open, Save Files**: Basic file operations through an intuitive interface
-- **File Browser**: Side drawer with list of available files
-- **Rename and Delete**: File management tools with confirmation dialogs
-- **Automatic Saving**: Changes are automatically persisted to prevent data loss
+### 自定义功能
+- **语言选择**：可以在设置中更改界面语言
+- **主题选择**：在深色和浅色主题之间切换
+- **字体大小控制**：通过设置或手势调整编辑器字体大小
+- **编辑器偏好**：通过设置自定义编辑器行为
+- **光标粗细**：便于增强移动设备上的视觉体验 （实际上是作者懒得调光标😫）
 
-### User Interface
-- **Responsive Design**: Works across different Android device sizes
-- **Navigation Drawer**: Easy access to file list and settings
-- **Toolbar Actions**: Context-sensitive actions based on current fragment
-- **Fragment-based Navigation**: Smooth transitions between different screens
+### 输入/输出面板 （这个还没做完🤫）
+- **测试输入**：输入测试数据以验证算法输出
+- **输出显示**：查看执行结果
+- **并行测试**：直接在 IDE 内测试算法功能
 
-### Customization
-- **Language Selection**: Interface language can be changed in settings
-- **Theme Selection**: Toggle between dark and light themes
-- **Font Size Control**: Adjust editor font size from settings or with gestures
-- **Cursor Width**: Enhanced visual experience on mobile devices (actually the author was too lazy to adjust the cursor😫)
-- **Editor Preferences**: Customize editor behavior through settings
+## 计划实现功能
 
-### Input/Output Panel (Not fully implemented yet🤫)
-- **Test Input**: Enter test data to validate algorithm outputs
-- **Output Display**: View execution results
-- **Parallel Testing**: Test algorithm functionality directly within the IDE
+### 编译器集成
+- 集成 C/C++、Java 和 Python 编译器
+- 本地编译和执行
+- 支持不同编译器版本
+- 编译进度指示器
+- 在编辑器中高亮显示编译错误
 
-## Planned Features
+### 问题状态检测
+- 自动检测解决方案状态：
+  - AC（通过）
+  - WA（答案错误）
+  - CE（编译错误）
+  - MLE（内存超限）
+  - TLE（时间超限）
+  - RE（运行时错误）
+- 执行时间和内存使用统计
+- 测试用例结果可视化
 
-### Compiler Integration
-- Integration with C/C++, Java, and Python compilers
-- Local compilation and execution
-- Support for different compiler versions
-- Compilation progress indicators
-- Compilation error highlighting in the editor
-
-### Problem Status Detection
-- Automatic detection of solution status:
-  - AC (Accepted)
-  - WA (Wrong Answer)
-  - CE (Compilation Error)
-  - MLE (Memory Limit Exceeded)
-  - TLE (Time Limit Exceeded)
-  - RE (Runtime Error)
-- Execution time and memory usage statistics
-- Test case result visualization
-
-### competitive-companion Integration
-- Android version of the competitive-companion
-- Import test cases directly from problem statements
-- Support for major competitive programming platforms:
+### competitive-companion 集成
+- Android 版本的 competitive-companion
+- 直接从问题陈述导入测试用例
+- 支持主要竞赛编程平台：
   - Codeforces
   - AtCoder
-  - LeetCode
-  - Luogu
-  - Niuke
+  - 洛谷
+  - 牛客
 
-## Installation
+## 安装
 
-[releases](https://github.com/META-Xiao/acc_ide/releases/latest)
+- 点击[releases](https://github.com/META-Xiao/acc_ide/releases/latest)安装最新版本
+- 或者 `clone`项目到本地，使用 Android Studio 打开项目并运行
 
-## Contributing
+## 贡献
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+欢迎贡献！请随时提交 Pull Request。
 
-## License
+## 许可证
 
-This software is released under an open-source license with the following conditions:
+本软件根据以下条件发布为开源软件：
 
-1. This software is free to use for personal and non-commercial purposes.
-2. Commercial use is permitted, but requires:
-   - Prior notification to the author before commercial use
-   - Clear attribution to the original author in any commercial product or service
-3. Modifications and redistribution are allowed, provided that:
-   - The original license terms are maintained
-   - Attribution to the original author is preserved
-   - Changes are clearly documented
+1. 本软件可免费用于个人和非商业用途。
+2. 允许商业使用，但要求：
+   - 在商业使用前通知作者
+   - 在任何商业产品或服务中明确标明原作者署名
+3. 允许修改和再发布，前提是：
+   - 保持原始许可条款
+   - 保留对原作者的署名
+   - 明确记录所做的更改
 
-Copyright © 2024 ACC IDE Project. All rights reserved except as specified in this license.
+版权所有 © 2024 ACC IDE 项目。除本许可证中指定外，保留所有权利。
 
-## Acknowledgements
+## 致谢
 
-- [Sora Editor](https://github.com/Rosemoe/sora-editor) for the code editing capabilities
-- Other open-source libraries used in this project
+- [Sora Editor](https://github.com/Rosemoe/sora-editor) 提供代码编辑功能
+- 本项目中使用的其他开源库
 
 ---
 
-ACC IDE - Enhancing your competitive programming experience on Android. 
+ACC IDE - 提升您在 Android 上的OJ体验。 
