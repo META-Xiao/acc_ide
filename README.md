@@ -1,7 +1,7 @@
 # ACC IDE
 
 - [English](README.md)
-- [简体中文](README_cn.md)
+- [简体中文](README_zh.md)
 
 ACC IDE is an Android-based integrated development environment specifically designed for algorithmic competitions and coding challenges. Built to enhance the competitive programming experience on mobile devices, ACC IDE provides a feature-rich environment for writing, testing, and submitting algorithmic solutions.
 
