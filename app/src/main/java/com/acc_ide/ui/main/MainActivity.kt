@@ -641,6 +641,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
+     * Update Language Server Protocol (LSP) state
+     * 更新语言服务器协议(LSP)状态
+     */
+    fun updateLspState(enabled: Boolean) {
+        try {
+            supportFragmentManager.fragments.forEach { fragment ->
+                if (fragment is EditorFragment) {
+                    fragment.setLspEnabled(enabled)
+                }
+            }
+            Log.d("MainActivity", "LSP state updated: $enabled")
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Failed to update LSP state: ${e.message}")
+        }
+    }
+
+    /**
      * Refresh editor syntax highlighting
      * 刷新编辑器的语法高亮
      */

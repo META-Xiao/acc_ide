@@ -1,15 +1,16 @@
 plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
 }
 
 android {
     namespace 'com.acc_ide'
     compileSdk 33
+    buildToolsVersion "36.0.0"
 
     defaultConfig {
         applicationId "com.acc_ide"
-        minSdk 24
+        minSdk 26
         targetSdk 33
         versionCode 123
         versionName "1.2.3"
@@ -19,35 +20,41 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    
+
     bundle {
         language {
             enableSplit = false
         }
     }
+
     compileOptions {
-        coreLibraryDesugaringEnabled true
+        coreLibraryDesugaringEnabled false
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+
     kotlinOptions {
         jvmTarget = '17'
         apiVersion = '2.1'
         languageVersion = '2.1'
     }
 
+    lint {
+        baseline = file("lint-baseline.xml")
+    }
+
     packaging {
         resources {
             excludes += [
-                'license/README.dom.txt',
-                'license/LICENSE.dom-documentation.txt',
-                'license/NOTICE',
-                'license/LICENSE',
-                'license/LICENSE.dom-software.txt'
+                    'license/README.dom.txt',
+                    'license/LICENSE.dom-documentation.txt',
+                    'license/NOTICE',
+                    'license/LICENSE',
+                    'license/LICENSE.dom-software.txt'
             ]
         }
     }
@@ -63,27 +70,18 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
     implementation 'androidx.preference:preference-ktx:1.2.1'
 
-    constraints {
-        implementation("org.jetbrains.kotlin:kotlin-stdlib") {
-            version {
-                strictly("2.1.0")
-            }
-        }
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-common") {
-            version {
-                strictly("2.1.0")
-            }
-        }
-    }
-    
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.1.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-common:2.1.0")
+
     implementation(platform("io.github.rosemoe:editor-bom:0.23.7"))
     implementation 'io.github.rosemoe:editor'
     implementation 'io.github.rosemoe:language-textmate'
+    implementation 'io.github.rosemoe:editor-lsp'
     implementation("io.github.Rosemoe.sora-editor:textmate-core:0.8.4")
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+    // coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
-} 
+}

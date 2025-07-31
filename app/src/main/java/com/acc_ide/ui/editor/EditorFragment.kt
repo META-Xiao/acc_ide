@@ -195,6 +195,10 @@ class EditorFragment : Fragment() {
             prefs.getBoolean(SettingsFragment.PREF_ENABLE_AUTO_COMPLETION, true)
         setAutoCompletionEnabled(autoCompletionEnabled)
 
+        // Set LSP enabled state
+        val lspEnabled = prefs.getBoolean(SettingsFragment.PREF_ENABLE_LSP, true)
+        setLspEnabled(lspEnabled)
+
         // Set cursor width immediately without delay to prevent post-frame lag
         val cursorWidth = prefs.getFloat(
             SettingsFragment.PREF_CURSOR_WIDTH,
@@ -807,6 +811,27 @@ class EditorFragment : Fragment() {
                 android.util.Log.d("EditorFragment", "Auto-completion component state set: $enabled")
             } catch (e: Exception) {
                 android.util.Log.e("EditorFragment", "Failed to set auto-completion component state: ${e.message}")
+            }
+        }
+    }
+
+    /**
+     * Set Language Server Protocol (LSP) enabled state
+     * 设置语言服务器协议(LSP)的启用状态
+     * @param enabled Whether to enable LSP features
+     */
+    fun setLspEnabled(enabled: Boolean) {
+        if (::editor.isInitialized) {
+            try {
+                // TODO: Add LSP integration here when LSP features are implemented
+                // For now, we just log the state change
+                android.util.Log.d("EditorFragment", "LSP state set: $enabled")
+                
+                // If LSP functionality is implemented in the future, 
+                // we can enable/disable LSP features here based on the enabled parameter
+                
+            } catch (e: Exception) {
+                android.util.Log.e("EditorFragment", "Failed to set LSP state: ${e.message}")
             }
         }
     }

@@ -13,270 +13,113 @@
     </issue>
 
     <issue
-        id="ScopedStorage"
-        message="WRITE_EXTERNAL_STORAGE no longer provides write access when targeting Android 10, unless you use `requestLegacyExternalStorage`"
-        errorLine1="    &lt;uses-permission android:name=&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot; "
-        errorLine2="                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        id="OldTargetApi"
+        message="Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the `android.os.Build.VERSION_CODES` javadoc for details."
+        errorLine1="        targetSdk 33"
+        errorLine2="        ~~~~~~~~~~~~">
         <location
-            file="src/main/AndroidManifest.xml"
-            line="5"
-            column="36"/>
-    </issue>
-
-    <issue
-        id="SuspiciousIndentation"
-        message="Suspicious indentation: This is indented but is not continuing the previous expression (`val selectedBgColor `...)"
-        errorLine1="                    javaClass.methods.forEach { method ->"
-        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/EditorFragment.kt"
-            line="478"
-            column="21"/>
-        <location
-            file="src/main/java/com/acc_ide/EditorFragment.kt"
-            line="474"
-            column="17"
-            message="Previous statement here"/>
-    </issue>
-
-    <issue
-        id="SuspiciousIndentation"
-        message="Suspicious indentation: This is indented but is not continuing the previous expression (`supportActionBar?.ti`...)"
-        errorLine1="                        supportFragmentManager.beginTransaction()"
-        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/MainActivity.kt"
-            line="227"
-            column="25"/>
-        <location
-            file="src/main/java/com/acc_ide/MainActivity.kt"
-            line="224"
-            column="17"
-            message="Previous statement here"/>
-    </issue>
-
-    <issue
-        id="SuspiciousIndentation"
-        message="Suspicious indentation: This is indented but is not continuing the previous expression (`val storedFiles = fi`...)"
-        errorLine1="            Log.d(&quot;MainActivity&quot;, &quot;存储中找到 ${storedFiles.size} 个文件&quot;)"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/MainActivity.kt"
-            line="616"
-            column="13"/>
-        <location
-            file="src/main/java/com/acc_ide/MainActivity.kt"
-            line="615"
-            column="9"
-            message="Previous statement here"/>
-    </issue>
-
-    <issue
-        id="SuspiciousIndentation"
-        message="Suspicious indentation: This is indented but is not continuing the previous expression (`files[fileName] = fi`...)"
-        errorLine1="                        validFileCount++"
-        errorLine2="                        ~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/MainActivity.kt"
-            line="654"
-            column="25"/>
-        <location
-            file="src/main/java/com/acc_ide/MainActivity.kt"
-            line="653"
-            column="21"
-            message="Previous statement here"/>
-    </issue>
-
-    <issue
-        id="SuspiciousIndentation"
-        message="Suspicious indentation: This is indented but is not continuing the previous expression (`val newDeletedFiles `...)"
-        errorLine1="                        if (fileName.startsWith(&quot;NewFile_&quot;)) {"
-        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/MainActivity.kt"
-            line="1586"
-            column="25"/>
-        <location
-            file="src/main/java/com/acc_ide/MainActivity.kt"
-            line="1583"
-            column="21"
-            message="Previous statement here"/>
-    </issue>
-
-    <issue
-        id="UnusedAttribute"
-        message="Attribute `enableOnBackInvokedCallback` is only used in API level 33 and higher (current min is 31)"
-        errorLine1="        android:enableOnBackInvokedCallback=&quot;true&quot;"
-        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/AndroidManifest.xml"
-            line="23"
+            file="build.gradle"
+            line="14"
             column="9"/>
     </issue>
 
     <issue
-        id="AppBundleLocaleChanges"
-        message="Found dynamic locale changes, but did not find corresponding Play Core library calls for downloading languages and splitting by language is not disabled in the `bundle` configuration"
-        errorLine1="            configuration.setLocale(locale)"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        id="CustomSplashScreen"
+        message="The application should not provide its own launch screen"
+        errorLine1="class SplashActivity : AppCompatActivity() {"
+        errorLine2="      ~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/acc_ide/util/LocaleHelper.kt"
-            line="62"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="DetachAndAttachSameFragment"
-        message="Calling detach() and attach() in the same FragmentTransaction is a no-op, meaning it does not recreate the Fragment&apos;s view. If you would like the view to be recreated, separate these operations into separate transactions."
-        errorLine1="                supportFragmentManager.beginTransaction()"
-        errorLine2="                                       ~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/MainActivity.kt"
-            line="1366"
-            column="40"/>
-    </issue>
-
-    <issue
-        id="DetachAndAttachSameFragment"
-        message="Calling detach() and attach() in the same FragmentTransaction is a no-op, meaning it does not recreate the Fragment&apos;s view. If you would like the view to be recreated, separate these operations into separate transactions."
-        errorLine1="                supportFragmentManager.beginTransaction()"
-        errorLine2="                                       ~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/MainActivity.kt"
-            line="1376"
-            column="40"/>
-    </issue>
-
-    <issue
-        id="SelectedPhotoAccess"
-        message="Your app is currently not handling Selected Photos Access introduced in Android 14+"
-        errorLine1="    &lt;uses-permission android:name=&quot;android.permission.READ_MEDIA_IMAGES&quot; />"
-        errorLine2="                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/AndroidManifest.xml"
-            line="9"
-            column="36"/>
-    </issue>
-
-    <issue
-        id="SelectedPhotoAccess"
-        message="Your app is currently not handling Selected Photos Access introduced in Android 14+"
-        errorLine1="    &lt;uses-permission android:name=&quot;android.permission.READ_MEDIA_VIDEO&quot; />"
-        errorLine2="                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/AndroidManifest.xml"
-            line="10"
-            column="36"/>
-    </issue>
-
-    <issue
-        id="AndroidGradlePluginVersion"
-        message="A newer version of Gradle than 8.11.1 is available: 8.14.3"
-        errorLine1="distributionUrl=https\://services.gradle.org/distributions/gradle-8.11.1-bin.zip"
-        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="../gradle/wrapper/gradle-wrapper.properties"
-            line="3"
-            column="17"/>
+            file="src/main/java/com/acc_ide/ui/splash/SplashActivity.kt"
+            line="29"
+            column="7"/>
     </issue>
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.core:core-ktx than 1.10.1 is available: 1.15.0"
-        errorLine1="    implementation(&quot;androidx.core:core-ktx:1.10.1&quot;)"
-        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="A newer version of `compileSdkVersion` than 33 is available: 35"
+        errorLine1="    compileSdk 33"
+        errorLine2="    ~~~~~~~~~~~~~">
         <location
-            file="build.gradle.kts"
-            line="44"
-            column="20"/>
+            file="build.gradle"
+            line="8"
+            column="5"/>
     </issue>
 
     <issue
         id="GradleDependency"
-        message="A newer version of com.google.android.material:material than 1.9.0 is available: 1.11.0"
-        errorLine1="    implementation(&quot;com.google.android.material:material:1.9.0&quot;)"
+        message="A newer version of com.google.android.material:material than 1.9.0 is available: 1.10.0"
+        errorLine1="    implementation &apos;com.google.android.material:material:1.9.0&apos;"
         errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="build.gradle.kts"
-            line="46"
+            file="build.gradle"
+            line="66"
             column="20"/>
     </issue>
 
     <issue
         id="GradleDependency"
         message="A newer version of androidx.drawerlayout:drawerlayout than 1.1.1 is available: 1.2.0"
-        errorLine1="    implementation(&quot;androidx.drawerlayout:drawerlayout:1.1.1&quot;)"
+        errorLine1="    implementation &apos;androidx.drawerlayout:drawerlayout:1.1.1&apos;"
         errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="build.gradle.kts"
-            line="48"
+            file="build.gradle"
+            line="68"
             column="20"/>
     </issue>
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.navigation:navigation-fragment-ktx than 2.5.3 is available: 2.7.7"
-        errorLine1="    implementation(&quot;androidx.navigation:navigation-fragment-ktx:2.5.3&quot;)"
+        message="A newer version of androidx.navigation:navigation-fragment-ktx than 2.5.3 is available: 2.6.0"
+        errorLine1="    implementation &apos;androidx.navigation:navigation-fragment-ktx:2.5.3&apos;"
         errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="build.gradle.kts"
-            line="49"
+            file="build.gradle"
+            line="69"
             column="20"/>
     </issue>
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.navigation:navigation-ui-ktx than 2.5.3 is available: 2.7.7"
-        errorLine1="    implementation(&quot;androidx.navigation:navigation-ui-ktx:2.5.3&quot;)"
+        message="A newer version of androidx.navigation:navigation-ui-ktx than 2.5.3 is available: 2.6.0"
+        errorLine1="    implementation &apos;androidx.navigation:navigation-ui-ktx:2.5.3&apos;"
         errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="build.gradle.kts"
-            line="50"
+            file="build.gradle"
+            line="70"
             column="20"/>
     </issue>
 
     <issue
         id="GradleDependency"
-        message="A newer version of io.github.Rosemoe.sora-editor:editor than 0.23.4 is available: 0.23.5"
-        errorLine1="    implementation(&quot;io.github.Rosemoe.sora-editor:editor:0.23.4&quot;)"
-        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="A newer version of org.jetbrains.kotlin:kotlin-stdlib than 2.1.0 is available: 2.1.21"
+        errorLine1="    implementation(&quot;org.jetbrains.kotlin:kotlin-stdlib:2.1.0&quot;)"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="build.gradle.kts"
-            line="54"
+            file="build.gradle"
+            line="73"
             column="20"/>
     </issue>
 
     <issue
         id="GradleDependency"
-        message="A newer version of org.jetbrains.kotlin.android than 2.0.21 is available: 2.1.0"
-        errorLine1="kotlin = &quot;2.0.21&quot;"
-        errorLine2="         ~~~~~~~~">
+        message="A newer version of org.jetbrains.kotlin:kotlin-stdlib-common than 2.1.0 is available: 2.1.21"
+        errorLine1="    implementation(&quot;org.jetbrains.kotlin:kotlin-stdlib-common:2.1.0&quot;)"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="../gradle/libs.versions.toml"
-            line="3"
-            column="10"/>
+            file="build.gradle"
+            line="74"
+            column="20"/>
     </issue>
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.core:core-ktx than 1.10.1 is available: 1.15.0"
-        errorLine1="coreKtx = &quot;1.10.1&quot;"
-        errorLine2="          ~~~~~~~~">
+        message="A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.7.3 is available: 1.10.2"
+        errorLine1="    implementation &apos;org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3&apos;"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="../gradle/libs.versions.toml"
-            line="4"
-            column="11"/>
-    </issue>
-
-    <issue
-        id="GradleDependency"
-        message="A newer version of com.google.android.material:material than 1.10.0 is available: 1.11.0"
-        errorLine1="material = &quot;1.10.0&quot;"
-        errorLine2="           ~~~~~~~~">
-        <location
-            file="../gradle/libs.versions.toml"
-            line="9"
-            column="12"/>
+            file="build.gradle"
+            line="86"
+            column="20"/>
     </issue>
 
     <issue
@@ -296,19 +139,8 @@
         errorLine1="    &lt;string name=&quot;copy&quot;>Copy&lt;/string>"
         errorLine2="                  ~~~~">
         <location
-            file="src/main/res/values-en/strings.xml"
-            line="48"
-            column="19"/>
-    </issue>
-
-    <issue
-        id="PrivateResource"
-        message="Overriding `@string/copy` which is marked as private in androidx.preference:preference:1.2.1. If deliberate, use tools:override=&quot;true&quot;, otherwise pick a different name."
-        errorLine1="    &lt;string name=&quot;copy&quot;>复制&lt;/string>"
-        errorLine2="                  ~~~~">
-        <location
-            file="src/main/res/values-zh-rCN/strings.xml"
-            line="49"
+            file="src/main/res/values/strings.xml"
+            line="46"
             column="19"/>
     </issue>
 
@@ -318,522 +150,16 @@
         errorLine1="    &lt;string name=&quot;copy&quot;>Copy&lt;/string>"
         errorLine2="                  ~~~~">
         <location
-            file="src/main/res/values/strings.xml"
+            file="src/main/res/values-en/strings.xml"
             line="55"
             column="19"/>
     </issue>
 
     <issue
-        id="UseCompatLoadingForDrawables"
-        message="Use `AppCompatResources.getDrawable()`"
-        errorLine1="                background = context.getDrawable(R.drawable.page_indicator)"
-        errorLine2="                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/view/SymbolPanelView.kt"
-            line="79"
-            column="30"/>
-    </issue>
-
-    <issue
-        id="UseCompatLoadingForDrawables"
-        message="Use `AppCompatResources.getDrawable()`"
-        errorLine1="                background = context.getDrawable(R.drawable.page_indicator)"
-        errorLine2="                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/view/SymbolPanelView.kt"
-            line="79"
-            column="30"/>
-    </issue>
-
-    <issue
         id="MissingTranslation"
-        message="&quot;open_file&quot; is not translated in &quot;en&quot; (English) or &quot;zh&quot; (Chinese)"
-        errorLine1="    &lt;string name=&quot;open_file&quot;>Open File&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="8"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;save_as&quot; is not translated in &quot;en&quot; (English) or &quot;zh&quot; (Chinese)"
-        errorLine1="    &lt;string name=&quot;save_as&quot;>Save As&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="15"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;welcome&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;welcome&quot;>Welcome&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="23"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;cursor_width&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;cursor_width&quot;>Cursor Width&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="28"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;file_closed&quot; is not translated in &quot;en&quot; (English) or &quot;zh&quot; (Chinese)"
-        errorLine1="    &lt;string name=&quot;file_closed&quot;>File closed: %1$s&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="33"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;undo&quot; is not translated in &quot;en&quot; (English) or &quot;zh&quot; (Chinese)"
-        errorLine1="    &lt;string name=&quot;undo&quot;>Undo&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="49"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;redo&quot; is not translated in &quot;en&quot; (English) or &quot;zh&quot; (Chinese)"
-        errorLine1="    &lt;string name=&quot;redo&quot;>Redo&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="50"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;theme_system&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;theme_system&quot;>System Default&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="78"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;theme_light&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;theme_light&quot;>Light&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="79"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;theme_dark&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;theme_dark&quot;>Dark&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="80"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;error_title&quot; is not translated in &quot;en&quot; (English) or &quot;zh&quot; (Chinese)"
-        errorLine1="    &lt;string name=&quot;error_title&quot;>Error&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="81"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;error_message&quot; is not translated in &quot;en&quot; (English) or &quot;zh&quot; (Chinese)"
-        errorLine1="    &lt;string name=&quot;error_message&quot;>An error occurred: %1$s&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="82"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;ok_button&quot; is not translated in &quot;en&quot; (English) or &quot;zh&quot; (Chinese)"
-        errorLine1="    &lt;string name=&quot;ok_button&quot;>OK&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="83"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;toggle_symbol_panel&quot; is not translated in &quot;en&quot; (English) or &quot;zh&quot; (Chinese)"
-        errorLine1="    &lt;string name=&quot;toggle_symbol_panel&quot;>Toggle Symbol Panel&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="86"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;symbol_panel_shown&quot; is not translated in &quot;en&quot; (English) or &quot;zh&quot; (Chinese)"
-        errorLine1="    &lt;string name=&quot;symbol_panel_shown&quot;>Symbol panel shown&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="87"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;symbol_panel_hidden&quot; is not translated in &quot;en&quot; (English) or &quot;zh&quot; (Chinese)"
-        errorLine1="    &lt;string name=&quot;symbol_panel_hidden&quot;>Symbol panel hidden&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="88"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;auto_complete_switch_label&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;auto_complete_switch_label&quot;>Auto-complete&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="89"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;symbol_panel_switch_label&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;symbol_panel_switch_label&quot;>Symbol Panel&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="90"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;github_runner_settings&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;github_runner_settings&quot;>GitHub Runner Settings&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="93"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;github_repo_url_hint&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;github_repo_url_hint&quot;>GitHub Repository URL&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="94"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;github_pat_hint&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;github_pat_hint&quot;>Personal Access Token&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="95"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;test_connection&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;test_connection&quot;>Test Connection&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="96"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;connection_testing&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;connection_testing&quot;>Testing connection...&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="97"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;connection_successful&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;connection_successful&quot;>Connection successful!&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="98"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;connection_failed&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;connection_failed&quot;>Connection failed: %1$s&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="99"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;github_settings_saved&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;github_settings_saved&quot;>GitHub settings saved.&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="100"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;github_repo_pat_empty&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;github_repo_pat_empty&quot;>Repository URL and PAT cannot be empty.&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="101"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;github_repo_invalid&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;github_repo_invalid&quot;>Invalid GitHub Repository URL format.&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="102"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;code_running&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;code_running&quot;>Running...&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="105"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;code_running_on_github&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;code_running_on_github&quot;>Running code on GitHub Actions...&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="106"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;code_running_time&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;code_running_time&quot;>Running... (%1$d seconds)&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="107"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;workflow_timeout&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;workflow_timeout&quot;>Workflow execution timed out&lt;/string>"
+        message="&quot;lsp_switch_label&quot; is not translated in &quot;en&quot; (English)"
+        errorLine1="    &lt;string name=&quot;lsp_switch_label&quot;>Language Server Protocol&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="108"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;workflow_trigger_failed&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;workflow_trigger_failed&quot;>Failed to trigger GitHub workflow&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="109"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;workflow_error&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;workflow_error&quot;>Error: %1$s&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="110"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;workflow_polling_error&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;workflow_polling_error&quot;>Polling error: %1$s&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="111"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;already_running&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;already_running&quot;>Code is already running, please wait&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="112"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;no_github_settings&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;no_github_settings&quot;>Please configure GitHub repository and PAT in settings&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="113"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;invalid_repo_url&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;invalid_repo_url&quot;>Invalid GitHub repository URL&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="114"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;code_empty&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;code_empty&quot;>Code cannot be empty&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="115"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;artifact_not_found&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;artifact_not_found&quot;>Result artifact not found&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="116"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;result_processing_error&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;result_processing_error&quot;>Error processing results: %1$s&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="117"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;no_output&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;no_output&quot;>No output available&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="118"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;unsupported_language&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;unsupported_language&quot;>Unsupported language: %1$s&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="121"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;simulated_cpp_output&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;simulated_cpp_output&quot;>Simulated C++ output:&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="122"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;simulated_python_output&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;simulated_python_output&quot;>Simulated Python output:&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
             line="123"
@@ -842,9 +168,9 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;simulated_java_output&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;simulated_java_output&quot;>Simulated Java output:&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="&quot;lsp_description&quot; is not translated in &quot;en&quot; (English)"
+        errorLine1="    &lt;string name=&quot;lsp_description&quot;>Enable intelligent code features like auto-completion, error checking, and code navigation&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
             line="124"
@@ -853,9 +179,9 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;processing_input&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;processing_input&quot;>Processing: %1$s&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~">
+        message="&quot;lsp_enabled&quot; is not translated in &quot;en&quot; (English)"
+        errorLine1="    &lt;string name=&quot;lsp_enabled&quot;>LSP enabled&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
             line="125"
@@ -864,9 +190,9 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;cpp_compile_error&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;cpp_compile_error&quot;>// Compilation error: No output statement in code&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="&quot;lsp_disabled&quot; is not translated in &quot;en&quot; (English)"
+        errorLine1="    &lt;string name=&quot;lsp_disabled&quot;>LSP disabled&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
             line="126"
@@ -875,56 +201,89 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;python_error&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;python_error&quot;># Error: No output statement in code&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~">
+        message="&quot;file_name_unsaved&quot; is not translated in &quot;en&quot; (English)"
+        errorLine1="    &lt;string name=&quot;file_name_unsaved&quot;>%1$s*&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="127"
+            line="169"
             column="13"/>
     </issue>
 
     <issue
         id="MissingTranslation"
-        message="&quot;java_compile_error&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;java_compile_error&quot;>// Compilation error: No output statement in code&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="&quot;execution_status_with_time&quot; is not translated in &quot;en&quot; (English)"
+        errorLine1="    &lt;string name=&quot;execution_status_with_time&quot;>%1$s   %2$d ms&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="128"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;error_keyword&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;error_keyword&quot;>error&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="129"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;compile_error_keyword&quot; is not translated in &quot;en&quot; (English)"
-        errorLine1="    &lt;string name=&quot;compile_error_keyword&quot;>Compilation error&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="130"
+            line="170"
             column="13"/>
     </issue>
 
     <issue
         id="PluralsCandidate"
-        message="Formatting %d followed by words (&quot;seconds&quot;): This should probably be a plural rather than a string"
-        errorLine1="    &lt;string name=&quot;code_running_time&quot;>Running... (%1$d seconds)&lt;/string>"
-        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="Formatting %d followed by words (&quot;orphaned&quot;): This should probably be a plural rather than a string"
+        errorLine1="    &lt;string name=&quot;log_found_orphaned_meta&quot;>Found %1$d orphaned metadata files, cleaning up...&lt;/string>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="107"
+            line="80"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="PluralsCandidate"
+        message="Formatting %d followed by words (&quot;orphaned&quot;): This should probably be a plural rather than a string"
+        errorLine1="    &lt;string name=&quot;log_found_orphaned_meta&quot;>Found %1$d orphaned metadata files, cleaning up...&lt;/string>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-en/strings.xml"
+            line="82"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="PluralsCandidate"
+        message="Formatting %d followed by words (&quot;code&quot;): This should probably be a plural rather than a string"
+        errorLine1="    &lt;string name=&quot;log_found_code_files&quot;>Found %1$d code files, validating metadata...&lt;/string>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="84"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="PluralsCandidate"
+        message="Formatting %d followed by words (&quot;files&quot;): This should probably be a plural rather than a string"
+        errorLine1="    &lt;string name=&quot;log_fixed_missing_meta&quot;>Created missing metadata for %1$d files&lt;/string>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="85"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="PluralsCandidate"
+        message="Formatting %d followed by words (&quot;code&quot;): This should probably be a plural rather than a string"
+        errorLine1="    &lt;string name=&quot;log_found_code_files&quot;>Found %1$d code files, validating metadata...&lt;/string>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-en/strings.xml"
+            line="86"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="PluralsCandidate"
+        message="Formatting %d followed by words (&quot;files&quot;): This should probably be a plural rather than a string"
+        errorLine1="    &lt;string name=&quot;log_fixed_missing_meta&quot;>Created missing metadata for %1$d files&lt;/string>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-en/strings.xml"
+            line="87"
             column="5"/>
     </issue>
 
@@ -935,70 +294,48 @@
         errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/acc_ide/adapter/FileListAdapter.kt"
-            line="152"
+            line="159"
             column="9"/>
     </issue>
 
     <issue
-        id="Recycle"
-        message="This `TypedArray` should be recycled after use with `#recycle()`"
-        errorLine1="            foreground = context.obtainStyledAttributes(intArrayOf(android.R.attr.selectableItemBackground)).getDrawable(0)"
-        errorLine2="                                 ~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/view/SymbolPanelView.kt"
-            line="242"
-            column="34"/>
-    </issue>
-
-    <issue
-        id="Recycle"
-        message="This `TypedArray` should be recycled after use with `#recycle()`"
-        errorLine1="            foreground = context.obtainStyledAttributes(intArrayOf(android.R.attr.selectableItemBackground)).getDrawable(0)"
-        errorLine2="                                 ~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/view/SymbolPanelView.kt"
-            line="242"
-            column="34"/>
-    </issue>
-
-    <issue
         id="ObsoleteSdkInt"
-        message="Unnecessary; `SDK_INT` is always >= 29"
-        errorLine1="                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {"
-        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/util/FileStorageManager.kt"
-            line="297"
-            column="21"/>
-    </issue>
-
-    <issue
-        id="ObsoleteSdkInt"
-        message="Unnecessary; `Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q` is always true here (`SDK_INT` ≥ 29 and &lt; 33)"
-        errorLine1="            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/MainActivity.kt"
-            line="414"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="ObsoleteSdkInt"
-        message="Unnecessary; `Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q` is always true here (`SDK_INT` ≥ 29 and &lt; 33)"
-        errorLine1="            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/MainActivity.kt"
-            line="459"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="ObsoleteSdkInt"
-        message="This folder configuration (`v26`) is unnecessary; `minSdkVersion` is 29. Merge all the resources in this folder into `mipmap-anydpi`.">
+        message="This folder configuration (`v26`) is unnecessary; `minSdkVersion` is 26. Merge all the resources in this folder into `mipmap-anydpi`.">
         <location
             file="src/main/res/mipmap-anydpi-v26"/>
+    </issue>
+
+    <issue
+        id="StaticFieldLeak"
+        message="Do not place Android context classes in static fields (static reference to `LspManager` which has field `context` pointing to `Context`); this is a memory leak"
+        errorLine1="        private var instance: LspManager? = null"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/acc_ide/lsp/LspManager.kt"
+            line="23"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="VectorPath"
+        message="Very long vector path (904 characters), which is bad for performance. Considering reducing precision, removing minor details or rasterizing vector."
+        errorLine1="        android:pathData=&quot;M19.14,12.94c0.04,-0.3 0.06,-0.61 0.06,-0.94c0,-0.32 -0.02,-0.64 -0.07,-0.94l2.03,-1.58c0.18,-0.14 0.23,-0.41 0.12,-0.61l-1.92,-3.32c-0.12,-0.22 -0.37,-0.29 -0.59,-0.22l-2.39,0.96c-0.5,-0.38 -1.03,-0.7 -1.62,-0.94L14.4,2.81c-0.04,-0.24 -0.24,-0.41 -0.48,-0.41h-3.84c-0.24,0 -0.43,0.17 -0.47,0.41L9.25,5.35C8.66,5.59 8.12,5.92 7.63,6.29L5.24,5.33c-0.22,-0.08 -0.47,0 -0.59,0.22L2.74,8.87C2.62,9.08 2.66,9.34 2.86,9.48l2.03,1.58C4.84,11.36 4.8,11.69 4.8,12s0.02,0.64 0.07,0.94l-2.03,1.58c-0.18,0.14 -0.23,0.41 -0.12,0.61l1.92,3.32c0.12,0.22 0.37,0.29 0.59,0.22l2.39,-0.96c0.5,0.38 1.03,0.7 1.62,0.94l0.36,2.54c0.05,0.24 0.24,0.41 0.48,0.41h3.84c0.24,0 0.44,-0.17 0.47,-0.41l0.36,-2.54c0.59,-0.24 1.13,-0.56 1.62,-0.94l2.39,0.96c0.22,0.08 0.47,0 0.59,-0.22l1.92,-3.32c0.12,-0.22 0.07,-0.47 -0.12,-0.61L19.14,12.94zM12,15.6c-1.98,0 -3.6,-1.62 -3.6,-3.6s1.62,-3.6 3.6,-3.6s3.6,1.62 3.6,3.6S13.98,15.6 12,15.6z&quot;/>"
+        errorLine2="                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/drawable/ic_settings_gear.xml"
+            line="9"
+            column="27"/>
+    </issue>
+
+    <issue
+        id="Overdraw"
+        message="Possible overdraw: Root element paints background `?attr/colorSurface` with a theme that also paints a background (inferred theme is `@style/Theme_AccIDE_NoActionBar`)"
+        errorLine1="    android:background=&quot;?attr/colorSurface&quot;>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_splash.xml"
+            line="7"
+            column="5"/>
     </issue>
 
     <issue
@@ -1030,7 +367,7 @@
         errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/fragment_welcome.xml"
-            line="7"
+            line="6"
             column="5"/>
     </issue>
 
@@ -1091,6 +428,28 @@
 
     <issue
         id="UnusedResources"
+        message="The resource `R.color.code_background_light` appears to be unused"
+        errorLine1="    &lt;color name=&quot;code_background_light&quot;>#FAFAFA&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="25"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.code_text_light` appears to be unused"
+        errorLine1="    &lt;color name=&quot;code_text_light&quot;>#212121&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="26"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
         message="The resource `R.color.sidebar_highlight_light` appears to be unused"
         errorLine1="    &lt;color name=&quot;sidebar_highlight_light&quot;>#E3F2FD&lt;/color>"
         errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
@@ -1102,12 +461,210 @@
 
     <issue
         id="UnusedResources"
+        message="The resource `R.color.code_background_dark` appears to be unused"
+        errorLine1="    &lt;color name=&quot;code_background_dark&quot;>#1E1E1E&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="42"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.code_text_dark` appears to be unused"
+        errorLine1="    &lt;color name=&quot;code_text_dark&quot;>#EEEEEE&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="43"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
         message="The resource `R.color.sidebar_highlight_dark` appears to be unused"
         errorLine1="    &lt;color name=&quot;sidebar_highlight_dark&quot;>#0D47A1&lt;/color>"
         errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/colors.xml"
             line="44"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.keyword_light` appears to be unused"
+        errorLine1="    &lt;color name=&quot;keyword_light&quot;>#D32F2F&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="52"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.comment_light` appears to be unused"
+        errorLine1="    &lt;color name=&quot;comment_light&quot;>#757575&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="53"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.string_light` appears to be unused"
+        errorLine1="    &lt;color name=&quot;string_light&quot;>#2E7D32&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="54"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.number_light` appears to be unused"
+        errorLine1="    &lt;color name=&quot;number_light&quot;>#1565C0&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="55"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.operator_light` appears to be unused"
+        errorLine1="    &lt;color name=&quot;operator_light&quot;>#EF6C00&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="56"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.identifier_light` appears to be unused"
+        errorLine1="    &lt;color name=&quot;identifier_light&quot;>#0277BD&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="57"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.type_name_light` appears to be unused"
+        errorLine1="    &lt;color name=&quot;type_name_light&quot;>#6A1B9A&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="58"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.function_name_light` appears to be unused"
+        errorLine1="    &lt;color name=&quot;function_name_light&quot;>#00695C&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="59"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.keyword_dark` appears to be unused"
+        errorLine1="    &lt;color name=&quot;keyword_dark&quot;>#FF5252&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="62"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.comment_dark` appears to be unused"
+        errorLine1="    &lt;color name=&quot;comment_dark&quot;>#9E9E9E&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="63"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.string_dark` appears to be unused"
+        errorLine1="    &lt;color name=&quot;string_dark&quot;>#81C784&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="64"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.number_dark` appears to be unused"
+        errorLine1="    &lt;color name=&quot;number_dark&quot;>#64B5F6&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="65"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.operator_dark` appears to be unused"
+        errorLine1="    &lt;color name=&quot;operator_dark&quot;>#FFB74D&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="66"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.identifier_dark` appears to be unused"
+        errorLine1="    &lt;color name=&quot;identifier_dark&quot;>#4FC3F7&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="67"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.type_name_dark` appears to be unused"
+        errorLine1="    &lt;color name=&quot;type_name_dark&quot;>#CE93D8&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="68"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.function_name_dark` appears to be unused"
+        errorLine1="    &lt;color name=&quot;function_name_dark&quot;>#4DB6AC&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="69"
             column="12"/>
     </issue>
 
@@ -1163,6 +720,94 @@
         <location
             file="src/main/res/values/colors.xml"
             line="76"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.line_number_light` appears to be unused"
+        errorLine1="    &lt;color name=&quot;line_number_light&quot;>#757575&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="79"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.line_number_dark` appears to be unused"
+        errorLine1="    &lt;color name=&quot;line_number_dark&quot;>#9E9E9E&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="80"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.current_line_light` appears to be unused"
+        errorLine1="    &lt;color name=&quot;current_line_light&quot;>#F5F5F5&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="81"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.current_line_dark` appears to be unused"
+        errorLine1="    &lt;color name=&quot;current_line_dark&quot;>#2A2A2A&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="82"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.selection_light` appears to be unused"
+        errorLine1="    &lt;color name=&quot;selection_light&quot;>#D0D0D0&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="83"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.selection_dark` appears to be unused"
+        errorLine1="    &lt;color name=&quot;selection_dark&quot;>#4A4A4A&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="84"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.block_line_light` appears to be unused"
+        errorLine1="    &lt;color name=&quot;block_line_light&quot;>#E0E0E0&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="85"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.block_line_dark` appears to be unused"
+        errorLine1="    &lt;color name=&quot;block_line_dark&quot;>#505050&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="86"
             column="12"/>
     </issue>
 
@@ -1248,6 +893,17 @@
 
     <issue
         id="UnusedResources"
+        message="The resource `R.layout.layout_symbol_page` appears to be unused"
+        errorLine1="&lt;GridLayout"
+        errorLine2="^">
+        <location
+            file="src/main/res/layout/layout_symbol_page.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
         message="The resource `R.layout.layout_symbol_panel` appears to be unused"
         errorLine1="&lt;merge xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
         errorLine2="^">
@@ -1275,73 +931,62 @@
         errorLine2="            ~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="11"
+            line="10"
             column="13"/>
     </issue>
 
     <issue
         id="UnusedResources"
         message="The resource `R.string.no_files` appears to be unused"
-        errorLine1="    &lt;string name=&quot;no_files&quot;>No files, please create a new one&lt;/string>"
+        errorLine1="    &lt;string name=&quot;no_files&quot;>No files yet. Create a new one.&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="12"
+            line="11"
             column="13"/>
     </issue>
 
     <issue
         id="UnusedResources"
         message="The resource `R.string.current_output` appears to be unused"
-        errorLine1="    &lt;string name=&quot;current_output&quot;>Current Output:&lt;/string>"
+        errorLine1="    &lt;string name=&quot;current_output&quot;>Current output:&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="17"
+            line="15"
             column="13"/>
     </issue>
 
     <issue
         id="UnusedResources"
         message="The resource `R.string.answer_output` appears to be unused"
-        errorLine1="    &lt;string name=&quot;answer_output&quot;>Answer Output (Optional):&lt;/string>"
+        errorLine1="    &lt;string name=&quot;answer_output&quot;>Reference output (optional):&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="18"
+            line="16"
             column="13"/>
     </issue>
 
     <issue
         id="UnusedResources"
         message="The resource `R.string.theme` appears to be unused"
-        errorLine1="    &lt;string name=&quot;theme&quot;>Dark Mode&lt;/string>"
+        errorLine1="    &lt;string name=&quot;theme&quot;>Dark mode&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="25"
+            line="22"
             column="13"/>
     </issue>
 
     <issue
         id="UnusedResources"
         message="The resource `R.string.file_options` appears to be unused"
-        errorLine1="    &lt;string name=&quot;file_options&quot;>File Options&lt;/string>"
+        errorLine1="    &lt;string name=&quot;file_options&quot;>File options&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="29"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="UnusedResources"
-        message="The resource `R.string.editor` appears to be unused"
-        errorLine1="    &lt;string name=&quot;editor&quot;>Editor&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="44"
+            line="26"
             column="13"/>
     </issue>
 
@@ -1352,7 +997,18 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="45"
+            line="39"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.editor` appears to be unused"
+        errorLine1="    &lt;string name=&quot;editor&quot;>Editor&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="42"
             column="13"/>
     </issue>
 
@@ -1363,7 +1019,7 @@
         errorLine2="            ~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="55"
+            line="46"
             column="13"/>
     </issue>
 
@@ -1374,7 +1030,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="56"
+            line="47"
             column="13"/>
     </issue>
 
@@ -1385,7 +1041,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="57"
+            line="48"
             column="13"/>
     </issue>
 
@@ -1396,7 +1052,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="58"
+            line="49"
             column="13"/>
     </issue>
 
@@ -1407,7 +1063,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="59"
+            line="50"
             column="13"/>
     </issue>
 
@@ -1418,62 +1074,172 @@
         errorLine2="            ~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="60"
+            line="51"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.file_saved` appears to be unused"
+        errorLine1="    &lt;string name=&quot;file_saved&quot;>File &quot;%1$s&quot; saved successfully&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="52"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.file_closed` appears to be unused"
+        errorLine1="    &lt;string name=&quot;file_closed&quot;>File &quot;%1$s&quot; closed&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="61"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.log_textmate_init_in_progress` appears to be unused"
+        errorLine1="    &lt;string name=&quot;log_textmate_init_in_progress&quot;>TextMate initialization in progress&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="89"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.log_preloading_common_languages` appears to be unused"
+        errorLine1="    &lt;string name=&quot;log_preloading_common_languages&quot;>Preloading common languages&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="90"
             column="13"/>
     </issue>
 
     <issue
         id="UnusedResources"
         message="The resource `R.string.action_refresh_files` appears to be unused"
-        errorLine1="    &lt;string name=&quot;action_refresh_files&quot;>刷新文件列表&lt;/string>"
+        errorLine1="    &lt;string name=&quot;action_refresh_files&quot;>Refresh file list&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="68"
+            line="98"
             column="13"/>
     </issue>
 
     <issue
         id="UnusedResources"
         message="The resource `R.string.action_clear_all_files` appears to be unused"
-        errorLine1="    &lt;string name=&quot;action_clear_all_files&quot;>清除所有文件&lt;/string>"
+        errorLine1="    &lt;string name=&quot;action_clear_all_files&quot;>Clear all files&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="69"
+            line="99"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.clear_all_files_title` appears to be unused"
+        errorLine1="    &lt;string name=&quot;clear_all_files_title&quot;>Clear all files&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="100"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.clear_all_files_message` appears to be unused"
+        errorLine1="    &lt;string name=&quot;clear_all_files_message&quot;>Are you sure you want to delete all files? This action cannot be undone.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="101"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.clear_all_files_success` appears to be unused"
+        errorLine1="    &lt;string name=&quot;clear_all_files_success&quot;>All files deleted&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="102"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.clear_all_files_failure` appears to be unused"
+        errorLine1="    &lt;string name=&quot;clear_all_files_failure&quot;>Failed to delete all files&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="103"
             column="13"/>
     </issue>
 
     <issue
         id="UnusedResources"
         message="The resource `R.string.files_refreshed` appears to be unused"
-        errorLine1="    &lt;string name=&quot;files_refreshed&quot;>文件列表已刷新&lt;/string>"
+        errorLine1="    &lt;string name=&quot;files_refreshed&quot;>File list refreshed&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="74"
+            line="104"
             column="13"/>
     </issue>
 
     <issue
         id="UnusedResources"
         message="The resource `R.string.show_storage_path` appears to be unused"
-        errorLine1="    &lt;string name=&quot;show_storage_path&quot;>显示存储路径&lt;/string>"
+        errorLine1="    &lt;string name=&quot;show_storage_path&quot;>Show storage path&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="75"
+            line="105"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.storage_path_title` appears to be unused"
+        errorLine1="    &lt;string name=&quot;storage_path_title&quot;>File storage path&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="106"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.storage_path_message` appears to be unused"
+        errorLine1="    &lt;string name=&quot;storage_path_message&quot;>Your files are stored at:\n%1$s\n\nYou can access this path through a file manager&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="107"
             column="13"/>
     </issue>
 
     <issue
         id="UnusedResources"
         message="The resource `R.string.theme_system` appears to be unused"
-        errorLine1="    &lt;string name=&quot;theme_system&quot;>System Default&lt;/string>"
+        errorLine1="    &lt;string name=&quot;theme_system&quot;>System default&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="78"
+            line="108"
             column="13"/>
     </issue>
 
@@ -1484,7 +1250,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="79"
+            line="109"
             column="13"/>
     </issue>
 
@@ -1495,18 +1261,18 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="80"
+            line="110"
             column="13"/>
     </issue>
 
     <issue
         id="UnusedResources"
         message="The resource `R.string.toggle_symbol_panel` appears to be unused"
-        errorLine1="    &lt;string name=&quot;toggle_symbol_panel&quot;>Toggle Symbol Panel&lt;/string>"
+        errorLine1="    &lt;string name=&quot;toggle_symbol_panel&quot;>Toggle symbol panel&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="86"
+            line="116"
             column="13"/>
     </issue>
 
@@ -1517,7 +1283,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="87"
+            line="117"
             column="13"/>
     </issue>
 
@@ -1528,18 +1294,117 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="88"
+            line="118"
             column="13"/>
     </issue>
 
     <issue
         id="UnusedResources"
-        message="The resource `R.string.auto_complete_switch_label` appears to be unused"
-        errorLine1="    &lt;string name=&quot;auto_complete_switch_label&quot;>Auto-complete&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="The resource `R.string.unsupported_language` appears to be unused"
+        errorLine1="    &lt;string name=&quot;unsupported_language&quot;>Unsupported language: %1$s&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="89"
+            line="157"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.simulated_cpp_output` appears to be unused"
+        errorLine1="    &lt;string name=&quot;simulated_cpp_output&quot;>Simulated C++ output:&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="158"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.simulated_python_output` appears to be unused"
+        errorLine1="    &lt;string name=&quot;simulated_python_output&quot;>Simulated Python output:&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="159"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.simulated_java_output` appears to be unused"
+        errorLine1="    &lt;string name=&quot;simulated_java_output&quot;>Simulated Java output:&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="160"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.processing_input` appears to be unused"
+        errorLine1="    &lt;string name=&quot;processing_input&quot;>Processing: %1$s&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="161"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.cpp_compile_error` appears to be unused"
+        errorLine1="    &lt;string name=&quot;cpp_compile_error&quot;>// Compilation error: no output statement in code&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="162"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.python_error` appears to be unused"
+        errorLine1="    &lt;string name=&quot;python_error&quot;># Error: no output statement in code&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="163"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.java_compile_error` appears to be unused"
+        errorLine1="    &lt;string name=&quot;java_compile_error&quot;>// Compilation error: no output statement in code&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="164"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.error_keyword` appears to be unused"
+        errorLine1="    &lt;string name=&quot;error_keyword&quot;>Error&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="165"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.compile_error_keyword` appears to be unused"
+        errorLine1="    &lt;string name=&quot;compile_error_keyword&quot;>Compilation error&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="166"
             column="13"/>
     </issue>
 
@@ -1550,7 +1415,18 @@
         errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/styles.xml"
-            line="27"
+            line="35"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.style.SymbolButtonStyle` appears to be unused"
+        errorLine1="    &lt;style name=&quot;SymbolButtonStyle&quot; parent=&quot;Widget.MaterialComponents.Button.TextButton&quot;>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/styles.xml"
+            line="58"
             column="12"/>
     </issue>
 
@@ -1579,17 +1455,6 @@
     <issue
         id="TypographyEllipsis"
         message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
-        errorLine1="    &lt;string name=&quot;language_changed&quot;>Language changed successfully, applying new language...&lt;/string>"
-        errorLine2="                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values-en/strings.xml"
-            line="40"
-            column="37"/>
-    </issue>
-
-    <issue
-        id="TypographyEllipsis"
-        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
         errorLine1="    &lt;string name=&quot;language_changed&quot;>语言切换成功，正在应用新语言...&lt;/string>"
         errorLine2="                                    ~~~~~~~~~~~~~~~~~">
         <location
@@ -1601,23 +1466,353 @@
     <issue
         id="TypographyEllipsis"
         message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
-        errorLine1="    &lt;string name=&quot;language_changed&quot;>语言已更改，正在应用新语言...&lt;/string>"
-        errorLine2="                                    ~~~~~~~~~~~~~~~~">
+        errorLine1="    &lt;string name=&quot;loading&quot;>正在初始化...&lt;/string>"
+        errorLine2="                           ~~~~~~~~">
         <location
-            file="src/main/res/values-zh-rCN/strings.xml"
-            line="41"
-            column="37"/>
+            file="src/main/res/values-zh/strings.xml"
+            line="53"
+            column="28"/>
     </issue>
 
     <issue
         id="TypographyEllipsis"
         message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
-        errorLine1="    &lt;string name=&quot;language_changed&quot;>Language changed successfully, applying new language...&lt;/string>"
-        errorLine2="                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        errorLine1="    &lt;string name=&quot;initializing_file_system&quot;>正在初始化文件系统...&lt;/string>"
+        errorLine2="                                            ~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-zh/strings.xml"
+            line="54"
+            column="45"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;cleaning_temp_files&quot;>正在清理临时文件...&lt;/string>"
+        errorLine2="                                       ~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-zh/strings.xml"
+            line="55"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;verifying_file_system&quot;>正在验证文件系统...&lt;/string>"
+        errorLine2="                                         ~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-zh/strings.xml"
+            line="56"
+            column="42"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;initializing_templates&quot;>正在初始化模板...&lt;/string>"
+        errorLine2="                                          ~~~~~~~~~~">
+        <location
+            file="src/main/res/values-zh/strings.xml"
+            line="57"
+            column="43"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;initializing_syntax_highlighting&quot;>正在初始化语法高亮...&lt;/string>"
+        errorLine2="                                                    ~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-zh/strings.xml"
+            line="58"
+            column="53"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_start_init_fs&quot;>开始初始化文件系统...&lt;/string>"
+        errorLine2="                                     ~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-zh/strings.xml"
+            line="70"
+            column="38"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_start_init_fs&quot;>Initializing file system...&lt;/string>"
+        errorLine2="                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="46"
-            column="37"/>
+            line="70"
+            column="38"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_start_init_fs&quot;>Initializing file system...&lt;/string>"
+        errorLine2="                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-en/strings.xml"
+            line="72"
+            column="38"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_start_cleaning_temp&quot;>开始清理临时文件...&lt;/string>"
+        errorLine2="                                           ~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-zh/strings.xml"
+            line="72"
+            column="44"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_start_cleaning_temp&quot;>Cleaning temporary files...&lt;/string>"
+        errorLine2="                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="72"
+            column="44"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_start_verifying_fs&quot;>开始验证文件系统完整性...&lt;/string>"
+        errorLine2="                                          ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-zh/strings.xml"
+            line="73"
+            column="43"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_start_verifying_fs&quot;>Verifying file system integrity...&lt;/string>"
+        errorLine2="                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="73"
+            column="43"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_start_cleaning_temp&quot;>Cleaning temporary files...&lt;/string>"
+        errorLine2="                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-en/strings.xml"
+            line="74"
+            column="44"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_start_init_templates&quot;>开始初始化代码模板...&lt;/string>"
+        errorLine2="                                            ~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-zh/strings.xml"
+            line="74"
+            column="45"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_start_init_templates&quot;>Initializing code templates...&lt;/string>"
+        errorLine2="                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="74"
+            column="45"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_start_verifying_fs&quot;>Verifying file system integrity...&lt;/string>"
+        errorLine2="                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-en/strings.xml"
+            line="75"
+            column="43"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_start_init_templates&quot;>Initializing code templates...&lt;/string>"
+        errorLine2="                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-en/strings.xml"
+            line="76"
+            column="45"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_textmate_init_started&quot;>开始初始化语法高亮组件...&lt;/string>"
+        errorLine2="                                             ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-zh/strings.xml"
+            line="76"
+            column="46"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_textmate_init_started&quot;>Initializing syntax highlighter...&lt;/string>"
+        errorLine2="                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="76"
+            column="46"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_start_init_textmate&quot;>配置语法高亮组件...&lt;/string>"
+        errorLine2="                                           ~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-zh/strings.xml"
+            line="77"
+            column="44"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_start_init_textmate&quot;>Configuring syntax highlighter...&lt;/string>"
+        errorLine2="                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="77"
+            column="44"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_textmate_init_started&quot;>Initializing syntax highlighter...&lt;/string>"
+        errorLine2="                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-en/strings.xml"
+            line="78"
+            column="46"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_start_init_textmate&quot;>Configuring syntax highlighter...&lt;/string>"
+        errorLine2="                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-en/strings.xml"
+            line="79"
+            column="44"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_found_orphaned_meta&quot;>发现 %1$d 个孤立的元数据文件，正在清理...&lt;/string>"
+        errorLine2="                                           ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-zh/strings.xml"
+            line="80"
+            column="44"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_found_orphaned_meta&quot;>Found %1$d orphaned metadata files, cleaning up...&lt;/string>"
+        errorLine2="                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="80"
+            column="44"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_found_orphaned_meta&quot;>Found %1$d orphaned metadata files, cleaning up...&lt;/string>"
+        errorLine2="                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-en/strings.xml"
+            line="82"
+            column="44"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_found_code_files&quot;>发现 %1$d 个代码文件，正在验证元数据...&lt;/string>"
+        errorLine2="                                        ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-zh/strings.xml"
+            line="84"
+            column="41"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_found_code_files&quot;>Found %1$d code files, validating metadata...&lt;/string>"
+        errorLine2="                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="84"
+            column="41"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_found_code_files&quot;>Found %1$d code files, validating metadata...&lt;/string>"
+        errorLine2="                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-en/strings.xml"
+            line="86"
+            column="41"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_textmate_init_in_progress&quot;>正在初始化TextMate...&lt;/string>"
+        errorLine2="                                                 ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-zh/strings.xml"
+            line="89"
+            column="50"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;log_preloading_common_languages&quot;>正在预加载常用语言...&lt;/string>"
+        errorLine2="                                                   ~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-zh/strings.xml"
+            line="90"
+            column="52"/>
     </issue>
 
     <issue
@@ -1627,7 +1822,7 @@
         errorLine2="                                      ~~~~~~~~~">
         <location
             file="src/main/res/values-zh/strings.xml"
-            line="81"
+            line="133"
             column="39"/>
     </issue>
 
@@ -1638,7 +1833,7 @@
         errorLine2="                                ~~~~~~">
         <location
             file="src/main/res/values-zh/strings.xml"
-            line="89"
+            line="141"
             column="33"/>
     </issue>
 
@@ -1649,7 +1844,7 @@
         errorLine2="                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-zh/strings.xml"
-            line="90"
+            line="142"
             column="43"/>
     </issue>
 
@@ -1660,51 +1855,7 @@
         errorLine2="                                     ~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-zh/strings.xml"
-            line="91"
-            column="38"/>
-    </issue>
-
-    <issue
-        id="TypographyEllipsis"
-        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
-        errorLine1="    &lt;string name=&quot;connection_testing&quot;>Testing connection...&lt;/string>"
-        errorLine2="                                      ~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="97"
-            column="39"/>
-    </issue>
-
-    <issue
-        id="TypographyEllipsis"
-        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
-        errorLine1="    &lt;string name=&quot;code_running&quot;>Running...&lt;/string>"
-        errorLine2="                                ~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="105"
-            column="33"/>
-    </issue>
-
-    <issue
-        id="TypographyEllipsis"
-        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
-        errorLine1="    &lt;string name=&quot;code_running_on_github&quot;>Running code on GitHub Actions...&lt;/string>"
-        errorLine2="                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="106"
-            column="43"/>
-    </issue>
-
-    <issue
-        id="TypographyEllipsis"
-        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
-        errorLine1="    &lt;string name=&quot;code_running_time&quot;>Running... (%1$d seconds)&lt;/string>"
-        errorLine2="                                     ~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="107"
+            line="143"
             column="38"/>
     </issue>
 
@@ -1730,22 +1881,11 @@
     <issue
         id="UseKtx"
         message="Use the KTX extension function `SharedPreferences.edit` instead?"
-        errorLine1="                    prefs.edit().putFloat(SettingsFragment.PREF_FONT_SIZE, currentTextSize).apply()"
-        errorLine2="                    ~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/EditorFragment.kt"
-            line="433"
-            column="21"/>
-    </issue>
-
-    <issue
-        id="UseKtx"
-        message="Use the KTX extension function `SharedPreferences.edit` instead?"
         errorLine1="                    prefs.edit().putFloat(SettingsFragment.PREF_FONT_SIZE, fontSize).apply()"
         errorLine2="                    ~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/acc_ide/EditorFragment.kt"
-            line="1220"
+            file="src/main/java/com/acc_ide/ui/editor/EditorFragment.kt"
+            line="706"
             column="21"/>
     </issue>
 
@@ -1755,9 +1895,31 @@
         errorLine1="                    prefs.edit().putFloat(SettingsFragment.PREF_CURSOR_WIDTH, widthInDp).apply()"
         errorLine2="                    ~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/acc_ide/EditorFragment.kt"
-            line="1323"
+            file="src/main/java/com/acc_ide/ui/editor/EditorFragment.kt"
+            line="786"
             column="21"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        errorLine1="        prefs.edit()"
+        errorLine2="        ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/acc_ide/data/repository/FileRepository.kt"
+            line="63"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `String.toUri` instead?"
+        errorLine1="            val uri = Uri.parse(file.externalUri)"
+        errorLine2="                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/acc_ide/util/FileStorageManager.kt"
+            line="204"
+            column="23"/>
     </issue>
 
     <issue
@@ -1767,107 +1929,8 @@
         errorLine2="                         ~~~~~~~~~~~~">
         <location
             file="src/main/java/com/acc_ide/util/LocaleHelper.kt"
-            line="48"
+            line="53"
             column="26"/>
-    </issue>
-
-    <issue
-        id="UseKtx"
-        message="Use the KTX extension function `SharedPreferences.edit` instead?"
-        errorLine1="                prefs.edit()"
-        errorLine2="                ~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/MainActivity.kt"
-            line="302"
-            column="17"/>
-    </issue>
-
-    <issue
-        id="UseKtx"
-        message="Use the KTX extension function `SharedPreferences.edit` instead?"
-        errorLine1="                prefs.edit()"
-        errorLine2="                ~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/MainActivity.kt"
-            line="321"
-            column="17"/>
-    </issue>
-
-    <issue
-        id="UseKtx"
-        message="Use the KTX extension function `SharedPreferences.edit` instead?"
-        errorLine1="                prefs.edit()"
-        errorLine2="                ~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/MainActivity.kt"
-            line="363"
-            column="17"/>
-    </issue>
-
-    <issue
-        id="UseKtx"
-        message="Use the KTX extension function `SharedPreferences.edit` instead?"
-        errorLine1="                prefs.edit()"
-        errorLine2="                ~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/MainActivity.kt"
-            line="599"
-            column="17"/>
-    </issue>
-
-    <issue
-        id="UseKtx"
-        message="Use the KTX extension function `SharedPreferences.edit` instead?"
-        errorLine1="        prefs.edit()"
-        errorLine2="        ~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/MainActivity.kt"
-            line="704"
-            column="9"/>
-    </issue>
-
-    <issue
-        id="UseKtx"
-        message="Use the KTX extension function `SharedPreferences.edit` instead?"
-        errorLine1="                    prefs.edit()"
-        errorLine2="                    ~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/MainActivity.kt"
-            line="1252"
-            column="21"/>
-    </issue>
-
-    <issue
-        id="UseKtx"
-        message="Use the KTX extension function `SharedPreferences.edit` instead?"
-        errorLine1="                    prefs.edit()"
-        errorLine2="                    ~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/MainActivity.kt"
-            line="1595"
-            column="21"/>
-    </issue>
-
-    <issue
-        id="UseKtx"
-        message="Use the KTX extension function `SharedPreferences.edit` instead?"
-        errorLine1="                                prefs.edit()"
-        errorLine2="                                ~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/MainActivity.kt"
-            line="1733"
-            column="33"/>
-    </issue>
-
-    <issue
-        id="UseKtx"
-        message="Use the KTX extension function `SharedPreferences.edit` instead?"
-        errorLine1="                                prefs.edit()"
-        errorLine2="                                ~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/MainActivity.kt"
-            line="1764"
-            column="33"/>
     </issue>
 
     <issue
@@ -1876,8 +1939,8 @@
         errorLine1="                    prefs.edit().putInt(&quot;app_night_mode&quot;, selectedMode).apply()"
         errorLine2="                    ~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/acc_ide/SettingsFragment.kt"
-            line="125"
+            file="src/main/java/com/acc_ide/ui/settings/SettingsFragment.kt"
+            line="137"
             column="21"/>
     </issue>
 
@@ -1887,8 +1950,8 @@
         errorLine1="                prefs.edit().putFloat(PREF_FONT_SIZE, value).apply()"
         errorLine2="                ~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/acc_ide/SettingsFragment.kt"
-            line="187"
+            file="src/main/java/com/acc_ide/ui/settings/SettingsFragment.kt"
+            line="204"
             column="17"/>
     </issue>
 
@@ -1898,8 +1961,8 @@
         errorLine1="                prefs.edit().putFloat(PREF_CURSOR_WIDTH, value).apply()"
         errorLine2="                ~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/acc_ide/SettingsFragment.kt"
-            line="212"
+            file="src/main/java/com/acc_ide/ui/settings/SettingsFragment.kt"
+            line="229"
             column="17"/>
     </issue>
 
@@ -1909,8 +1972,30 @@
         errorLine1="            prefs.edit().putBoolean(PREF_ENABLE_SYMBOL_PANEL, isChecked).apply()"
         errorLine2="            ~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/acc_ide/SettingsFragment.kt"
-            line="224"
+            file="src/main/java/com/acc_ide/ui/settings/SettingsFragment.kt"
+            line="241"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        errorLine1="            prefs.edit().putBoolean(PREF_ENABLE_AUTO_COMPLETION, isChecked).apply()"
+        errorLine2="            ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/acc_ide/ui/settings/SettingsFragment.kt"
+            line="250"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        errorLine1="            prefs.edit().putBoolean(PREF_ENABLE_LSP, isChecked).apply()"
+        errorLine2="            ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/acc_ide/ui/settings/SettingsFragment.kt"
+            line="260"
             column="13"/>
     </issue>
 
@@ -1920,8 +2005,8 @@
         errorLine1="            val purpleColor = Color.parseColor(&quot;#674fa4&quot;)"
         errorLine2="                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/acc_ide/SettingsFragment.kt"
-            line="254"
+            file="src/main/java/com/acc_ide/ui/settings/SettingsFragment.kt"
+            line="305"
             column="31"/>
     </issue>
 
@@ -1931,19 +2016,19 @@
         errorLine1="            val grayColor = Color.parseColor(&quot;#333333&quot;)"
         errorLine2="                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/acc_ide/SettingsFragment.kt"
-            line="259"
+            file="src/main/java/com/acc_ide/ui/settings/SettingsFragment.kt"
+            line="309"
             column="29"/>
     </issue>
 
     <issue
         id="UseKtx"
         message="Use the KTX extension function `String.toColorInt` instead?"
-        errorLine1="            Color.parseColor(&quot;#FFE0E0E0&quot;) // 未选中为淡灰色"
+        errorLine1="            Color.parseColor(&quot;#FFE0E0E0&quot;) // Light gray when unchecked"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/acc_ide/SettingsFragment.kt"
-            line="383"
+            file="src/main/java/com/acc_ide/ui/settings/SettingsFragment.kt"
+            line="459"
             column="13"/>
     </issue>
 
@@ -1953,8 +2038,8 @@
         errorLine1="                        githubStatusText.setTextColor(Color.parseColor(&quot;#388E3C&quot;)) // Green"
         errorLine2="                                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/acc_ide/SettingsFragment.kt"
-            line="449"
+            file="src/main/java/com/acc_ide/ui/settings/SettingsFragment.kt"
+            line="537"
             column="55"/>
     </issue>
 
@@ -1964,251 +2049,20 @@
         errorLine1="                        prefs.edit()"
         errorLine2="                        ~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/acc_ide/SettingsFragment.kt"
-            line="452"
+            file="src/main/java/com/acc_ide/ui/settings/SettingsFragment.kt"
+            line="540"
             column="25"/>
     </issue>
 
     <issue
-        id="UseTomlInstead"
-        message="Use the existing version catalog reference (`libs.androidx.core.ktx`) instead"
-        errorLine1="    implementation(&quot;androidx.core:core-ktx:1.10.1&quot;)"
-        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        id="UseKtx"
+        message="Use the KTX extension function `Context.withStyledAttributes` instead?"
+        errorLine1="            val typedArray = context.obtainStyledAttributes(intArrayOf(android.R.attr.selectableItemBackground))"
+        errorLine2="                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="build.gradle.kts"
-            line="44"
-            column="20"/>
-    </issue>
-
-    <issue
-        id="UseTomlInstead"
-        message="Use the existing version catalog reference (`libs.androidx.appcompat`) instead"
-        errorLine1="    implementation(&quot;androidx.appcompat:appcompat:1.6.1&quot;)"
-        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="build.gradle.kts"
-            line="45"
-            column="20"/>
-    </issue>
-
-    <issue
-        id="UseTomlInstead"
-        message="Use version catalog instead (com.google.android.material:material is already available as `material`, but using version 1.10.0 instead)"
-        errorLine1="    implementation(&quot;com.google.android.material:material:1.9.0&quot;)"
-        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="build.gradle.kts"
-            line="46"
-            column="20"/>
-    </issue>
-
-    <issue
-        id="UseTomlInstead"
-        message="Use version catalog instead"
-        errorLine1="    implementation(&quot;androidx.constraintlayout:constraintlayout:2.1.4&quot;)"
-        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="build.gradle.kts"
-            line="47"
-            column="20"/>
-    </issue>
-
-    <issue
-        id="UseTomlInstead"
-        message="Use version catalog instead"
-        errorLine1="    implementation(&quot;androidx.drawerlayout:drawerlayout:1.1.1&quot;)"
-        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="build.gradle.kts"
-            line="48"
-            column="20"/>
-    </issue>
-
-    <issue
-        id="UseTomlInstead"
-        message="Use version catalog instead"
-        errorLine1="    implementation(&quot;androidx.navigation:navigation-fragment-ktx:2.5.3&quot;)"
-        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="build.gradle.kts"
-            line="49"
-            column="20"/>
-    </issue>
-
-    <issue
-        id="UseTomlInstead"
-        message="Use version catalog instead"
-        errorLine1="    implementation(&quot;androidx.navigation:navigation-ui-ktx:2.5.3&quot;)"
-        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="build.gradle.kts"
-            line="50"
-            column="20"/>
-    </issue>
-
-    <issue
-        id="UseTomlInstead"
-        message="Use version catalog instead"
-        errorLine1="    implementation(&quot;androidx.preference:preference-ktx:1.2.1&quot;)"
-        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="build.gradle.kts"
-            line="51"
-            column="20"/>
-    </issue>
-
-    <issue
-        id="UseTomlInstead"
-        message="Use version catalog instead"
-        errorLine1="    implementation(&quot;io.github.Rosemoe.sora-editor:editor:0.23.4&quot;)"
-        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="build.gradle.kts"
-            line="54"
-            column="20"/>
-    </issue>
-
-    <issue
-        id="UseTomlInstead"
-        message="Use version catalog instead"
-        errorLine1="    implementation(&quot;io.github.Rosemoe.sora-editor:language-java:0.23.4&quot;)"
-        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="build.gradle.kts"
-            line="55"
-            column="20"/>
-    </issue>
-
-    <issue
-        id="UseTomlInstead"
-        message="Use version catalog instead"
-        errorLine1="    coreLibraryDesugaring(&quot;com.android.tools:desugar_jdk_libs:2.0.4&quot;)"
-        errorLine2="                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="build.gradle.kts"
-            line="58"
-            column="27"/>
-    </issue>
-
-    <issue
-        id="UseTomlInstead"
-        message="Use the existing version catalog reference (`libs.junit`) instead"
-        errorLine1="    testImplementation(&quot;junit:junit:4.13.2&quot;)"
-        errorLine2="                       ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="build.gradle.kts"
-            line="60"
-            column="24"/>
-    </issue>
-
-    <issue
-        id="UseTomlInstead"
-        message="Use the existing version catalog reference (`libs.androidx.junit`) instead"
-        errorLine1="    androidTestImplementation(&quot;androidx.test.ext:junit:1.1.5&quot;)"
-        errorLine2="                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="build.gradle.kts"
-            line="61"
-            column="31"/>
-    </issue>
-
-    <issue
-        id="UseTomlInstead"
-        message="Use the existing version catalog reference (`libs.androidx.espresso.core`) instead"
-        errorLine1="    androidTestImplementation(&quot;androidx.test.espresso:espresso-core:3.5.1&quot;)"
-        errorLine2="                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="build.gradle.kts"
-            line="62"
-            column="31"/>
-    </issue>
-
-    <issue
-        id="UseTomlInstead"
-        message="Use version catalog instead"
-        errorLine1="    implementation(&quot;com.squareup.okhttp3:okhttp:4.12.0&quot;)"
-        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="build.gradle.kts"
-            line="65"
-            column="20"/>
-    </issue>
-
-    <issue
-        id="UseTomlInstead"
-        message="Use version catalog instead"
-        errorLine1="    implementation(&quot;org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3&quot;)"
-        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="build.gradle.kts"
-            line="67"
-            column="20"/>
-    </issue>
-
-    <issue
-        id="LabelFor"
-        message="Missing accessibility label: provide either a view with an `android:labelFor` that references this view or provide an `android:hint`"
-        errorLine1="        &lt;EditText"
-        errorLine2="         ~~~~~~~~">
-        <location
-            file="src/main/res/layout/dialog_rename_file.xml"
-            line="13"
-            column="10"/>
-    </issue>
-
-    <issue
-        id="SetTextI18n"
-        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
-        errorLine1="            holder.fileName.text = &quot;$fileName*&quot; // 添加星号表示仅保存在临时目录"
-        errorLine2="                                   ~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/adapter/FileListAdapter.kt"
-            line="46"
-            column="36"/>
-    </issue>
-
-    <issue
-        id="SetTextI18n"
-        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
-        errorLine1="                    runStatus.text = &quot;${cachedInstance.status}   ${cachedInstance.executionTime} ms&quot;"
-        errorLine2="                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/IOPanelFragment.kt"
-            line="138"
-            column="38"/>
-    </issue>
-
-    <issue
-        id="SetTextI18n"
-        message="String literal in `setText` can not be translated. Use Android resources instead."
-        errorLine1="                    runStatus.text = &quot;${cachedInstance.status}   ${cachedInstance.executionTime} ms&quot;"
-        errorLine2="                                                                                                ~~~">
-        <location
-            file="src/main/java/com/acc_ide/IOPanelFragment.kt"
-            line="138"
-            column="97"/>
-    </issue>
-
-    <issue
-        id="SetTextI18n"
-        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
-        errorLine1="                                runStatus.text = &quot;$status   $executionTime ms&quot;"
-        errorLine2="                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/acc_ide/IOPanelFragment.kt"
-            line="538"
-            column="50"/>
-    </issue>
-
-    <issue
-        id="SetTextI18n"
-        message="String literal in `setText` can not be translated. Use Android resources instead."
-        errorLine1="                                runStatus.text = &quot;$status   $executionTime ms&quot;"
-        errorLine2="                                                                          ~~~">
-        <location
-            file="src/main/java/com/acc_ide/IOPanelFragment.kt"
-            line="538"
-            column="75"/>
+            file="src/main/java/com/acc_ide/view/SymbolPanelView.kt"
+            line="248"
+            column="30"/>
     </issue>
 
     <issue
@@ -2217,8 +2071,8 @@
         errorLine1="        fontSizeValue.text = savedFontSize.toInt().toString()"
         errorLine2="                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/acc_ide/SettingsFragment.kt"
-            line="177"
+            file="src/main/java/com/acc_ide/ui/settings/SettingsFragment.kt"
+            line="194"
             column="30"/>
     </issue>
 
@@ -2228,8 +2082,8 @@
         errorLine1="            fontSizeValue.text = fontSize.toString()"
         errorLine2="                                 ~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/acc_ide/SettingsFragment.kt"
-            line="183"
+            file="src/main/java/com/acc_ide/ui/settings/SettingsFragment.kt"
+            line="200"
             column="34"/>
     </issue>
 
@@ -2239,8 +2093,8 @@
         errorLine1="        cursorWidthValue.text = savedCursorWidth.toInt().toString()"
         errorLine2="                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/acc_ide/SettingsFragment.kt"
-            line="202"
+            file="src/main/java/com/acc_ide/ui/settings/SettingsFragment.kt"
+            line="219"
             column="33"/>
     </issue>
 
@@ -2250,8 +2104,8 @@
         errorLine1="            cursorWidthValue.text = cursorWidth.toString()"
         errorLine2="                                    ~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/acc_ide/SettingsFragment.kt"
-            line="208"
+            file="src/main/java/com/acc_ide/ui/settings/SettingsFragment.kt"
+            line="225"
             column="37"/>
     </issue>
 
@@ -2273,7 +2127,7 @@
         errorLine2="                    ~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/fragment_settings.xml"
-            line="116"
+            line="171"
             column="21"/>
     </issue>
 
@@ -2284,7 +2138,7 @@
         errorLine2="                    ~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/fragment_settings.xml"
-            line="151"
+            line="206"
             column="21"/>
     </issue>
 

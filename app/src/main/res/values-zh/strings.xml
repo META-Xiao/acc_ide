@@ -119,6 +119,12 @@
     <string name="auto_completion_switch_label">自动补全</string>
     <string name="symbol_panel_switch_label">符号面板</string>
     
+    <!-- LSP 设置 -->
+    <string name="lsp_switch_label">语言服务器协议</string>
+    <string name="lsp_description">启用智能代码功能，如自动补全、错误检查和代码导航</string>
+    <string name="lsp_enabled">LSP 已启用</string>
+    <string name="lsp_disabled">LSP 已禁用</string>
+    
     <!-- GitHub Action 设置 -->
     <string name="github_runner_settings">GitHub Action 设置</string>
     <string name="github_repo_url_hint">GitHub 仓库地址</string>

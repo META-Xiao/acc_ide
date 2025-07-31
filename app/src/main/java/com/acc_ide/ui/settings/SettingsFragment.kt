@@ -57,6 +57,7 @@ class SettingsFragment : Fragment() {
     private lateinit var prefs: SharedPreferences
     private lateinit var switchSymbolPanel: SwitchCompat
     private lateinit var switchAutoCompletion: SwitchCompat
+    private lateinit var switchLsp: SwitchCompat
     private lateinit var githubRepoEditText: TextInputEditText
     private lateinit var githubPatEditText: TextInputEditText
     private lateinit var testGithubButton: Button
@@ -74,6 +75,7 @@ class SettingsFragment : Fragment() {
         const val DEFAULT_FONT_SIZE = 18f
         const val PREF_ENABLE_SYMBOL_PANEL = "enable_symbol_panel"
         const val PREF_ENABLE_AUTO_COMPLETION = "enable_auto_completion"
+        const val PREF_ENABLE_LSP = "enable_lsp"
         const val PREF_CURSOR_WIDTH = "editor_cursor_width"
         const val DEFAULT_CURSOR_WIDTH = 8f
         const val MIN_CURSOR_WIDTH = 2f
@@ -101,6 +103,7 @@ class SettingsFragment : Fragment() {
         cursorWidthSlider = view.findViewById(R.id.cursor_width_slider)
         cursorWidthValue = view.findViewById(R.id.cursor_width_value)
         switchSymbolPanel = view.findViewById(R.id.switch_symbol_panel)
+        switchLsp = view.findViewById(R.id.switch_lsp)
         githubRepoEditText = view.findViewById(R.id.github_repo_edit_text)
         githubPatEditText = view.findViewById(R.id.github_pat_edit_text)
         testGithubButton = view.findViewById(R.id.test_github_button)
@@ -247,6 +250,24 @@ class SettingsFragment : Fragment() {
             prefs.edit().putBoolean(PREF_ENABLE_AUTO_COMPLETION, isChecked).apply()
             // Notify all open editors to update auto completion state
             (activity as? MainActivity)?.updateAutoCompletionState(isChecked)
+        }
+        
+        // Set LSP switch
+        val lspEnabled = prefs.getBoolean(PREF_ENABLE_LSP, true)
+        switchLsp.isChecked = lspEnabled
+        setSwitchColor(switchLsp)
+        switchLsp.setOnCheckedChangeListener { _, isChecked ->
+            prefs.edit().putBoolean(PREF_ENABLE_LSP, isChecked).apply()
+            // Show status message
+            val message = if (isChecked) {
+                getString(R.string.lsp_enabled)
+            } else {
+                getString(R.string.lsp_disabled)
+            }
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+            
+            // Notify all open editors to update LSP state
+            (activity as? MainActivity)?.updateLspState(isChecked)
         }
 
         // Load saved GitHub settings

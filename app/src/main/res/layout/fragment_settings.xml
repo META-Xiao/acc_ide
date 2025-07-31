@@ -83,6 +83,40 @@
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"/>
             </LinearLayout>
+            
+            <!-- LSP 开关 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="8dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/lsp_switch_label"
+                        android:textSize="16sp"
+                        android:textColor="?attr/colorOnPrimaryContainer"/>
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/switch_lsp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"/>
+                </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lsp_description"
+                    android:textSize="14sp"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="4dp"/>
+            </LinearLayout>
 
             <!-- Language Setting -->
             <TextView

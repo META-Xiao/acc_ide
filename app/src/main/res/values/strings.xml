@@ -118,6 +118,12 @@
     <string name="symbol_panel_hidden">Symbol panel hidden</string>
     <string name="auto_completion_switch_label">Auto-completion</string>
     <string name="symbol_panel_switch_label">Symbol panel</string>
+    
+    <!-- LSP Settings -->
+    <string name="lsp_switch_label">Language Server Protocol</string>
+    <string name="lsp_description">Enable intelligent code features like auto-completion, error checking, and code navigation</string>
+    <string name="lsp_enabled">LSP enabled</string>
+    <string name="lsp_disabled">LSP disabled</string>
 
     <!-- GitHub Action Settings -->
     <string name="github_runner_settings">GitHub Action Settings</string>
