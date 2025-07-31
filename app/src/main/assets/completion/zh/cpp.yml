@@ -1,0 +1,246 @@
+# C++补全配置 - 中文版
+language: cpp
+locale: zh
+version: "1.0"
+
+# 基本数据类型
+data_types:
+  - label: "int"
+    insert_text: "int"
+    detail: "整数类型"
+    kind: keyword
+    priority: 10
+    
+  - label: "char"
+    insert_text: "char"
+    detail: "字符类型"
+    kind: keyword
+    priority: 10
+    
+  - label: "float"
+    insert_text: "float"
+    detail: "单精度浮点型"
+    kind: keyword
+    priority: 10
+    
+  - label: "double"
+    insert_text: "double"
+    detail: "双精度浮点型"
+    kind: keyword
+    priority: 10
+    
+  - label: "bool"
+    insert_text: "bool"
+    detail: "布尔类型"
+    kind: keyword
+    priority: 10
+    
+  - label: "void"
+    insert_text: "void"
+    detail: "空类型"
+    kind: keyword
+    priority: 10
+    
+  - label: "string"
+    insert_text: "string"
+    detail: "字符串类型"
+    kind: class
+    priority: 8
+
+# 控制流关键字
+control_flow:
+  - label: "if"
+    insert_text: "if (${1:condition}) {\n    ${2:// TODO}\n}"
+    detail: "条件语句"
+    kind: snippet
+    priority: 15
+    
+  - label: "else"
+    insert_text: "else {\n    ${1:// TODO}\n}"
+    detail: "否则语句"
+    kind: snippet
+    priority: 15
+    
+  - label: "for"
+    insert_text: "for (${1:int i = 0}; ${2:i < n}; ${3:i++}) {\n    ${4:// TODO}\n}"
+    detail: "for循环"
+    kind: snippet
+    priority: 15
+    
+  - label: "while"
+    insert_text: "while (${1:condition}) {\n    ${2:// TODO}\n}"
+    detail: "while循环"
+    kind: snippet
+    priority: 15
+    
+  - label: "do"
+    insert_text: "do {\n    ${1:// TODO}\n} while (${2:condition});"
+    detail: "do-while循环"
+    kind: snippet
+    priority: 15
+    
+  - label: "switch"
+    insert_text: "switch (${1:expression}) {\n    case ${2:value}:\n        ${3:// TODO}\n        break;\n    default:\n        ${4:// TODO}\n        break;\n}"
+    detail: "选择语句"
+    kind: snippet
+    priority: 15
+    
+  - label: "return"
+    insert_text: "return ${1:value};"
+    detail: "返回语句"
+    kind: snippet
+    priority: 12
+    
+  - label: "break"
+    insert_text: "break;"
+    detail: "跳出语句"
+    kind: keyword
+    priority: 10
+    
+  - label: "continue"
+    insert_text: "continue;"
+    detail: "继续语句"
+    kind: keyword
+    priority: 10
+
+# 预处理指令
+preprocessor:
+  - label: "#include"
+    insert_text: "#include <${1:iostream}>"
+    detail: "包含头文件"
+    kind: snippet
+    priority: 20
+    
+  - label: "#define"
+    insert_text: "#define ${1:MACRO} ${2:value}"
+    detail: "宏定义"
+    kind: snippet
+    priority: 15
+    
+  - label: "#ifdef"
+    insert_text: "#ifdef ${1:MACRO}\n${2:// TODO}\n#endif"
+    detail: "条件编译"
+    kind: snippet
+    priority: 12
+
+# 常用STL容器
+stl_containers:
+  - label: "vector"
+    insert_text: "vector<${1:int}> ${2:vec}"
+    detail: "动态数组"
+    kind: class
+    priority: 18
+    
+  - label: "array"
+    insert_text: "array<${1:int}, ${2:size}> ${3:arr}"
+    detail: "固定数组"
+    kind: class
+    priority: 15
+    
+  - label: "list"
+    insert_text: "list<${1:int}> ${2:lst}"
+    detail: "双向链表"
+    kind: class
+    priority: 15
+    
+  - label: "map"
+    insert_text: "map<${1:key}, ${2:value}> ${3:mp}"
+    detail: "映射容器"
+    kind: class
+    priority: 18
+    
+  - label: "set"
+    insert_text: "set<${1:int}> ${2:s}"
+    detail: "集合容器"
+    kind: class
+    priority: 15
+    
+  - label: "queue"
+    insert_text: "queue<${1:int}> ${2:q}"
+    detail: "队列容器"
+    kind: class
+    priority: 15
+    
+  - label: "stack"
+    insert_text: "stack<${1:int}> ${2:stk}"
+    detail: "栈容器"
+    kind: class
+    priority: 15
+
+# 常用算法函数
+algorithms:
+  - label: "sort"
+    insert_text: "sort(${1:begin}, ${2:end})"
+    detail: "排序算法"
+    kind: function
+    priority: 18
+    
+  - label: "reverse"
+    insert_text: "reverse(${1:begin}, ${2:end})"
+    detail: "反转容器"
+    kind: function
+    priority: 15
+    
+  - label: "find"
+    insert_text: "find(${1:begin}, ${2:end}, ${3:value})"
+    detail: "查找元素"
+    kind: function
+    priority: 15
+    
+  - label: "binary_search"
+    insert_text: "binary_search(${1:begin}, ${2:end}, ${3:value})"
+    detail: "二分查找"
+    kind: function
+    priority: 15
+
+# 输入输出
+io_operations:  
+  - label: "cout"
+    insert_text: "cout << ${1:value} << endl;"
+    detail: "标准输出"
+    kind: snippet
+    priority: 20
+    
+  - label: "cin"
+    insert_text: "cin >> ${1:variable};"
+    detail: "标准输入"
+    kind: snippet
+    priority: 20
+    
+  - label: "printf"
+    insert_text: "printf(\"${1:format}\", ${2:args});"
+    detail: "格式化输出"
+    kind: snippet
+    priority: 15
+    
+  - label: "scanf"
+    insert_text: "scanf(\"${1:format}\", ${2:&variable});"
+    detail: "格式化输入"
+    kind: snippet
+    priority: 15
+
+# 竞赛常用代码片段
+competitive_snippets:
+  - label: "fast_io"
+    insert_text: "ios_base::sync_with_stdio(false);\ncin.tie(NULL);"
+    detail: "快速输入输出"
+    kind: snippet
+    priority: 20
+    
+  - label: "main"
+    insert_text: "int main() {\n    ${1:// 快速输入输出}\n    ios_base::sync_with_stdio(false);\n    cin.tie(NULL);\n    \n    ${2:// TODO: 实现代码}\n    \n    return 0;\n}"
+    detail: "主函数模板"
+    kind: snippet
+    priority: 25
+    
+  - label: "gcd"
+    insert_text: "int gcd(int a, int b) {\n    return b == 0 ? a : gcd(b, a % b);\n}"
+    detail: "最大公约数"
+    kind: snippet
+    priority: 15
+    
+  - label: "lcm"  
+    insert_text: "int lcm(int a, int b) {\n    return a / gcd(a, b) * b;\n}"
+    detail: "最小公倍数"
+    kind: snippet
+    priority: 15 

@@ -24,6 +24,7 @@ import com.acc_ide.ui.iopanel.IOPanelFragment
 import com.acc_ide.ui.settings.SettingsFragment
 import com.acc_ide.util.TextMateManager
 import com.acc_ide.view.SymbolPanelView
+import com.acc_ide.lsp.core.LspManager
 import io.github.rosemoe.sora.lang.EmptyLanguage
 import io.github.rosemoe.sora.widget.CodeEditor
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme
@@ -550,7 +551,6 @@ class EditorFragment : Fragment() {
             
             // Configure scrollbar colors through ColorScheme
             val colorScheme = editor.colorScheme
-            if (colorScheme != null) {
                 if (isDarkTheme) {
                     // Set scrollbar colors for dark theme
                     colorScheme.setColor(io.github.rosemoe.sora.widget.schemes.EditorColorScheme.SCROLL_BAR_THUMB, 0x66FFFFFF.toInt())
@@ -561,7 +561,6 @@ class EditorFragment : Fragment() {
                     colorScheme.setColor(io.github.rosemoe.sora.widget.schemes.EditorColorScheme.SCROLL_BAR_THUMB, 0x66000000.toInt())
                     colorScheme.setColor(io.github.rosemoe.sora.widget.schemes.EditorColorScheme.SCROLL_BAR_THUMB_PRESSED, 0x99000000.toInt())
                     colorScheme.setColor(io.github.rosemoe.sora.widget.schemes.EditorColorScheme.SCROLL_BAR_TRACK, 0x1AFFFFFF.toInt())
-                }
             }
             
         } catch (e: Exception) {
@@ -636,6 +635,20 @@ class EditorFragment : Fragment() {
      */
     internal fun setupLanguageSupport(specifiedLanguage: String? = null) {
         try {
+            // 检查是否已经设置了LSP语言支持
+            val currentLanguage = editor.editorLanguage
+            if (currentLanguage is io.github.rosemoe.sora.lsp.editor.LspLanguage) {
+                android.util.Log.d("EditorFragment", "LSP language already set, skipping TextMate setup to avoid conflicts")
+                
+                // 只更新颜色方案和自动补全颜色，不覆盖语言设置
+                if (editor.colorScheme !is io.github.rosemoe.sora.langs.textmate.TextMateColorScheme) {
+                    editor.colorScheme = getOrCreateColorScheme()
+                }
+                configureAutoCompletionColors()
+                editor.postInvalidate()
+                return
+            }
+            
             val fileExtension = when (specifiedLanguage ?: language) {
                 "java" -> "java"
                 "cpp" -> "cpp"
@@ -663,7 +676,7 @@ class EditorFragment : Fragment() {
                 editor.colorScheme = getOrCreateColorScheme()
             }
 
-            // Set language
+            // Set language (only if not LSP)
             editor.setEditorLanguage(textMateLanguage)
 
             // Configure auto-completion component colors
@@ -823,13 +836,25 @@ class EditorFragment : Fragment() {
     fun setLspEnabled(enabled: Boolean) {
         if (::editor.isInitialized) {
             try {
-                // TODO: Add LSP integration here when LSP features are implemented
-                // For now, we just log the state change
-                android.util.Log.d("EditorFragment", "LSP state set: $enabled")
+                val lspManager = LspManager.getInstance(requireContext())
                 
-                // If LSP functionality is implemented in the future, 
-                // we can enable/disable LSP features here based on the enabled parameter
-                
+                if (enabled) {
+                    // 启用LSP支持
+                    if (lspManager.isLanguageSupported(language)) {
+                        val success = lspManager.enableLspForEditor(editor, language)
+                        if (success) {
+                            android.util.Log.d("EditorFragment", "LSP enabled successfully for $language")
+                        } else {
+                            android.util.Log.w("EditorFragment", "Failed to enable LSP for $language")
+                        }
+                    } else {
+                        android.util.Log.w("EditorFragment", "Language $language not supported for LSP")
+                    }
+                } else {
+                    // 禁用LSP支持
+                    lspManager.disableLspForEditor(editor, language)
+                    android.util.Log.d("EditorFragment", "LSP disabled for $language")
+                }
             } catch (e: Exception) {
                 android.util.Log.e("EditorFragment", "Failed to set LSP state: ${e.message}")
             }

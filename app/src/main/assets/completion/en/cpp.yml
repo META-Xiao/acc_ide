@@ -1,0 +1,246 @@
+# C++ Completion Configuration - English Version
+language: cpp
+locale: en
+version: "1.0"
+
+# Basic data types
+data_types:
+  - label: "int"
+    insert_text: "int"
+    detail: "Integer type"
+    kind: keyword
+    priority: 10
+    
+  - label: "char"
+    insert_text: "char"
+    detail: "Character type"
+    kind: keyword
+    priority: 10
+    
+  - label: "float"
+    insert_text: "float"
+    detail: "Single precision floating point"
+    kind: keyword
+    priority: 10
+    
+  - label: "double"
+    insert_text: "double"
+    detail: "Double precision floating point"
+    kind: keyword
+    priority: 10
+    
+  - label: "bool"
+    insert_text: "bool"
+    detail: "Boolean type"
+    kind: keyword
+    priority: 10
+    
+  - label: "void"
+    insert_text: "void"
+    detail: "Void type"
+    kind: keyword
+    priority: 10
+    
+  - label: "string"
+    insert_text: "string"
+    detail: "String type"
+    kind: class
+    priority: 8
+
+# Control flow keywords
+control_flow:
+  - label: "if"
+    insert_text: "if (${1:condition}) {\n    ${2:// TODO}\n}"
+    detail: "If statement"
+    kind: snippet
+    priority: 15
+    
+  - label: "else"
+    insert_text: "else {\n    ${1:// TODO}\n}"
+    detail: "Else statement"
+    kind: snippet
+    priority: 15
+    
+  - label: "for"
+    insert_text: "for (${1:int i = 0}; ${2:i < n}; ${3:i++}) {\n    ${4:// TODO}\n}"
+    detail: "For loop"
+    kind: snippet
+    priority: 15
+    
+  - label: "while"
+    insert_text: "while (${1:condition}) {\n    ${2:// TODO}\n}"
+    detail: "While loop"
+    kind: snippet
+    priority: 15
+    
+  - label: "do"
+    insert_text: "do {\n    ${1:// TODO}\n} while (${2:condition});"
+    detail: "Do-while loop"
+    kind: snippet
+    priority: 15
+    
+  - label: "switch"
+    insert_text: "switch (${1:expression}) {\n    case ${2:value}:\n        ${3:// TODO}\n        break;\n    default:\n        ${4:// TODO}\n        break;\n}"
+    detail: "Switch statement"
+    kind: snippet
+    priority: 15
+    
+  - label: "return"
+    insert_text: "return ${1:value};"
+    detail: "Return statement"
+    kind: snippet
+    priority: 12
+    
+  - label: "break"
+    insert_text: "break;"
+    detail: "Break statement"
+    kind: keyword
+    priority: 10
+    
+  - label: "continue"
+    insert_text: "continue;"
+    detail: "Continue statement"
+    kind: keyword
+    priority: 10
+
+# Preprocessor directives
+preprocessor:
+  - label: "#include"
+    insert_text: "#include <${1:iostream}>"
+    detail: "Include header file"
+    kind: snippet
+    priority: 20
+    
+  - label: "#define"
+    insert_text: "#define ${1:MACRO} ${2:value}"
+    detail: "Macro definition"
+    kind: snippet
+    priority: 15
+    
+  - label: "#ifdef"
+    insert_text: "#ifdef ${1:MACRO}\n${2:// TODO}\n#endif"
+    detail: "Conditional compilation"
+    kind: snippet
+    priority: 12
+
+# Common STL containers
+stl_containers:
+  - label: "vector"
+    insert_text: "vector<${1:int}> ${2:vec}"
+    detail: "Dynamic array"
+    kind: class
+    priority: 18
+    
+  - label: "array"
+    insert_text: "array<${1:int}, ${2:size}> ${3:arr}"
+    detail: "Fixed-size array"
+    kind: class
+    priority: 15
+    
+  - label: "list"
+    insert_text: "list<${1:int}> ${2:lst}"
+    detail: "Doubly linked list"
+    kind: class
+    priority: 15
+    
+  - label: "map"
+    insert_text: "map<${1:key}, ${2:value}> ${3:mp}"
+    detail: "Associative container"
+    kind: class
+    priority: 18
+    
+  - label: "set"
+    insert_text: "set<${1:int}> ${2:s}"
+    detail: "Set container"
+    kind: class
+    priority: 15
+    
+  - label: "queue"
+    insert_text: "queue<${1:int}> ${2:q}"
+    detail: "Queue container"
+    kind: class
+    priority: 15
+    
+  - label: "stack"
+    insert_text: "stack<${1:int}> ${2:stk}"
+    detail: "Stack container"
+    kind: class
+    priority: 15
+
+# Common algorithms
+algorithms:
+  - label: "sort"
+    insert_text: "sort(${1:begin}, ${2:end})"
+    detail: "Sort algorithm"
+    kind: function
+    priority: 18
+    
+  - label: "reverse"
+    insert_text: "reverse(${1:begin}, ${2:end})"
+    detail: "Reverse container"
+    kind: function
+    priority: 15
+    
+  - label: "find"
+    insert_text: "find(${1:begin}, ${2:end}, ${3:value})"
+    detail: "Find element"
+    kind: function
+    priority: 15
+    
+  - label: "binary_search"
+    insert_text: "binary_search(${1:begin}, ${2:end}, ${3:value})"
+    detail: "Binary search"
+    kind: function
+    priority: 15
+
+# Input/Output operations
+io_operations:  
+  - label: "cout"
+    insert_text: "cout << ${1:value} << endl;"
+    detail: "Standard output"
+    kind: snippet
+    priority: 20
+    
+  - label: "cin"
+    insert_text: "cin >> ${1:variable};"
+    detail: "Standard input"
+    kind: snippet
+    priority: 20
+    
+  - label: "printf"
+    insert_text: "printf(\"${1:format}\", ${2:args});"
+    detail: "Formatted output"
+    kind: snippet
+    priority: 15
+    
+  - label: "scanf"
+    insert_text: "scanf(\"${1:format}\", ${2:&variable});"
+    detail: "Formatted input"
+    kind: snippet
+    priority: 15
+
+# Competitive programming snippets
+competitive_snippets:
+  - label: "fast_io"
+    insert_text: "ios_base::sync_with_stdio(false);\ncin.tie(NULL);"
+    detail: "Fast I/O optimization"
+    kind: snippet
+    priority: 20
+    
+  - label: "main"
+    insert_text: "int main() {\n    ${1:// Fast I/O}\n    ios_base::sync_with_stdio(false);\n    cin.tie(NULL);\n    \n    ${2:// TODO: Implement code}\n    \n    return 0;\n}"
+    detail: "Main function template"
+    kind: snippet
+    priority: 25
+    
+  - label: "gcd"
+    insert_text: "int gcd(int a, int b) {\n    return b == 0 ? a : gcd(b, a % b);\n}"
+    detail: "Greatest Common Divisor"
+    kind: snippet
+    priority: 15
+    
+  - label: "lcm"  
+    insert_text: "int lcm(int a, int b) {\n    return a / gcd(a, b) * b;\n}"
+    detail: "Least Common Multiple"
+    kind: snippet
+    priority: 15 

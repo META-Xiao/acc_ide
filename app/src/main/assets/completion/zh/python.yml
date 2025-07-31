@@ -1,0 +1,260 @@
+# Python补全配置 - 中文版
+language: python
+locale: zh
+version: "1.0"
+
+# 控制流关键字
+control_flow:
+  - label: "if"
+    insert_text: "if ${1:condition}:\n    ${2:pass}"
+    detail: "条件语句"
+    kind: snippet
+    priority: 20
+    
+  - label: "elif"
+    insert_text: "elif ${1:condition}:\n    ${2:pass}"
+    detail: "否则如果语句"
+    kind: snippet
+    priority: 18
+    
+  - label: "else"
+    insert_text: "else:\n    ${1:pass}"
+    detail: "否则语句"
+    kind: snippet
+    priority: 18
+    
+  - label: "for"
+    insert_text: "for ${1:item} in ${2:iterable}:\n    ${3:pass}"
+    detail: "for循环"
+    kind: snippet
+    priority: 20
+    
+  - label: "while"
+    insert_text: "while ${1:condition}:\n    ${2:pass}"
+    detail: "while循环"
+    kind: snippet
+    priority: 18
+    
+  - label: "try"
+    insert_text: "try:\n    ${1:pass}\nexcept ${2:Exception} as e:\n    ${3:pass}"
+    detail: "异常处理"
+    kind: snippet
+    priority: 18
+    
+  - label: "with"
+    insert_text: "with ${1:expression} as ${2:variable}:\n    ${3:pass}"
+    detail: "with语句"
+    kind: snippet
+    priority: 16
+
+# 函数和类定义
+definitions:
+  - label: "def"
+    insert_text: "def ${1:function_name}(${2:args}):\n    \"\"\"${3:函数说明}\"\"\"\n    ${4:pass}"
+    detail: "函数定义"
+    kind: snippet
+    priority: 22
+    
+  - label: "class"
+    insert_text: "class ${1:ClassName}:\n    \"\"\"${2:类说明}\"\"\"\n    \n    def __init__(self${3:, args}):\n        ${4:pass}"
+    detail: "类定义"
+    kind: snippet
+    priority: 20
+    
+  - label: "lambda"
+    insert_text: "lambda ${1:args}: ${2:expression}"
+    detail: "匿名函数"
+    kind: snippet
+    priority: 15
+
+# 内置函数
+builtin_functions:
+  - label: "print"
+    insert_text: "print(${1:value})"
+    detail: "打印函数"
+    kind: function
+    priority: 25
+    
+  - label: "len"
+    insert_text: "len(${1:object})"
+    detail: "获取长度"
+    kind: function
+    priority: 20
+    
+  - label: "range"
+    insert_text: "range(${1:stop})"
+    detail: "生成数字序列"
+    kind: function
+    priority: 20
+    
+  - label: "input"
+    insert_text: "input(${1:'请输入: '})"
+    detail: "获取用户输入"
+    kind: function
+    priority: 20
+    
+  - label: "str"
+    insert_text: "str(${1:object})"
+    detail: "转换为字符串"
+    kind: function
+    priority: 18
+    
+  - label: "int"
+    insert_text: "int(${1:value})"
+    detail: "转换为整数"
+    kind: function
+    priority: 18
+    
+  - label: "float"
+    insert_text: "float(${1:value})"
+    detail: "转换为浮点数"
+    kind: function
+    priority: 18
+    
+  - label: "list"
+    insert_text: "list(${1:iterable})"
+    detail: "创建列表"
+    kind: function
+    priority: 18
+    
+  - label: "dict"
+    insert_text: "dict(${1:})"
+    detail: "创建字典"
+    kind: function
+    priority: 18
+    
+  - label: "set"
+    insert_text: "set(${1:iterable})"
+    detail: "创建集合"
+    kind: function
+    priority: 16
+    
+  - label: "tuple"
+    insert_text: "tuple(${1:iterable})"
+    detail: "创建元组"
+    kind: function
+    priority: 16
+
+# 常用标准库
+standard_library:
+  - label: "import os"
+    insert_text: "import os"
+    detail: "导入操作系统接口模块"
+    kind: module
+    priority: 18
+    
+  - label: "import sys"
+    insert_text: "import sys"
+    detail: "导入系统特定参数模块"
+    kind: module
+    priority: 18
+    
+  - label: "import json"
+    insert_text: "import json"
+    detail: "导入JSON处理模块"
+    kind: module
+    priority: 16
+    
+  - label: "import math"
+    insert_text: "import math"
+    detail: "导入数学函数模块"
+    kind: module
+    priority: 16
+    
+  - label: "import random"
+    insert_text: "import random"
+    detail: "导入随机数模块"
+    kind: module
+    priority: 16
+    
+  - label: "import datetime"
+    insert_text: "import datetime"
+    detail: "导入日期时间模块"
+    kind: module
+    priority: 14
+
+# 数据结构操作
+data_structures:
+  - label: "list_comprehension"
+    insert_text: "[${1:expression} for ${2:item} in ${3:iterable}]"
+    detail: "列表推导式"
+    kind: snippet
+    priority: 18
+    
+  - label: "dict_comprehension"
+    insert_text: "{${1:key}: ${2:value} for ${3:item} in ${4:iterable}}"
+    detail: "字典推导式"
+    kind: snippet
+    priority: 16
+    
+  - label: "enumerate"
+    insert_text: "for ${1:index}, ${2:value} in enumerate(${3:iterable}):\n    ${4:pass}"
+    detail: "枚举遍历"
+    kind: snippet
+    priority: 18
+    
+  - label: "zip"
+    insert_text: "for ${1:a}, ${2:b} in zip(${3:list1}, ${4:list2}):\n    ${5:pass}"
+    detail: "并行遍历"
+    kind: snippet
+    priority: 16
+
+# 文件操作
+file_operations:
+  - label: "open_file"
+    insert_text: "with open('${1:filename}', '${2:r}') as ${3:f}:\n    ${4:content = f.read()}"
+    detail: "文件读写"
+    kind: snippet
+    priority: 18
+    
+  - label: "read_lines"
+    insert_text: "with open('${1:filename}', 'r') as f:\n    lines = f.readlines()"
+    detail: "读取所有行"
+    kind: snippet
+    priority: 16
+
+# 算法竞赛常用
+competitive_snippets:
+  - label: "fast_input"
+    insert_text: "import sys\ninput = sys.stdin.readline"
+    detail: "快速输入优化"
+    kind: snippet
+    priority: 20
+    
+  - label: "main_template"
+    insert_text: "def main():\n    # 快速输入\n    import sys\n    input = sys.stdin.readline\n    \n    ${1:# TODO: 实现代码}\n    \nif __name__ == '__main__':\n    main()"
+    detail: "竞赛主函数模板"
+    kind: snippet
+    priority: 25
+    
+  - label: "gcd"
+    insert_text: "def gcd(a, b):\n    while b:\n        a, b = b, a % b\n    return a"
+    detail: "最大公约数"
+    kind: snippet
+    priority: 16
+    
+  - label: "binary_search"
+    insert_text: "def binary_search(arr, target):\n    left, right = 0, len(arr) - 1\n    while left <= right:\n        mid = (left + right) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    return -1"
+    detail: "二分查找"
+    kind: snippet
+    priority: 16
+
+# 字符串操作
+string_operations:
+  - label: "f_string"
+    insert_text: "f\"${1:Hello {name}}\""
+    detail: "格式化字符串"
+    kind: snippet
+    priority: 20
+    
+  - label: "join"
+    insert_text: "'${1:,}'.join(${2:list})"
+    detail: "字符串连接"
+    kind: snippet
+    priority: 16
+    
+  - label: "split"
+    insert_text: "${1:string}.split('${2: }')"
+    detail: "字符串分割"
+    kind: snippet
+    priority: 16 

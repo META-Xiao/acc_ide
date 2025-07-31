@@ -1,0 +1,260 @@
+# Python Completion Configuration - English Version
+language: python
+locale: en
+version: "1.0"
+
+# Control flow keywords
+control_flow:
+  - label: "if"
+    insert_text: "if ${1:condition}:\n    ${2:pass}"
+    detail: "If statement"
+    kind: snippet
+    priority: 20
+    
+  - label: "elif"
+    insert_text: "elif ${1:condition}:\n    ${2:pass}"
+    detail: "Elif statement"
+    kind: snippet
+    priority: 18
+    
+  - label: "else"
+    insert_text: "else:\n    ${1:pass}"
+    detail: "Else statement"
+    kind: snippet
+    priority: 18
+    
+  - label: "for"
+    insert_text: "for ${1:item} in ${2:iterable}:\n    ${3:pass}"
+    detail: "For loop"
+    kind: snippet
+    priority: 20
+    
+  - label: "while"
+    insert_text: "while ${1:condition}:\n    ${2:pass}"
+    detail: "While loop"
+    kind: snippet
+    priority: 18
+    
+  - label: "try"
+    insert_text: "try:\n    ${1:pass}\nexcept ${2:Exception} as e:\n    ${3:pass}"
+    detail: "Exception handling"
+    kind: snippet
+    priority: 18
+    
+  - label: "with"
+    insert_text: "with ${1:expression} as ${2:variable}:\n    ${3:pass}"
+    detail: "With statement"
+    kind: snippet
+    priority: 16
+
+# Function and class definitions
+definitions:
+  - label: "def"
+    insert_text: "def ${1:function_name}(${2:args}):\n    \"\"\"${3:Function description}\"\"\"\n    ${4:pass}"
+    detail: "Function definition"
+    kind: snippet
+    priority: 22
+    
+  - label: "class"
+    insert_text: "class ${1:ClassName}:\n    \"\"\"${2:Class description}\"\"\"\n    \n    def __init__(self${3:, args}):\n        ${4:pass}"
+    detail: "Class definition"
+    kind: snippet
+    priority: 20
+    
+  - label: "lambda"
+    insert_text: "lambda ${1:args}: ${2:expression}"
+    detail: "Lambda function"
+    kind: snippet
+    priority: 15
+
+# Built-in functions
+builtin_functions:
+  - label: "print"
+    insert_text: "print(${1:value})"
+    detail: "Print function"
+    kind: function
+    priority: 25
+    
+  - label: "len"
+    insert_text: "len(${1:object})"
+    detail: "Get length"
+    kind: function
+    priority: 20
+    
+  - label: "range"
+    insert_text: "range(${1:stop})"
+    detail: "Generate number sequence"
+    kind: function
+    priority: 20
+    
+  - label: "input"
+    insert_text: "input(${1:'Enter: '})"
+    detail: "Get user input"
+    kind: function
+    priority: 20
+    
+  - label: "str"
+    insert_text: "str(${1:object})"
+    detail: "Convert to string"
+    kind: function
+    priority: 18
+    
+  - label: "int"
+    insert_text: "int(${1:value})"
+    detail: "Convert to integer"
+    kind: function
+    priority: 18
+    
+  - label: "float"
+    insert_text: "float(${1:value})"
+    detail: "Convert to float"
+    kind: function
+    priority: 18
+    
+  - label: "list"
+    insert_text: "list(${1:iterable})"
+    detail: "Create list"
+    kind: function
+    priority: 18
+    
+  - label: "dict"
+    insert_text: "dict(${1:})"
+    detail: "Create dictionary"
+    kind: function
+    priority: 18
+    
+  - label: "set"
+    insert_text: "set(${1:iterable})"
+    detail: "Create set"
+    kind: function
+    priority: 16
+    
+  - label: "tuple"
+    insert_text: "tuple(${1:iterable})"
+    detail: "Create tuple"
+    kind: function
+    priority: 16
+
+# Standard library
+standard_library:
+  - label: "import os"
+    insert_text: "import os"
+    detail: "Import OS interface module"
+    kind: module
+    priority: 18
+    
+  - label: "import sys"
+    insert_text: "import sys"
+    detail: "Import system module"
+    kind: module
+    priority: 18
+    
+  - label: "import json"
+    insert_text: "import json"
+    detail: "Import JSON module"
+    kind: module
+    priority: 16
+    
+  - label: "import math"
+    insert_text: "import math"
+    detail: "Import math module"
+    kind: module
+    priority: 16
+    
+  - label: "import random"
+    insert_text: "import random"
+    detail: "Import random module"
+    kind: module
+    priority: 16
+    
+  - label: "import datetime"
+    insert_text: "import datetime"
+    detail: "Import datetime module"
+    kind: module
+    priority: 14
+
+# Data structure operations
+data_structures:
+  - label: "list_comprehension"
+    insert_text: "[${1:expression} for ${2:item} in ${3:iterable}]"
+    detail: "List comprehension"
+    kind: snippet
+    priority: 18
+    
+  - label: "dict_comprehension"
+    insert_text: "{${1:key}: ${2:value} for ${3:item} in ${4:iterable}}"
+    detail: "Dictionary comprehension"
+    kind: snippet
+    priority: 16
+    
+  - label: "enumerate"
+    insert_text: "for ${1:index}, ${2:value} in enumerate(${3:iterable}):\n    ${4:pass}"
+    detail: "Enumerate iteration"
+    kind: snippet
+    priority: 18
+    
+  - label: "zip"
+    insert_text: "for ${1:a}, ${2:b} in zip(${3:list1}, ${4:list2}):\n    ${5:pass}"
+    detail: "Parallel iteration"
+    kind: snippet
+    priority: 16
+
+# File operations
+file_operations:
+  - label: "open_file"
+    insert_text: "with open('${1:filename}', '${2:r}') as ${3:f}:\n    ${4:content = f.read()}"
+    detail: "File I/O"
+    kind: snippet
+    priority: 18
+    
+  - label: "read_lines"
+    insert_text: "with open('${1:filename}', 'r') as f:\n    lines = f.readlines()"
+    detail: "Read all lines"
+    kind: snippet
+    priority: 16
+
+# Competitive programming snippets
+competitive_snippets:
+  - label: "fast_input"
+    insert_text: "import sys\ninput = sys.stdin.readline"
+    detail: "Fast input optimization"
+    kind: snippet
+    priority: 20
+    
+  - label: "main_template"
+    insert_text: "def main():\n    # Fast input\n    import sys\n    input = sys.stdin.readline\n    \n    ${1:# TODO: Implement code}\n    \nif __name__ == '__main__':\n    main()"
+    detail: "Main function template"
+    kind: snippet
+    priority: 25
+    
+  - label: "gcd"
+    insert_text: "def gcd(a, b):\n    while b:\n        a, b = b, a % b\n    return a"
+    detail: "Greatest Common Divisor"
+    kind: snippet
+    priority: 16
+    
+  - label: "binary_search"
+    insert_text: "def binary_search(arr, target):\n    left, right = 0, len(arr) - 1\n    while left <= right:\n        mid = (left + right) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    return -1"
+    detail: "Binary search"
+    kind: snippet
+    priority: 16
+
+# String operations
+string_operations:
+  - label: "f_string"
+    insert_text: "f\"${1:Hello {name}}\""
+    detail: "Formatted string"
+    kind: snippet
+    priority: 20
+    
+  - label: "join"
+    insert_text: "'${1:,}'.join(${2:list})"
+    detail: "String join"
+    kind: snippet
+    priority: 16
+    
+  - label: "split"
+    insert_text: "${1:string}.split('${2: }')"
+    detail: "String split"
+    kind: snippet
+    priority: 16 

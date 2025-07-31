@@ -1,0 +1,192 @@
+# Java补全配置 - 中文版
+language: java
+locale: zh
+version: "1.0"
+
+# 基本数据类型
+data_types:
+  - label: "int"
+    insert_text: "int"
+    detail: "整数类型"
+    kind: keyword
+    priority: 10
+    
+  - label: "double"
+    insert_text: "double"
+    detail: "双精度浮点型"
+    kind: keyword
+    priority: 10
+    
+  - label: "float"
+    insert_text: "float"
+    detail: "单精度浮点型"
+    kind: keyword
+    priority: 10
+    
+  - label: "boolean"
+    insert_text: "boolean"
+    detail: "布尔类型"
+    kind: keyword
+    priority: 10
+    
+  - label: "char"
+    insert_text: "char"
+    detail: "字符类型"
+    kind: keyword
+    priority: 10
+    
+  - label: "String"
+    insert_text: "String"
+    detail: "字符串类型"
+    kind: class
+    priority: 12
+
+# 访问修饰符
+access_modifiers:
+  - label: "public"
+    insert_text: "public"
+    detail: "公共访问修饰符"
+    kind: keyword
+    priority: 15
+    
+  - label: "private"
+    insert_text: "private"
+    detail: "私有访问修饰符"
+    kind: keyword
+    priority: 15
+    
+  - label: "protected"
+    insert_text: "protected"
+    detail: "受保护访问修饰符"
+    kind: keyword
+    priority: 15
+    
+  - label: "static"
+    insert_text: "static"
+    detail: "静态修饰符"
+    kind: keyword
+    priority: 15
+    
+  - label: "final"
+    insert_text: "final"
+    detail: "最终修饰符"
+    kind: keyword
+    priority: 15
+
+# 控制流关键字
+control_flow:
+  - label: "if"
+    insert_text: "if (${1:condition}) {\n    ${2:// TODO}\n}"
+    detail: "条件语句"
+    kind: snippet
+    priority: 18
+    
+  - label: "else"
+    insert_text: "else {\n    ${1:// TODO}\n}"
+    detail: "否则语句"
+    kind: snippet
+    priority: 16
+    
+  - label: "for"
+    insert_text: "for (${1:int i = 0}; ${2:i < length}; ${3:i++}) {\n    ${4:// TODO}\n}"
+    detail: "for循环"
+    kind: snippet
+    priority: 18
+    
+  - label: "while"
+    insert_text: "while (${1:condition}) {\n    ${2:// TODO}\n}"
+    detail: "while循环"
+    kind: snippet
+    priority: 16
+    
+  - label: "switch"
+    insert_text: "switch (${1:expression}) {\n    case ${2:value}:\n        ${3:// TODO}\n        break;\n    default:\n        ${4:// TODO}\n        break;\n}"
+    detail: "选择语句"
+    kind: snippet
+    priority: 16
+    
+  - label: "try"
+    insert_text: "try {\n    ${1:// TODO}\n} catch (${2:Exception} e) {\n    ${3:// 异常处理}\n}"
+    detail: "异常处理"
+    kind: snippet
+    priority: 16
+
+# 类和接口
+class_interface:
+  - label: "class"
+    insert_text: "public class ${1:ClassName} {\n    ${2:// TODO}\n}"
+    detail: "类定义"
+    kind: snippet
+    priority: 20
+    
+  - label: "interface"
+    insert_text: "public interface ${1:InterfaceName} {\n    ${2:// TODO}\n}"
+    detail: "接口定义"
+    kind: snippet
+    priority: 18
+    
+  - label: "extends"
+    insert_text: "extends ${1:SuperClass}"
+    detail: "继承关键字"
+    kind: keyword
+    priority: 15
+    
+  - label: "implements"
+    insert_text: "implements ${1:Interface}"
+    detail: "实现关键字"
+    kind: keyword
+    priority: 15
+
+# 方法和构造器
+methods:
+  - label: "method"
+    insert_text: "public ${1:void} ${2:methodName}(${3:}) {\n    ${4:// TODO}\n}"
+    detail: "方法模板"
+    kind: snippet
+    priority: 18
+    
+  - label: "main"
+    insert_text: "public static void main(String[] args) {\n    ${1:// TODO}\n}"
+    detail: "主方法"
+    kind: snippet
+    priority: 25
+
+# 输入输出
+io_operations:
+  - label: "System.out.println"
+    insert_text: "System.out.println(${1:\"Hello World\"});"
+    detail: "控制台输出"
+    kind: snippet
+    priority: 20
+    
+  - label: "Scanner"
+    insert_text: "Scanner ${1:scanner} = new Scanner(System.in);"
+    detail: "输入扫描器"
+    kind: snippet
+    priority: 18
+    
+  - label: "sout"
+    insert_text: "System.out.println(${1:});"
+    detail: "快速输出"
+    kind: snippet
+    priority: 22
+
+# 集合框架
+collections:
+  - label: "ArrayList"
+    insert_text: "ArrayList<${1:String}> ${2:list} = new ArrayList<>();"
+    detail: "动态数组"
+    kind: snippet
+    priority: 18
+    
+  - label: "HashMap"
+    insert_text: "HashMap<${1:String}, ${2:Object}> ${3:map} = new HashMap<>();"
+    detail: "哈希映射"
+    kind: snippet
+    priority: 18
+    
+  - label: "HashSet"
+    insert_text: "HashSet<${1:String}> ${2:set} = new HashSet<>();"
+    detail: "哈希集合"
+    kind: snippet
+    priority: 16 

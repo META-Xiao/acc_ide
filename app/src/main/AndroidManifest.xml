@@ -35,6 +35,13 @@
             android:configChanges="locale|layoutDirection|uiMode"
             android:exported="false">
         </activity>
+        
+        <!-- LSP Language Server Service -->
+        <service
+            android:name="com.acc_ide.lsp.LspLanguageServerService"
+            android:enabled="true"
+            android:exported="false" />
+        
     </application>
 
 </manifest>
