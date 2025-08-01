@@ -1,107 +1,96 @@
-# Tree-sitter Native Libraries Builder 🛠️
+# Tree-sitter Build Scripts
 
-这个文件夹包含构建 Tree-sitter 原生库的所有脚本和工具。
+This directory contains scripts to build Tree-sitter libraries for Android.
 
-## 📋 文件说明
+## 🚀 Quick Start (Interactive Mode)
 
-- **Build-Complete-TreeSitter.ps1** - 🚀 **完整构建脚本（推荐）** - 从源码构建所有库，支持架构选择
-- **Build-All.ps1** - 一键完成所有构建步骤（需要AndroidIDE库）
-- **README.md** - 本说明文件
-
-## 🚀 快速开始
-
-### 准备工作
-1. **下载 Android NDK r26+**
-   ```
-   https://developer.android.com/ndk/downloads
-   ```
-   解压到某个目录，比如 `C:\android-ndk-r26d`
-
-### 🎯 完整构建（强烈推荐）
-完全从源码构建所有库，无需依赖 AndroidIDE：
+Simply run the launcher script from the project root:
 
 ```powershell
-cd treesitter_build
-
-# 构建所有架构
-.\Build-Complete-TreeSitter.ps1 -AndroidNdkPath "C:\android-ndk-r26d"
-
-# 只构建特定架构（更快）
-.\Build-Complete-TreeSitter.ps1 -AndroidNdkPath "C:\android-ndk-r26d" -Architectures @("arm64-v8a")
-
-# 交互式选择架构
-.\Build-Complete-TreeSitter.ps1 -AndroidNdkPath "C:\android-ndk-r26d" -ShowArchMenu
+# From project root directory
+./start.ps1
 ```
 
-### 📱 架构选择说明
-- **arm64-v8a** - 现代 Android 手机（推荐）
-- **armeabi-v7a** - 老旧 Android 设备
-- **x86_64** - Android 模拟器（64位）
-- **x86** - 老旧模拟器（32位）
-
-### 传统构建（需要AndroidIDE）
-如果你已经有 AndroidIDE 的库文件：
+Or run directly from the treesitter_build directory:
 
 ```powershell
-# 复制现有库文件到 ../app/src/main/assets/native/arm64-v8a/
-.\Build-All.ps1 -AndroidNdkPath "C:\android-ndk-r26d"
+# From treesitter_build directory
+./Build-Complete-TreeSitter.ps1
 ```
 
-### 手动构建步骤
+The script will guide you through:
+1. **NDK Path Configuration** - Enter your Android NDK path
+2. **CMake Selection** - Choose from auto-detected CMake installations or enter custom path
+3. **Architecture Selection** - Select which architectures to build
+
+## 📋 Interactive Process
+
+### Step 1: Android NDK
+- Enter your NDK path (e.g., `C:\android-ndk-r26d`)
+- Script validates the path and checks for ndk-build.cmd
+
+### Step 2: CMake Configuration
+- Auto-detects CMake from:
+  - Android SDK (`AndroidSDK\cmake\3.22.1\bin\cmake.exe`)
+  - MinGW installations
+  - System PATH
+- Choose from detected options or enter custom path
+
+### Step 3: Architecture Selection
+1. arm64-v8a (64-bit ARM - Modern phones)
+2. armeabi-v7a (32-bit ARM - Older devices)  
+3. x86_64 (64-bit x86 - Emulators)
+4. x86 (32-bit x86 - Old emulators)
+5. All architectures (recommended)
+
+## 🛠️ Non-Interactive Mode
+
+For automation or CI/CD:
+
 ```powershell
-# 1. 设置构建环境
-.\Build-TreeSitter-Native.ps1 -AndroidNdkPath "C:\android-ndk-r26d"
-
-# 2. 编译（在 native_build 目录中）
-cd native_build
-C:\android-ndk-r26d\ndk-build.cmd
-
-# 3. 复制库文件
-cd ..
-.\Copy-Built-Libraries.ps1
+./Build-Complete-TreeSitter.ps1 -AndroidNdkPath "C:\android-ndk-r26d" -CustomCMakePath "C:\Android\Sdk\cmake\3.22.1\bin\cmake.exe" -Architectures @("arm64-v8a", "x86_64") -NonInteractive
 ```
 
-## 📦 构建结果
+## 📁 Supported CMake Sources
 
-### 🚀 完整构建脚本输出
-使用 `Build-Complete-TreeSitter.ps1` 会完全从源码构建：
+- **Android SDK CMake 3.22.1+** (recommended)
+- **MinGW CMake**
+- **System CMake**
+- **Custom path**
 
-- `libtree-sitter.so` - Tree-sitter 核心库
-- `libandroid-tree-sitter.so` - Tree-sitter Android 绑定
-- `libtree-sitter-java.so` - Java 语言支持
-- `libtree-sitter-cpp.so` - C++ 语言支持
-- `libtree-sitter-python.so` - Python 语言支持
+> **Note**: Android NDK doesn't include CMake executable, only `android.toolchain.cmake` for cross-compilation.
 
-### 📱 支持语言
-- ✅ **Java** - 完整语法分析和智能补全
-- ✅ **C++** - 语法高亮和错误检测
-- ✅ **Python** - 语法分析和代码结构
+## 📦 Output
 
-### 📊 传统构建脚本
-使用其他脚本的组合构建结果可能不完整。
-
-## 🔧 特性
-
-- **16KB 页面大小兼容性** - 支持 Android 15+ 设备
-- **多架构支持** - arm64-v8a, armeabi-v7a, x86_64, x86
-- **自动化构建** - 一键完成所有步骤
-- **错误检测** - 构建过程中的错误提示
-
-## 📝 注意事项
-
-1. **Android NDK 版本** - 必须使用 r26 或更高版本
-2. **网络连接** - 构建过程需要下载约 20MB 源码文件
-3. **磁盘空间** - 确保至少有 500MB 可用空间
-4. **构建时间** - 全架构构建需要 5-10 分钟，单架构约 2-3 分钟
-5. **临时文件** - 构建完成后可删除 `complete_build` 临时目录
-6. **权限问题** - 确保有写入项目目录的权限
-
-## 🚀 测试
-
-构建完成后，回到项目根目录测试：
-```bash
-cd ..
-./gradlew assembleDebug
+Built libraries are copied to:
+```
+../app/src/main/jniLibs/
+├── arm64-v8a/
+├── armeabi-v7a/
+├── x86_64/
+└── x86/
 ```
 
-如果一切正常，你的应用将支持完整的 Tree-sitter 语法分析功能！ 
+## 🔧 Features
+
+- **16KB Page Alignment** - Android 15+ compatibility
+- **Auto-detection** - Finds NDK and CMake automatically
+- **Validation** - Checks library alignment using llvm-readelf
+- **Recovery** - CMake rebuild if ndk-build fails alignment
+- **Interactive** - User-friendly step-by-step process
+
+## 🆘 Troubleshooting
+
+If build fails:
+1. Ensure Android NDK 27+ is installed
+2. Install CMake via Android Studio SDK Manager
+3. Check internet connection for source downloads
+4. Verify sufficient disk space (>500MB)
+5. Try building single architecture first
+
+## 📄 Libraries Built
+
+- `libtree-sitter.so` - Core library
+- `libtree-sitter-java.so` - Java parser
+- `libtree-sitter-cpp.so` - C++ parser
+- `libtree-sitter-python.so` - Python parser 
