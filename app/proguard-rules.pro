@@ -72,3 +72,30 @@
 # Keep generic signature of Call, Response (R8 full mode strips signatures from non-kept items).
 -keep,allowobfuscation,allowshrinking interface retrofit2.Call
 -keep,allowobfuscation,allowshrinking class retrofit2.Response
+
+# ===================================================================
+# Rules for removed AndroidIDE Tree-sitter dependencies  
+# ===================================================================
+
+# Ignore AndroidIDE Tree-sitter references that were removed
+-dontwarn com.itsaky.androidide.treesitter.**
+-dontwarn dalvik.annotation.optimization.FastNative
+
+# ===================================================================
+# Rules for SnakeYAML (Java Beans not available on Android)
+# ===================================================================
+
+# SnakeYAML tries to use Java Beans API which is not available on Android
+-dontwarn java.beans.**
+
+# Keep SnakeYAML classes that are actually used
+-keep class org.yaml.snakeyaml.** { *; }
+
+# Handle SnakeYAML's reflection usage
+-keepclassmembers class * {
+    ** component1();
+    ** component2();
+    ** component3();
+    ** component4();
+    ** component5();
+}

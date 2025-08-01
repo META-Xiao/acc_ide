@@ -16,6 +16,19 @@ android {
         versionName "1.2.3"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        
+        // Only build for architectures that have Tree-sitter libraries
+        ndk {
+            abiFilters 'arm64-v8a'
+        }
+        
+        // CMake arguments for 16KB page size compatibility
+        externalNativeBuild {
+            cmake {
+                arguments '-DANDROID_LD=lld'
+                cppFlags '-fPIC'
+            }
+        }
     }
 
     buildTypes {
@@ -43,6 +56,15 @@ android {
         languageVersion = '2.1'
     }
 
+    externalNativeBuild {
+        cmake {
+            path file('src/main/cpp/CMakeLists.txt')  
+            version '3.22.1'
+        }
+    }
+
+    ndkVersion '26.1.10909125'
+
     lint {
         baseline = file("lint-baseline.xml")
     }
@@ -60,11 +82,19 @@ android {
     }
 
     packagingOptions {
-        exclude '**/libtree-sitter.so'
+        // Only exclude AndroidIDE tree-sitter library (if any)
         exclude '**/libandroid-tree-sitter.so'
-        exclude '**/libtree-sitter-java.so'
-        exclude '**/libtree-sitter-cpp.so'
-        exclude '**/libtree-sitter-python.so'
+        
+        // Keep our custom tree-sitter libraries
+        // exclude '**/libtree-sitter.so'           // We need this
+        // exclude '**/libtree-sitter-java.so'      // We need this  
+        // exclude '**/libtree-sitter-cpp.so'       // We need this
+        // exclude '**/libtree-sitter-python.so'    // We need this
+        
+        // Handle 16KB page size alignment issues with pre-built libraries
+        jniLibs {
+            useLegacyPackaging = true
+        }
     }
 }
 
@@ -85,7 +115,7 @@ dependencies {
     implementation 'io.github.rosemoe:editor'
     implementation 'io.github.rosemoe:language-textmate'
     implementation 'io.github.rosemoe:editor-lsp'
-    implementation 'io.github.rosemoe:language-treesitter'
+    implementation project(':language-treesitter')
     implementation("io.github.Rosemoe.sora-editor:textmate-core:0.8.4")
     
     // LSP4J dependencies
@@ -98,11 +128,4 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
     implementation 'org.yaml:snakeyaml:2.2'
-    
-    // Tree-sitter language bindings
-    implementation 'com.itsaky.androidide.treesitter:android-tree-sitter:4.3.1'
-    implementation 'com.itsaky.androidide.treesitter:tree-sitter-java:4.3.1'
-    implementation 'com.itsaky.androidide.treesitter:tree-sitter-cpp:4.3.1'
-    implementation 'com.itsaky.androidide.treesitter:tree-sitter-python:4.3.1'
-    
 }

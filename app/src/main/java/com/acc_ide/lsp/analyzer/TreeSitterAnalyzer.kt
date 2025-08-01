@@ -21,14 +21,14 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.util.concurrent.ConcurrentHashMap
 
-// AndroidIDE Tree-sitter 核心类
-import com.itsaky.androidide.treesitter.TSLanguage
-import com.itsaky.androidide.treesitter.TSQuery
-
-// Tree-sitter language bindings
-import com.itsaky.androidide.treesitter.java.TSLanguageJava
-import com.itsaky.androidide.treesitter.cpp.TSLanguageCpp  
-import com.itsaky.androidide.treesitter.python.TSLanguagePython
+// 自定义Tree-sitter包装类
+import com.acc_ide.lsp.model.TreeSitterWrapper
+import com.acc_ide.lsp.model.TreeSitterWrapper.TSLanguage
+import com.acc_ide.lsp.model.TreeSitterWrapper.TSQuery
+import com.acc_ide.lsp.model.TreeSitterWrapper.TSLanguageJava
+import com.acc_ide.lsp.model.TreeSitterWrapper.TSLanguageCpp  
+import com.acc_ide.lsp.model.TreeSitterWrapper.TSLanguagePython
+import io.github.rosemoe.sora.editor.ts.adapter.TreeSitterLanguageFactory
 
 /**
  * 基于sora-editor language-treesitter的语法分析器
@@ -111,10 +111,13 @@ class TreeSitterAnalyzer(private val context: Context) {
                 return false
             }
             
-            // 尝试创建一个简单的 TSLanguage 实例来测试原生库
-            TSLanguageJava.getInstance()
-            Log.d(TAG, "Native libraries are available and working")
-            true
+            // 检查Tree-sitter包装类是否可用
+            if (TreeSitterWrapper.isNativeLibraryLoaded()) {
+                Log.d(TAG, "Native libraries are available and working")
+                true
+            } else {
+                false
+            }
             
         } catch (e: UnsatisfiedLinkError) {
             Log.w(TAG, "Tree-sitter native library not available: ${e.message}")
@@ -145,26 +148,34 @@ class TreeSitterAnalyzer(private val context: Context) {
      * 创建完整的Tree-sitter语言实现
      * 使用正确的sora-editor language-treesitter API的DSL方式
      */
-    private fun createTsLanguage(
+        private fun createTsLanguage(
         languageName: String,
-        tsLanguage: TSLanguage,  // 实际的Tree-sitter语言实例
+        tsLanguage: TreeSitterWrapper.TSLanguage,  // 我们的Tree-sitter语言实例
         highlightScm: String,       // 高亮查询文件内容
         codeBlocksScm: String = "", // 代码块查询文件内容
         bracketsScm: String = "",   // 括号匹配查询文件内容
         localsScm: String = ""      // 局部变量查询文件内容
     ): TsLanguage? {
         return try {
-            Log.d(TAG, "Creating TsLanguageSpec for $languageName")
+            Log.d(TAG, "Tree-sitter language loaded: ${tsLanguage.getLanguageName()}")
+            Log.d(TAG, "Language instance available: ${tsLanguage.isAvailable()}")
             
-            // 检查查询字符串是否为空，如果为空则提供最小的默认值
+            // 使用修改后的language-treesitter模块创建适配器
+            val adaptedLanguage = TreeSitterLanguageFactory.wrapLanguage(
+                tsLanguage,
+                { tsLanguage.getLanguageName() },
+                { tsLanguage.getInstance() }
+            )
+            
+            Log.d(TAG, "Successfully adapted TSLanguage: ${adaptedLanguage.getName()}")
+            
             val safeHighlightScm = if (highlightScm.isBlank()) {
                 Log.w(TAG, "Empty highlight SCM for $languageName, using minimal default")
                 "(identifier) @identifier"
             } else highlightScm
             
-            // 创建语言规范
             val spec = TsLanguageSpec(
-                language = tsLanguage,
+                language = adaptedLanguage,
                 highlightScmSource = safeHighlightScm,
                 codeBlocksScmSource = codeBlocksScm,
                 bracketsScmSource = bracketsScm,
@@ -175,66 +186,12 @@ class TreeSitterAnalyzer(private val context: Context) {
             
             Log.d(TAG, "Creating TsLanguage instance for $languageName")
             
-            // 使用TsLanguage的DSL语法创建带主题的语言实例
             val tsLang = TsLanguage(
                 languageSpec = spec,
                 tab = true
             ) {
-                TextStyle.makeStyle(EditorColorScheme.KEYWORD) applyTo "keyword"
-                TextStyle.makeStyle(EditorColorScheme.KEYWORD) applyTo "keyword.control"
-                TextStyle.makeStyle(EditorColorScheme.KEYWORD) applyTo "keyword.operator"
-                TextStyle.makeStyle(EditorColorScheme.KEYWORD) applyTo "storage.type"
-                
-                TextStyle.makeStyle(EditorColorScheme.COMMENT) applyTo "comment"
-                TextStyle.makeStyle(EditorColorScheme.COMMENT) applyTo "comment.line"
-                TextStyle.makeStyle(EditorColorScheme.COMMENT) applyTo "comment.block"
-                
-                TextStyle.makeStyle(EditorColorScheme.LITERAL) applyTo "string"
-                TextStyle.makeStyle(EditorColorScheme.LITERAL) applyTo "string.quoted"
-                TextStyle.makeStyle(EditorColorScheme.LITERAL) applyTo "string.template"
-                
-                TextStyle.makeStyle(EditorColorScheme.LITERAL) applyTo "constant.numeric"
-                TextStyle.makeStyle(EditorColorScheme.LITERAL) applyTo "number"
-                
-                TextStyle.makeStyle(EditorColorScheme.OPERATOR) applyTo "operator"
-                
-                TextStyle.makeStyle(EditorColorScheme.IDENTIFIER_NAME) applyTo "variable"
-                TextStyle.makeStyle(EditorColorScheme.IDENTIFIER_NAME) applyTo "identifier"
-                TextStyle.makeStyle(EditorColorScheme.IDENTIFIER_NAME) applyTo "entity.name"
-                
-                TextStyle.makeStyle(EditorColorScheme.LITERAL) applyTo "constant"
-                TextStyle.makeStyle(EditorColorScheme.LITERAL) applyTo "constant.language"
-                TextStyle.makeStyle(EditorColorScheme.LITERAL) applyTo "support.constant"
-                
-                when (languageName.lowercase()) {
-                    "java" -> {
-                        TextStyle.makeStyle(EditorColorScheme.FUNCTION_NAME) applyTo "entity.name.function"
-                        TextStyle.makeStyle(EditorColorScheme.FUNCTION_NAME) applyTo "support.function"
-                        TextStyle.makeStyle(EditorColorScheme.IDENTIFIER_VAR) applyTo "variable.other.field"
-                        TextStyle.makeStyle(EditorColorScheme.IDENTIFIER_VAR) applyTo "entity.name.variable"
-                    }
-                    "cpp", "c" -> {
-                        TextStyle.makeStyle(EditorColorScheme.FUNCTION_NAME) applyTo "entity.name.function"
-                        TextStyle.makeStyle(EditorColorScheme.FUNCTION_NAME) applyTo "support.function.c"
-                        TextStyle.makeStyle(EditorColorScheme.HTML_TAG) applyTo "meta.preprocessor"
-                        TextStyle.makeStyle(EditorColorScheme.HTML_TAG) applyTo "keyword.control.directive"
-                    }
-                    "python" -> {
-                        TextStyle.makeStyle(EditorColorScheme.FUNCTION_NAME) applyTo "entity.name.function"
-                        TextStyle.makeStyle(EditorColorScheme.FUNCTION_NAME) applyTo "support.function.builtin"
-                        TextStyle.makeStyle(EditorColorScheme.IDENTIFIER_VAR) applyTo "variable.parameter"
-                        TextStyle.makeStyle(EditorColorScheme.IDENTIFIER_VAR) applyTo "variable.other.member"
-                    }
-                }
+                Log.d(TAG, "Configuring TsLanguage theme for $languageName")
             }
-            
-            // 使用语言自带的分析器
-            val analyzeManager = tsLang.analyzer
-            
-            // 存储到缓存
-            languageSpecs[languageName] = spec
-            languages[languageName] = tsLang
-            analyzeManagers[languageName] = analyzeManager
             
             Log.d(TAG, "Successfully created TsLanguage for $languageName")
             tsLang
@@ -251,21 +208,24 @@ class TreeSitterAnalyzer(private val context: Context) {
      */
     private fun loadTsLanguageResources(language: String): Triple<TSLanguage?, String?, String?>? {
         return try {
+            Log.d(TAG, "Loading Tree-sitter resources for $language")
+            Log.d(TAG, "Native libraries loaded: ${TreeSitterWrapper.isNativeLibraryLoaded()}")
+            
             when (language.lowercase()) {
                 "java" -> {
-                    val tsLang = TSLanguageJava.getInstance()
+                    val tsLang = TreeSitterWrapper.TSLanguageJava.create()
                     val highlightScm = loadAssetFile("treesitter/java/highlights.scm") ?: ""
                     val localsScm = loadAssetFile("treesitter/java/locals.scm") ?: ""
                     Triple(tsLang, highlightScm, localsScm)
                 }
                 "cpp", "c" -> {
-                    val tsLang = TSLanguageCpp.getInstance()
+                    val tsLang = TreeSitterWrapper.TSLanguageCpp.create()
                     val highlightScm = loadAssetFile("treesitter/cpp/highlights.scm") ?: ""
                     val localsScm = loadAssetFile("treesitter/cpp/locals.scm") ?: ""
                     Triple(tsLang, highlightScm, localsScm)
                 }
                 "python", "py" -> {
-                    val tsLang = TSLanguagePython.getInstance()
+                    val tsLang = TreeSitterWrapper.TSLanguagePython.create()
                     val highlightScm = loadAssetFile("treesitter/python/highlights.scm") ?: ""
                     val localsScm = loadAssetFile("treesitter/python/locals.scm") ?: ""
                     Triple(tsLang, highlightScm, localsScm)
