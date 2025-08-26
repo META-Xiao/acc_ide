@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
@@ -62,6 +63,7 @@ class SettingsFragment : Fragment() {
     private lateinit var githubPatEditText: TextInputEditText
     private lateinit var testGithubButton: Button
     private lateinit var githubStatusText: TextView
+    private lateinit var compilerSettingsItem: LinearLayout
     
     // Current app language
     private var currentLanguage: String = ""
@@ -106,6 +108,7 @@ class SettingsFragment : Fragment() {
         githubPatEditText = view.findViewById(R.id.github_pat_edit_text)
         testGithubButton = view.findViewById(R.id.test_github_button)
         githubStatusText = view.findViewById(R.id.github_status_text)
+        compilerSettingsItem = view.findViewById<LinearLayout>(R.id.compiler_settings_item)
 
         // Initialize SharedPreferences
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
@@ -255,6 +258,11 @@ class SettingsFragment : Fragment() {
 
         // Setup GitHub listeners
         setupGitHubListeners()
+
+        // Setup compiler settings click listener
+        compilerSettingsItem.setOnClickListener {
+            navigateToCompilerSettings()
+        }
 
         return view
     }
@@ -544,5 +552,17 @@ class SettingsFragment : Fragment() {
                 }
             }
         }
+    }
+
+    /**
+     * Navigate to compiler settings
+     * 导航到编译器设置
+     */
+    private fun navigateToCompilerSettings() {
+        val compilerSettingsFragment = CompilerSettingsFragment.newInstance()
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.content_frame, compilerSettingsFragment)
+            .addToBackStack("CompilerSettings")
+            .commit()
     }
 } 

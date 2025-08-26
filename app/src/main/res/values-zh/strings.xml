@@ -117,6 +117,7 @@
     <string name="symbol_panel_shown">符号面板已显示</string>
     <string name="symbol_panel_hidden">符号面板已隐藏</string>
     <string name="auto_completion_switch_label">自动补全</string>
+    <string name="compiler_management">编译器管理</string>
     <string name="symbol_panel_switch_label">符号面板</string>
     
     <!-- GitHub Action 设置 -->

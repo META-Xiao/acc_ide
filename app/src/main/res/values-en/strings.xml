@@ -119,6 +119,7 @@
     <string name="symbol_panel_shown">Symbol panel shown</string>
     <string name="symbol_panel_hidden">Symbol panel hidden</string>
     <string name="auto_completion_switch_label">Auto Completion</string>
+    <string name="compiler_management">Compiler Management</string>
     <string name="symbol_panel_switch_label">Symbol Panel</string>
 
     <!-- GitHub Action Settings -->

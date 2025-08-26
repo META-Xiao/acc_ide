@@ -15,8 +15,12 @@ import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.acc_ide.R
 import com.acc_ide.ui.main.MainActivity
+import com.acc_ide.compiler.CompilerService
+import com.acc_ide.compiler.Language
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.chip.ChipGroup
+import com.google.android.material.chip.Chip
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -45,9 +49,23 @@ class IOPanelFragment : Fragment() {
     private lateinit var inputText: TextInputEditText
     private lateinit var actualOutputText: TextInputEditText
     private lateinit var expectedOutputText: TextInputEditText
+    private lateinit var executionModeChipGroup: ChipGroup
+    private lateinit var localModeChip: Chip
+    private lateinit var cloudModeChip: Chip
+    
+    // 本地编译服务
+    private lateinit var compilerService: CompilerService
     
     private var fileName: String = ""
     private var language: String = ""
+    private var fileContent: String = ""
+    
+    // Execution modes
+    enum class ExecutionMode {
+        LOCAL, CLOUD
+    }
+    
+    private var currentExecutionMode: ExecutionMode = ExecutionMode.CLOUD
     private var isGitHubRunning = false
     private var pollingJob: Job? = null
 
@@ -55,6 +73,7 @@ class IOPanelFragment : Fragment() {
     companion object {
         private const val ARG_FILENAME = "filename"
         private const val ARG_LANGUAGE = "language"
+        private const val ARG_FILE_CONTENT = "file_content"
         
         // Cache IO instances for each file
         private val ioCache = mutableMapOf<String, IOInstance>()
@@ -72,11 +91,18 @@ class IOPanelFragment : Fragment() {
         )
 
         @JvmStatic
-        fun newInstance(fileName: String, language: String) =
+        /**
+         * Create new instance of IOPanelFragment
+         * @param fileName The name of the file to execute
+         * @param language The programming language of the file
+         * @param fileContent The content of the file (for local execution)
+         */
+        fun newInstance(fileName: String, language: String, fileContent: String = "") =
             IOPanelFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_FILENAME, fileName)
                     putString(ARG_LANGUAGE, language)
+                    putString(ARG_FILE_CONTENT, fileContent)
                 }
             }
     }
@@ -103,6 +129,7 @@ class IOPanelFragment : Fragment() {
         arguments?.let {
             fileName = it.getString(ARG_FILENAME, "")
             language = it.getString(ARG_LANGUAGE, "")
+            fileContent = it.getString(ARG_FILE_CONTENT, "")
         }
         
         // Initialize views
@@ -111,9 +138,18 @@ class IOPanelFragment : Fragment() {
         inputText = view.findViewById(R.id.input_text)
         actualOutputText = view.findViewById(R.id.actual_output_text)
         expectedOutputText = view.findViewById(R.id.expected_output_text)
+        executionModeChipGroup = view.findViewById(R.id.execution_mode_chip_group)
+        localModeChip = view.findViewById(R.id.local_mode_chip)
+        cloudModeChip = view.findViewById(R.id.cloud_mode_chip)
+        
+        // Initialize compiler service
+        compilerService = CompilerService(requireContext())
         
         // Set initial state
         runStatus.text = ""
+        
+        // Load execution mode preference
+        loadExecutionModePreference()
         
         // Load data from cache
         loadFromCache()
@@ -131,15 +167,176 @@ class IOPanelFragment : Fragment() {
     private fun setupListeners() {
         // Run code button
         runCodeButton.setOnClickListener {
-            // Run code on GitHub
-            runCodeOnGitHub()
+            when (currentExecutionMode) {
+                ExecutionMode.LOCAL -> runCodeLocally()
+                ExecutionMode.CLOUD -> runCodeOnGitHub()
+            }
+        }
+        
+        // Execution mode chips
+        localModeChip.setOnClickListener {
+            setExecutionMode(ExecutionMode.LOCAL)
+        }
+        
+        cloudModeChip.setOnClickListener {
+            setExecutionMode(ExecutionMode.CLOUD)
         }
     }
     
     /**
-     * Load data from cache and populate UI fields
-     * 从缓存加载数据并填充UI字段
+     * Load execution mode preference
      */
+    private fun loadExecutionModePreference() {
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        val modeString = sharedPref.getString("execution_mode", "CLOUD")
+        currentExecutionMode = try {
+            ExecutionMode.valueOf(modeString ?: "CLOUD")
+        } catch (e: Exception) {
+            ExecutionMode.CLOUD
+        }
+        
+        updateExecutionModeUI()
+    }
+    
+    /**
+     * Set execution mode and save preference
+     */
+    private fun setExecutionMode(mode: ExecutionMode) {
+        currentExecutionMode = mode
+        
+        // Save to preferences
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        sharedPref.edit().putString("execution_mode", mode.name).apply()
+        
+        updateExecutionModeUI()
+    }
+    
+    /**
+     * Update UI based on execution mode
+     */
+    private fun updateExecutionModeUI() {
+        when (currentExecutionMode) {
+            ExecutionMode.LOCAL -> {
+                localModeChip.isChecked = true
+                cloudModeChip.isChecked = false
+                runCodeButton.text = "本地运行"
+                runCodeButton.setIconResource(R.drawable.ic_play_arrow)
+            }
+            ExecutionMode.CLOUD -> {
+                localModeChip.isChecked = false
+                cloudModeChip.isChecked = true
+                runCodeButton.text = "云端运行"
+                runCodeButton.setIconResource(R.drawable.ic_cloud)
+            }
+        }
+    }
+    
+    /**
+     * Run code locally using the compiler service
+     */
+    private fun runCodeLocally() {
+        if (fileContent.isBlank()) {
+            showError("没有代码内容可执行")
+            return
+        }
+        
+        setRunning(true, "本地编译运行中...")
+        
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val result = when (getLanguageFromExtension(fileName)) {
+                    Language.C -> compilerService.compileC(fileContent, Language.C)
+                    Language.CPP -> compilerService.compileC(fileContent, Language.CPP)
+                    Language.JAVA -> compilerService.compileJava(fileContent)
+                    Language.PYTHON -> {
+                        // Python直接执行
+                        val execResult = compilerService.runPython(fileContent)
+                        displayLocalExecutionResult(execResult.output, execResult.error, execResult.success)
+                        return@launch
+                    }
+                    else -> {
+                        showError("不支持的语言类型: $language")
+                        return@launch
+                    }
+                }
+                
+                if (result.success && result.outputFile != null) {
+                    // 编译成功，运行程序
+                    setRunning(true, "运行程序中...")
+                    val execResult = compilerService.runProgram(result.outputFile)
+                    displayLocalExecutionResult(execResult.output, execResult.error, execResult.success)
+                } else {
+                    // 编译失败
+                    displayLocalExecutionResult("", result.error ?: "编译失败", false)
+                }
+                
+            } catch (e: Exception) {
+                Log.e("IOPanel", "本地执行异常", e)
+                displayLocalExecutionResult("", "本地执行异常: ${e.message}", false)
+            } finally {
+                setRunning(false)
+            }
+        }
+    }
+    
+    /**
+     * Display local execution result
+     */
+    private fun displayLocalExecutionResult(output: String, error: String?, success: Boolean) {
+        val resultText = if (success) {
+            if (output.isNotBlank()) output else "(程序执行完成，无输出)"
+        } else {
+            "执行失败:\n${error ?: "未知错误"}"
+        }
+        
+        actualOutputText.setText(resultText)
+        
+        val statusText = if (success) "本地运行完成" else "本地运行失败"
+        val statusColor = if (success) R.color.compile_success else R.color.compile_error
+        
+        runStatus.text = statusText
+        runStatus.setTextColor(ContextCompat.getColor(requireContext(), statusColor))
+        
+        // Save to cache
+        saveToCache()
+    }
+    
+    /**
+     * Get Language enum from file extension
+     */
+    private fun getLanguageFromExtension(fileName: String): Language? {
+        return when (fileName.substringAfterLast('.')) {
+            "c" -> Language.C
+            "cpp", "cc", "cxx" -> Language.CPP
+            "java" -> Language.JAVA
+            "py" -> Language.PYTHON
+            else -> null
+        }
+    }
+    
+    /**
+     * Set running state and update UI
+     */
+    private fun setRunning(running: Boolean, statusText: String = "") {
+        runCodeButton.isEnabled = !running
+        if (statusText.isNotEmpty()) {
+            runStatus.text = statusText
+        }
+        
+        if (running) {
+            runStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.compile_warning))
+        }
+    }
+    
+    /**
+     * Show error message
+     */
+    private fun showError(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+        runStatus.text = message
+        runStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.compile_error))
+    }
+
     private fun loadFromCache() {
         // Load data from cache
         val cachedInstance = ioCache[fileName]

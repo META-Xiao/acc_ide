@@ -12,40 +12,97 @@
     <LinearLayout
         android:id="@+id/io_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
         android:background="@color/content_background"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- 运行按钮  -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/run_code_button"
-            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:minWidth="80dp"
-            android:paddingHorizontal="12dp"
-            android:text="@string/run"
-            android:textSize="14sp"
-            app:backgroundTint="@color/blue_500"
-            app:cornerRadius="18dp"
-            app:icon="@android:drawable/ic_media_play"
-            app:iconSize="16dp"
-            app:iconGravity="textStart"
-            app:iconPadding="4dp" />
-
-        <!-- 运行状态 -->
-        <TextView
-            android:id="@+id/run_status"
-            android:layout_width="wrap_content"
+        <!-- 执行模式选择 -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            tools:text="AC" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="执行模式:"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginEnd="12dp" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/execution_mode_chip_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                app:chipSpacingHorizontal="4dp">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/local_mode_chip"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:text="本地编译"
+                    android:textSize="12sp"
+                    app:chipIcon="@drawable/ic_computer"
+                    app:chipIconSize="16dp" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/cloud_mode_chip"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:text="云端执行"
+                    android:textSize="12sp"
+                    android:checked="true"
+                    app:chipIcon="@drawable/ic_cloud"
+                    app:chipIconSize="16dp" />
+
+            </com.google.android.material.chip.ChipGroup>
+
+        </LinearLayout>
+
+        <!-- 运行按钮和状态 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- 运行按钮  -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/run_code_button"
+                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:minWidth="80dp"
+                android:paddingHorizontal="12dp"
+                android:text="@string/run"
+                android:textSize="14sp"
+                app:backgroundTint="@color/blue_500"
+                app:cornerRadius="18dp"
+                app:icon="@drawable/ic_play_arrow"
+                app:iconSize="16dp"
+                app:iconGravity="textStart"
+                app:iconPadding="4dp" />
+
+            <!-- 运行状态 -->
+            <TextView
+                android:id="@+id/run_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                tools:text="就绪" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

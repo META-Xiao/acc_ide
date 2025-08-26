@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 主题颜色 -->
+    <color name="primary_color">#2196F3</color>
+    <color name="secondary_color">#4CAF50</color>
+    <color name="accent_color">#FF5722</color>
+    
+    <!-- 编译器相关颜色 -->
+    <color name="compile_success">#4CAF50</color>
+    <color name="compile_error">#F44336</color>
+    <color name="compile_warning">#FF9800</color>
+    
+    <!-- 输出背景色 -->
+    <color name="output_background">#F5F5F5</color>
+    <color name="code_background">#FAFAFA</color>
+</resources>
