@@ -1,0 +1,2 @@
+int string msg_cannot_create_terminal_session 0x0
+int string msg_terminal_new_sessions_disabled 0x0

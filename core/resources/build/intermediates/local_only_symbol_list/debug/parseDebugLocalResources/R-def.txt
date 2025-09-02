@@ -1,0 +1,4 @@
+R_DEF: Internal format may change without notice
+local
+string msg_cannot_create_terminal_session
+string msg_terminal_new_sessions_disabled

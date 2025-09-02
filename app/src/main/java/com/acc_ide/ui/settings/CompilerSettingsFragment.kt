@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.acc_ide.R
 import com.acc_ide.compiler.CompilerManager
+import com.acc_ide.compiler.AssetBuildManager
 import com.acc_ide.compiler.Language
 import com.acc_ide.ui.main.MainActivity
 import kotlinx.coroutines.launch
@@ -23,8 +24,16 @@ import kotlinx.coroutines.launch
 class CompilerSettingsFragment : Fragment() {
     
     private lateinit var compilerManager: CompilerManager
+    private lateinit var assetBuildManager: AssetBuildManager
     private lateinit var compilerRecyclerView: RecyclerView
     private lateinit var compilerAdapter: CompilerAdapter
+    
+    // Asset build UI components
+    private lateinit var buildStatusCard: LinearLayout
+    private lateinit var buildStatusText: TextView
+    private lateinit var buildAssetsButton: Button
+    private lateinit var cleanAssetsButton: Button
+    private lateinit var buildProgressBar: ProgressBar
     
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,10 +43,13 @@ class CompilerSettingsFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_compiler_settings, container, false)
         
         compilerManager = CompilerManager(requireContext())
+        assetBuildManager = AssetBuildManager(requireContext())
         
         initViews(view)
         setupRecyclerView()
+        setupAssetBuildUI()
         loadCompilerStatus()
+        loadAssetBuildStatus()
         
         return view
     }
@@ -52,6 +64,18 @@ class CompilerSettingsFragment : Fragment() {
     
     private fun initViews(view: View) {
         compilerRecyclerView = view.findViewById(R.id.compiler_recycler_view)
+        
+        // Initialize asset build UI components (will need corresponding layout updates)
+        try {
+            buildStatusCard = view.findViewById(R.id.build_status_card)
+            buildStatusText = view.findViewById(R.id.build_status_text)
+            buildAssetsButton = view.findViewById(R.id.build_assets_button)
+            cleanAssetsButton = view.findViewById(R.id.clean_assets_button)  
+            buildProgressBar = view.findViewById(R.id.build_progress_bar)
+        } catch (e: Exception) {
+            // Layout may not include these components yet
+            android.util.Log.w("CompilerSettings", "Asset build UI components not found in layout")
+        }
     }
     
     private fun setupRecyclerView() {
@@ -110,6 +134,92 @@ class CompilerSettingsFragment : Fragment() {
                 loadCompilerStatus() // 刷新状态
             } catch (e: Exception) {
                 Toast.makeText(context, "卸载失败: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+    
+    private fun setupAssetBuildUI() {
+        try {
+            buildAssetsButton.setOnClickListener {
+                buildAssets()
+            }
+            
+            cleanAssetsButton.setOnClickListener {
+                cleanAssets()
+            }
+        } catch (e: Exception) {
+            // Asset build UI components may not be available yet
+            android.util.Log.w("CompilerSettings", "Asset build UI setup skipped: ${e.message}")
+        }
+    }
+    
+    private fun loadAssetBuildStatus() {
+        lifecycleScope.launch {
+            try {
+                val status = assetBuildManager.getBuildStatus()
+                updateAssetBuildUI(status)
+            } catch (e: Exception) {
+                android.util.Log.w("CompilerSettings", "Failed to load asset build status: ${e.message}")
+            }
+        }
+    }
+    
+    private fun updateAssetBuildUI(status: com.acc_ide.compiler.BuildStatus) {
+        try {
+            if (status.hasAssets) {
+                buildStatusText.text = "资产状态: 已构建 (${status.packagesCount}个包)\n版本: ${status.version}"
+                buildAssetsButton.text = "重新构建"
+                cleanAssetsButton.isEnabled = true
+            } else {
+                buildStatusText.text = "资产状态: 未构建\n请先构建编译器资产包"
+                buildAssetsButton.text = "构建资产"
+                cleanAssetsButton.isEnabled = false
+            }
+        } catch (e: Exception) {
+            android.util.Log.w("CompilerSettings", "Failed to update asset build UI: ${e.message}")
+        }
+    }
+    
+    private fun buildAssets() {
+        lifecycleScope.launch {
+            try {
+                buildProgressBar.visibility = android.view.View.VISIBLE
+                buildAssetsButton.isEnabled = false
+                buildStatusText.text = "正在构建资产包..."
+                
+                val result = assetBuildManager.buildAllAssets()
+                
+                buildProgressBar.visibility = android.view.View.GONE
+                buildAssetsButton.isEnabled = true
+                
+                if (result.success) {
+                    Toast.makeText(context, result.message, Toast.LENGTH_SHORT).show()
+                    loadAssetBuildStatus() // 刷新状态
+                } else {
+                    Toast.makeText(context, "构建失败: ${result.message}", Toast.LENGTH_LONG).show()
+                    buildStatusText.text = "构建失败: ${result.message}"
+                }
+                
+            } catch (e: Exception) {
+                buildProgressBar.visibility = android.view.View.GONE
+                buildAssetsButton.isEnabled = true
+                Toast.makeText(context, "构建异常: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+    
+    private fun cleanAssets() {
+        lifecycleScope.launch {
+            try {
+                val cleaned = assetBuildManager.cleanAssets()
+                if (cleaned) {
+                    Toast.makeText(context, "资产清理完成", Toast.LENGTH_SHORT).show()
+                    loadAssetBuildStatus() // 刷新状态
+                } else {
+                    Toast.makeText(context, "没有资产需要清理", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(context, "清理失败: ${e.message}", Toast.LENGTH_LONG).show()
             }
         }
     }

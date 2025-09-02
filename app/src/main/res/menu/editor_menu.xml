@@ -15,8 +15,21 @@
         app:showAsAction="always" />
     
     <item
+        android:id="@+id/action_compile_run"
+        android:icon="@android:drawable/ic_media_play"
+        android:title="@string/compile_run"
+        app:showAsAction="always" />
+        
+    <item
+        android:id="@+id/action_compile_only"
+        android:icon="@drawable/ic_build"
+        android:title="@string/compile_only"
+        app:showAsAction="ifRoom" />
+        
+    <item
         android:id="@+id/action_run"
         android:icon="@android:drawable/ic_media_play"
         android:title="@string/run"
-        app:showAsAction="always" />
+        app:showAsAction="never"
+        android:visible="false" />
 </menu> 

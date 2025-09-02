@@ -6,6 +6,12 @@
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    
+    <!-- Termux permissions -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" 
+        android:maxSdkVersion="28" />
 
     <application
         android:allowBackup="true"
@@ -36,6 +42,19 @@
             android:configChanges="locale|layoutDirection|uiMode"
             android:exported="false">
         </activity>
+        
+        <activity
+            android:name="com.acc_ide.ui.terminal.TerminalActivity"
+            android:theme="@style/Theme.AccIDE.NoActionBar"
+            android:exported="false"
+            android:configChanges="orientation|screenSize|keyboardHidden">
+        </activity>
+        
+        <!-- Termux Service -->
+        <service 
+            android:name="com.acc_ide.termux.app.TermuxService"
+            android:exported="false" />
+            
     </application>
 
 </manifest>

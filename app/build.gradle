@@ -77,6 +77,16 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
     implementation 'androidx.preference:preference-ktx:1.2.1'
 
+    // Termux modules dependencies
+    implementation project(':termux:application')
+    implementation project(':termux:shared')
+    implementation project(':termux:emulator')
+    implementation project(':termux:view')
+    
+    // Core modules dependencies
+    implementation project(':core:common')
+    implementation project(':core:resources')
+
     constraints {
         implementation("org.jetbrains.kotlin:kotlin-stdlib") {
             version {

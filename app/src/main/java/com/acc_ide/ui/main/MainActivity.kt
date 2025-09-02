@@ -24,8 +24,11 @@ import com.acc_ide.R
 import com.acc_ide.data.repository.FileRepository
 import com.acc_ide.ui.editor.EditorFragment
 import com.acc_ide.ui.settings.SettingsFragment
+import com.acc_ide.ui.terminal.TerminalActivity
 import com.acc_ide.ui.welcome.WelcomeFragment
 import com.acc_ide.util.*
+import com.acc_ide.compiler.CompileRunManager
+import com.acc_ide.compiler.Language
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -46,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var uiManager: UIManager
     private lateinit var fragmentNavigationManager: FragmentNavigationManager
     private lateinit var themeManager: ThemeManager
+    private lateinit var compileRunManager: CompileRunManager
 
     // Register file save result handler
     private val saveFileLauncher = registerForActivityResult(
@@ -76,10 +80,14 @@ class MainActivity : AppCompatActivity() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         try {
+            // Initialize Environment first
+            Environment.initialize(this)
+            
             // Initialize managers
             fileRepository = FileRepository(this)
             permissionManager = PermissionManager(this)
             themeManager = ThemeManager(this)
+            compileRunManager = CompileRunManager(this)
 
             // Apply theme and language settings
             themeManager.applyThemeSettings()
@@ -113,11 +121,20 @@ class MainActivity : AppCompatActivity() {
                 fragmentNavigationManager.showSettingsFragment()
             }
 
+            // Set up terminal button
+            val terminalItem = findViewById<LinearLayout>(R.id.terminal_item)
+            terminalItem.setOnClickListener {
+                openTerminal()
+            }
+
             // Listen to fragment changes
             setupFragmentLifecycleCallbacks()
 
             // Request permissions and initialize system
             requestStoragePermission()
+            
+            // Initialize compilation manager
+            initializeCompileRunManager()
 
             // Handle state restoration or initialization
             handleStateRestoration(savedInstanceState)
@@ -252,6 +269,25 @@ class MainActivity : AppCompatActivity() {
         Log.d("MainActivity", "File system initialization completed")
     }
 
+    /**
+     * Initialize compile run manager
+     * 初始化编译运行管理器
+     */
+    private fun initializeCompileRunManager() {
+        lifecycleScope.launch {
+            try {
+                val success = compileRunManager.initialize()
+                if (success) {
+                    Log.d("MainActivity", "CompileRunManager initialized successfully")
+                } else {
+                    Log.w("MainActivity", "Failed to initialize CompileRunManager")
+                }
+            } catch (e: Exception) {
+                Log.e("MainActivity", "Error initializing CompileRunManager", e)
+            }
+        }
+    }
+    
     /**
      * Handle state restoration or initialization
      * 处理状态恢复或初始化
@@ -695,6 +731,231 @@ class MainActivity : AppCompatActivity() {
         } else {
             // Other types of fragments, call system back behavior
             finishAfterTransition()
+        }
+    }
+
+    /**
+     * Open terminal activity
+     * 打开终端Activity
+     */
+    private fun openTerminal() {
+        try {
+            val intent = Intent(this, TerminalActivity::class.java)
+            startActivity(intent)
+            // Close drawer
+            fragmentNavigationManager.closeDrawer()
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Failed to open terminal: ${e.message}", e)
+            Toast.makeText(this, "Failed to open terminal: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+    
+    /**
+     * Compile and run current file
+     * 编译并运行当前文件
+     */
+    fun compileAndRunCurrentFile() {
+        if (currentFileName.isEmpty() || !files.containsKey(currentFileName)) {
+            Toast.makeText(this, "No file is currently open", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
+        val content = files[currentFileName] ?: ""
+        compileAndRun(currentFileName, content)
+    }
+    
+    /**
+     * Compile and run specified file
+     * 编译并运行指定文件
+     */
+    fun compileAndRun(fileName: String, content: String) {
+        lifecycleScope.launch {
+            try {
+                // Show progress or compilation dialog
+                val language = detectLanguageFromFileName(fileName)
+                if (language == null) {
+                    Toast.makeText(this@MainActivity, "Unsupported file type: $fileName", Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
+                
+                // Find current editor fragment to show compilation output
+                val editorFragment = supportFragmentManager.fragments
+                    .firstOrNull { it is EditorFragment } as? EditorFragment
+                
+                if (editorFragment != null) {
+                    // Show compilation in IOPanel if available
+                    showCompilationOutput("Starting compilation of $fileName...")
+                }
+                
+                compileRunManager.compileAndRun(
+                    fileName = fileName,
+                    content = content,
+                    callback = object : CompileRunManager.CompileRunCallback {
+                        override fun onCompileStart(fileName: String, language: Language) {
+                            runOnUiThread {
+                                showCompilationOutput("Compiling ${language.name} file: $fileName")
+                            }
+                        }
+                        
+                        override fun onOutput(output: String) {
+                            runOnUiThread {
+                                showCompilationOutput(output)
+                            }
+                        }
+                        
+                        override fun onError(error: String) {
+                            runOnUiThread {
+                                showCompilationOutput("ERROR: $error")
+                            }
+                        }
+                        
+                        override fun onCompileComplete(success: Boolean, message: String) {
+                            runOnUiThread {
+                                showCompilationOutput(if (success) "✓ $message" else "✗ $message")
+                                Toast.makeText(
+                                    this@MainActivity, 
+                                    if (success) "Compilation successful" else "Compilation failed", 
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    }
+                )
+                
+            } catch (e: Exception) {
+                Log.e("MainActivity", "Error during compilation", e)
+                Toast.makeText(this@MainActivity, "Compilation error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+    
+    /**
+     * Compile only (without running)
+     * 仅编译（不运行）
+     */
+    fun compileOnly(fileName: String, content: String) {
+        lifecycleScope.launch {
+            try {
+                val language = detectLanguageFromFileName(fileName)
+                if (language == null) {
+                    Toast.makeText(this@MainActivity, "Unsupported file type: $fileName", Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
+                
+                showCompilationOutput("Starting compilation of $fileName...")
+                
+                compileRunManager.compileOnly(
+                    fileName = fileName,
+                    content = content,
+                    callback = object : CompileRunManager.CompileRunCallback {
+                        override fun onCompileStart(fileName: String, language: Language) {
+                            runOnUiThread {
+                                showCompilationOutput("Compiling ${language.name} file: $fileName")
+                            }
+                        }
+                        
+                        override fun onOutput(output: String) {
+                            runOnUiThread {
+                                showCompilationOutput(output)
+                            }
+                        }
+                        
+                        override fun onError(error: String) {
+                            runOnUiThread {
+                                showCompilationOutput("ERROR: $error")
+                            }
+                        }
+                        
+                        override fun onCompileComplete(success: Boolean, message: String) {
+                            runOnUiThread {
+                                showCompilationOutput(if (success) "✓ $message" else "✗ $message")
+                                Toast.makeText(
+                                    this@MainActivity, 
+                                    if (success) "Compilation successful" else "Compilation failed", 
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    }
+                )
+                
+            } catch (e: Exception) {
+                Log.e("MainActivity", "Error during compilation", e)
+                Toast.makeText(this@MainActivity, "Compilation error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+    
+    /**
+     * Show compilation output in IOPanel or log
+     * 在IOPanel或日志中显示编译输出
+     */
+    private fun showCompilationOutput(output: String) {
+        try {
+            Log.d("Compilation", output)
+            
+            // Try to find IOPanelFragment and show output there
+            val fragments = supportFragmentManager.fragments
+            for (fragment in fragments) {
+                if (fragment.javaClass.simpleName.contains("IOPanel")) {
+                    // If IOPanelFragment exists, try to show output there
+                    fragment.javaClass.getMethod("appendOutput", String::class.java)
+                        .invoke(fragment, output + "\n")
+                    return
+                }
+            }
+            
+            // Fallback: show in toast for important messages
+            if (output.contains("ERROR") || output.contains("✓") || output.contains("✗")) {
+                Toast.makeText(this, output, Toast.LENGTH_SHORT).show()
+            }
+            
+        } catch (e: Exception) {
+            Log.d("Compilation", output) // Fallback to log only
+        }
+    }
+    
+    /**
+     * Detect language from file name
+     * 从文件名检测语言类型
+     */
+    private fun detectLanguageFromFileName(fileName: String): Language? {
+        return when {
+            fileName.endsWith(".c") -> Language.C
+            fileName.endsWith(".cpp") || fileName.endsWith(".cc") || fileName.endsWith(".cxx") -> Language.CPP
+            fileName.endsWith(".java") -> Language.JAVA
+            fileName.endsWith(".py") -> Language.PYTHON
+            else -> null
+        }
+    }
+    
+    /**
+     * Check if compiler is installed for current file type
+     * 检查当前文件类型的编译器是否已安装
+     */
+    fun isCompilerInstalled(fileName: String): Boolean {
+        val language = detectLanguageFromFileName(fileName) ?: return false
+        return compileRunManager.isCompilerInstalled(language)
+    }
+    
+    /**
+     * Get compiler info for current file type
+     * 获取当前文件类型的编译器信息
+     */
+    fun getCompilerInfo(fileName: String): String {
+        val language = detectLanguageFromFileName(fileName) ?: return "Unknown file type"
+        return compileRunManager.getCompilerInfo(language)
+    }
+    
+    override fun onDestroy() {
+        super.onDestroy()
+        try {
+            // Clean up compile run manager
+            if (::compileRunManager.isInitialized) {
+                compileRunManager.cleanup()
+            }
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Error during cleanup", e)
         }
     }
 } 

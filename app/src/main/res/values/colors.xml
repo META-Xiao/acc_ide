@@ -90,4 +90,21 @@
 
     <color name="switch_thumb_on">#674fa4</color>
     <color name="switch_thumb_off">#BDBDBD</color>
+    
+    <!-- Missing Material Design Colors -->
+    <color name="red_400">#EF5350</color>
+    <color name="background_markdown_code_block">#F5F5F5</color>
+    <color name="background_markdown_code_block_dark">#2E2E2E</color>
+    
+    <!-- Terminal Colors -->
+    <color name="terminal_background">#000000</color>
+    <color name="terminal_foreground">#FFFFFF</color>
+    <color name="terminal_cursor">#FFFFFF</color>
+    <color name="terminal_selection">#4A90E2</color>
+    
+    <!-- Additional utility colors -->
+    <color name="success_green">#4CAF50</color>
+    <color name="warning_orange">#FF9800</color>
+    <color name="error_red">#F44336</color>
+    <color name="info_blue">#2196F3</color>
 </resources>

@@ -8,18 +8,19 @@ import java.net.URL
 import java.util.zip.ZipInputStream
 
 /**
- * 编译器管理器 - 负责编译器的下载、安装和管理
+ * 重新设计的编译器管理器 - 基于成功的Android IDE应用实践
+ * 参考：CppDroid, C4droid, Termux等成功案例
  */
 class CompilerManager(private val context: Context) {
     
     private val TAG = "CompilerManager"
     private val toolchainDir = File(context.filesDir, "toolchain")
     
-    // 编译器下载URL配置
     companion object {
-        private const val CLANG_URL = "https://github.com/lzhiyong/android-clang/releases/download/17.0.6/android-clang-17.0.6-aarch64.zip"
-        private const val PYTHON_URL = "https://github.com/python/cpython/releases/download/v3.11.0/Python-3.11.0.tgz"
-        // 注意：实际项目中需要使用有效的下载链接
+        // 基于TinyCC的轻量级方案（类似CppDroid）
+        const val TINYCC_VERSION = "0.9.27"
+        const val PYTHON_VERSION = "3.11"
+        const val ECJ_VERSION = "3.33.0"
     }
     
     init {
@@ -27,90 +28,103 @@ class CompilerManager(private val context: Context) {
     }
     
     /**
-     * 检查编译器是否需要安装
+     * 检查编译器是否已安装（基于实际文件存在）
      */
-    fun needsInstallation(language: Language): Boolean {
+    fun isCompilerInstalled(language: Language): Boolean {
         return when (language) {
-            Language.C, Language.CPP -> !File(toolchainDir, "bin/clang").exists()
-            Language.JAVA -> !File(toolchainDir, "bin/javac").exists()
-            Language.PYTHON -> !File(toolchainDir, "bin/python3").exists()
+            Language.C, Language.CPP -> {
+                // 检查TinyCC二进制文件
+                File(toolchainDir, "tinycc/tcc").exists() && 
+                File(toolchainDir, "tinycc/tcc").canExecute()
+            }
+            Language.JAVA -> {
+                // 检查ECJ编译器
+                File(toolchainDir, "java/ecj.jar").exists()
+            }
+            Language.PYTHON -> {
+                // 检查Python解释器
+                File(toolchainDir, "python/bin/python3").exists() && 
+                File(toolchainDir, "python/bin/python3").canExecute()
+            }
         }
     }
     
     /**
-     * 获取编译器安装状态
+     * 获取编译器大小信息（从assets预检查）
      */
-    fun getInstallationStatus(): Map<Language, Boolean> {
-        return Language.values().associateWith { !needsInstallation(it) }
-    }
-    
-    /**
-     * 安装编译器
-     */
-    suspend fun installCompiler(
-        language: Language,
-        onProgress: (Int) -> Unit = {}
-    ): InstallResult = withContext(Dispatchers.IO) {
-        try {
-            Log.d(TAG, "Installing compiler for ${language.name}")
-            onProgress(0)
+    fun getCompilerSize(language: Language): CompilerSizeInfo {
+        return try {
+            val assetFileName = getAssetFileName(language)
+            val inputStream = context.assets.open("compilers/$assetFileName")
+            val size = inputStream.available().toLong()
+            inputStream.close()
             
-            when (language) {
-                Language.C, Language.CPP -> installClang(onProgress)
-                Language.JAVA -> installJava(onProgress)
-                Language.PYTHON -> installPython(onProgress)
+            // 基于实际压缩比估算
+            val uncompressedSize = when (language) {
+                Language.C, Language.CPP -> size * 4 // TinyCC解压比约1:4
+                Language.PYTHON -> size * 8 // Python库较多，约1:8
+                Language.JAVA -> size * 2 // ECJ jar包，约1:2
             }
             
+            CompilerSizeInfo(language, size, uncompressedSize, true)
         } catch (e: Exception) {
-            Log.e(TAG, "Installation failed for ${language.name}", e)
-            InstallResult.error("安装失败: ${e.message}")
+            Log.w(TAG, "Cannot get size for $language: ${e.message}")
+            CompilerSizeInfo(language, 0, 0, false)
         }
     }
     
     /**
-     * 从assets安装预打包的编译器
+     * 从assets安装编译器（类似CppDroid首次启动解压SDK的方式）
      */
     suspend fun installFromAssets(
         language: Language,
         onProgress: (Int) -> Unit = {}
     ): InstallResult = withContext(Dispatchers.IO) {
         try {
-            Log.d(TAG, "Installing ${language.name} from assets")
-            onProgress(10)
+            Log.d(TAG, "Installing $language toolchain from assets...")
+            onProgress(0)
             
             val assetFileName = getAssetFileName(language)
-            val assetManager = context.assets
+            val targetDir = File(toolchainDir, language.name.lowercase())
             
-            // 检查assets文件是否存在
-            val assetFiles = assetManager.list("compilers") ?: emptyArray()
-            if (!assetFiles.contains(assetFileName)) {
-                return@withContext InstallResult.error("编译器包未找到: $assetFileName")
+            // 清理旧安装
+            if (targetDir.exists()) {
+                targetDir.deleteRecursively()
+            }
+            targetDir.mkdirs()
+            
+            onProgress(10)
+            
+            // 解压assets中的工具链
+            context.assets.open("compilers/$assetFileName").use { inputStream ->
+                extractToolchain(inputStream, targetDir) { progress ->
+                    onProgress(10 + (progress * 0.7).toInt())
+                }
             }
             
-            onProgress(20)
+            onProgress(80)
             
-            // 打开assets文件
-            val inputStream = assetManager.open("compilers/$assetFileName")
+            // 设置执行权限（关键步骤）
+            setExecutablePermissions(language, targetDir)
             
-            onProgress(30)
-            
-            // 解压到toolchain目录
-            extractZipStream(inputStream, toolchainDir) { progress ->
-                onProgress(30 + (progress * 0.6).toInt())
+            // Python特殊处理
+            if (language == Language.PYTHON) {
+                setupPythonEnvironment(targetDir)
             }
             
             onProgress(90)
             
-            // 设置可执行权限
-            setExecutablePermissions(language)
-            
-            onProgress(100)
-            
-            InstallResult.success("${language.name} 编译器安装成功")
+            // 验证安装
+            if (verifyInstallation(language, targetDir)) {
+                onProgress(100)
+                InstallResult.success("${language.displayName} toolchain installed successfully")
+            } else {
+                InstallResult.error("Installation verification failed")
+            }
             
         } catch (e: Exception) {
-            Log.e(TAG, "Assets installation failed for ${language.name}", e)
-            InstallResult.error("从assets安装失败: ${e.message}")
+            Log.e(TAG, "Installation failed for $language", e)
+            InstallResult.error("Installation failed: ${e.message}")
         }
     }
     
@@ -119,54 +133,16 @@ class CompilerManager(private val context: Context) {
      */
     suspend fun uninstallCompiler(language: Language): UninstallResult = withContext(Dispatchers.IO) {
         try {
-            Log.d(TAG, "Uninstalling compiler for ${language.name}")
-            
-            when (language) {
-                Language.C, Language.CPP -> {
-                    File(toolchainDir, "bin/clang").delete()
-                    File(toolchainDir, "bin/clang++").delete()
-                }
-                Language.JAVA -> {
-                    File(toolchainDir, "bin/javac").delete()
-                }
-                Language.PYTHON -> {
-                    File(toolchainDir, "bin/python3").delete()
-                    File(toolchainDir, "bin/python").delete()
-                }
+            val targetDir = File(toolchainDir, language.name.lowercase())
+            if (targetDir.exists()) {
+                targetDir.deleteRecursively()
+                UninstallResult.success("${language.displayName} toolchain uninstalled")
+            } else {
+                UninstallResult.success("${language.displayName} toolchain was not installed")
             }
-            
-            UninstallResult.success("${language.name} 编译器已卸载")
-            
         } catch (e: Exception) {
-            Log.e(TAG, "Uninstallation failed for ${language.name}", e)
-            UninstallResult.error("卸载失败: ${e.message}")
-        }
-    }
-    
-    /**
-     * 获取编译器大小信息
-     */
-    fun getCompilerSize(language: Language): CompilerSizeInfo {
-        val assetFileName = getAssetFileName(language)
-        
-        return try {
-            val inputStream = context.assets.open("compilers/$assetFileName")
-            val size = inputStream.available().toLong()
-            inputStream.close()
-            
-            CompilerSizeInfo(
-                language = language,
-                compressedSize = size,
-                estimatedUncompressedSize = size * 3, // 估算解压后大小
-                available = true
-            )
-        } catch (e: Exception) {
-            CompilerSizeInfo(
-                language = language,
-                compressedSize = 0,
-                estimatedUncompressedSize = 0,
-                available = false
-            )
+            Log.e(TAG, "Uninstall failed for $language", e)
+            UninstallResult.error("Uninstall failed: ${e.message}")
         }
     }
     
@@ -174,97 +150,95 @@ class CompilerManager(private val context: Context) {
      * 获取编译器信息
      */
     fun getCompilerInfo(language: Language): CompilerInfo {
-        val isInstalled = !needsInstallation(language)
-        val version = if (isInstalled) getCompilerVersion(language) else "未安装"
+        val isInstalled = isCompilerInstalled(language)
+        val version = if (isInstalled) getCompilerVersion(language) else "Not installed"
         val path = if (isInstalled) getCompilerPath(language) else ""
         
         return CompilerInfo(
             language = language,
             isInstalled = isInstalled,
             version = version,
-            path = path
+            path = path,
+            size = if (isInstalled) getInstalledSize(language) else 0
         )
-    }
-    
-    /**
-     * 获取编译器版本
-     */
-    private fun getCompilerVersion(language: Language): String {
-        return when (language) {
-            Language.C, Language.CPP -> "Clang 17.0.6"
-            Language.JAVA -> "OpenJDK 11"
-            Language.PYTHON -> "Python 3.11"
-        }
-    }
-    
-    /**
-     * 获取编译器路径
-     */
-    private fun getCompilerPath(language: Language): String {
-        return when (language) {
-            Language.C, Language.CPP -> File(toolchainDir, "bin/clang").absolutePath
-            Language.JAVA -> File(toolchainDir, "bin/javac").absolutePath
-            Language.PYTHON -> File(toolchainDir, "bin/python3").absolutePath
-        }
     }
     
     // 私有方法
     
     private fun getAssetFileName(language: Language): String {
         return when (language) {
-            Language.C, Language.CPP -> "clang-toolchain.zip"
-            Language.JAVA -> "java-compiler.zip"
-            Language.PYTHON -> "python-interpreter.zip"
+            Language.C, Language.CPP -> "tinycc-android-arm64.zip"
+            Language.JAVA -> "java-ecj.zip"
+            Language.PYTHON -> "python311-android-arm64.zip"
         }
     }
     
-    private suspend fun installClang(onProgress: (Int) -> Unit): InstallResult {
-        // 这里应该从预打包的assets或者下载clang工具链
-        return installFromAssets(Language.C, onProgress)
-    }
-    
-    private suspend fun installJava(onProgress: (Int) -> Unit): InstallResult {
-        // 安装Java编译器
-        return installFromAssets(Language.JAVA, onProgress)
-    }
-    
-    private suspend fun installPython(onProgress: (Int) -> Unit): InstallResult {
-        // 安装Python解释器
-        return installFromAssets(Language.PYTHON, onProgress)
-    }
-    
-    private suspend fun downloadFile(
-        url: String,
-        outputFile: File,
-        onProgress: (Int) -> Unit
-    ) = withContext(Dispatchers.IO) {
+    /**
+     * 专门为Python设置环境变量和库路径
+     */
+    private fun setupPythonEnvironment(pythonDir: File) {
         try {
-            val connection = URL(url).openConnection()
-            val fileLength = connection.contentLength
+            // 创建Python启动脚本
+            val pythonScript = File(pythonDir, "python")
+            val pythonContent = """#!/system/bin/sh
+# Python wrapper script for Android
+export PYTHONHOME="${pythonDir.absolutePath}"
+export PYTHONPATH="${'$'}PYTHONHOME/lib/python3.11:${'$'}PYTHONHOME/lib/python3.11/site-packages"
+export LD_LIBRARY_PATH="${'$'}PYTHONHOME/lib:${'$'}LD_LIBRARY_PATH"
+
+# 设置临时目录
+export TMPDIR="/data/data/${context.packageName}/cache/python_tmp"
+mkdir -p "${'$'}TMPDIR"
+
+# 执行Python
+exec "${'$'}PYTHONHOME/bin/python3.11" "${'$'}@"
+"""
+            pythonScript.writeText(pythonContent)
+            pythonScript.setExecutable(true, false)
             
-            connection.getInputStream().use { input ->
-                outputFile.outputStream().use { output ->
-                    val buffer = ByteArray(8192)
-                    var bytesRead = 0
-                    var totalBytes = 0
-                    
-                    while (input.read(buffer).also { bytesRead = it } != -1) {
-                        output.write(buffer, 0, bytesRead)
-                        totalBytes += bytesRead
-                        
-                        if (fileLength > 0) {
-                            val progress = (totalBytes * 100) / fileLength
-                            onProgress(progress)
-                        }
-                    }
-                }
-            }
+            // 创建符合Termux标准的目录结构
+            val libDir = File(pythonDir, "lib")
+            val binDir = File(pythonDir, "bin")
+            val includeDir = File(pythonDir, "include")
+            
+            libDir.mkdirs()
+            binDir.mkdirs()
+            includeDir.mkdirs()
+            
+            Log.d(TAG, "Python environment setup completed")
+            
         } catch (e: Exception) {
-            throw IOException("下载失败: ${e.message}", e)
+            Log.w(TAG, "Failed to setup Python environment", e)
         }
     }
     
-    private suspend fun extractZipStream(
+    private fun getCompilerVersion(language: Language): String {
+        return when (language) {
+            Language.C, Language.CPP -> "TinyCC $TINYCC_VERSION"
+            Language.JAVA -> "ECJ $ECJ_VERSION"
+            Language.PYTHON -> "Python $PYTHON_VERSION"
+        }
+    }
+    
+    private fun getCompilerPath(language: Language): String {
+        return when (language) {
+            Language.C, Language.CPP -> File(toolchainDir, "tinycc/tcc").absolutePath
+            Language.JAVA -> File(toolchainDir, "java/ecj.jar").absolutePath
+            Language.PYTHON -> File(toolchainDir, "python/bin/python3").absolutePath
+        }
+    }
+    
+    private fun getInstalledSize(language: Language): Long {
+        val targetDir = File(toolchainDir, language.name.lowercase())
+        return if (targetDir.exists()) {
+            targetDir.walkTopDown().filter { it.isFile }.map { it.length() }.sum()
+        } else 0
+    }
+    
+    /**
+     * 解压工具链压缩包
+     */
+    private suspend fun extractToolchain(
         inputStream: InputStream,
         destDir: File,
         onProgress: (Int) -> Unit = {}
@@ -274,47 +248,103 @@ class CompilerManager(private val context: Context) {
         ZipInputStream(inputStream.buffered()).use { zipStream ->
             var entry = zipStream.nextEntry
             var entryCount = 0
+            var totalEntries = 0
             
+            // 先计算总条目数（如果可能）
             while (entry != null) {
-                val destFile = File(destDir, entry.name)
-                
-                if (entry.isDirectory) {
-                    destFile.mkdirs()
-                } else {
-                    destFile.parentFile?.mkdirs()
-                    destFile.outputStream().use { output ->
-                        zipStream.copyTo(output)
-                    }
-                }
-                
-                entryCount++
-                if (entryCount % 10 == 0) {
-                    onProgress(entryCount)
-                }
-                
-                zipStream.closeEntry()
+                totalEntries++
                 entry = zipStream.nextEntry
+            }
+            
+            // 重新开始解压
+            ZipInputStream(inputStream.buffered()).use { zipStream2 ->
+                entry = zipStream2.nextEntry
+                
+                while (entry != null) {
+                    val destFile = File(destDir, entry.name)
+                    
+                    if (entry.isDirectory) {
+                        destFile.mkdirs()
+                    } else {
+                        destFile.parentFile?.mkdirs()
+                        destFile.outputStream().use { output ->
+                            zipStream2.copyTo(output)
+                        }
+                    }
+                    
+                    entryCount++
+                    if (totalEntries > 0 && entryCount % 10 == 0) {
+                        val progress = (entryCount * 100) / totalEntries
+                        onProgress(progress)
+                    }
+                    
+                    zipStream2.closeEntry()
+                    entry = zipStream2.nextEntry
+                }
             }
         }
     }
     
-    private fun setExecutablePermissions(language: Language) {
-        when (language) {
+    /**
+     * 设置可执行权限（关键步骤，类似Termux的权限设置）
+     */
+    private fun setExecutablePermissions(language: Language, targetDir: File) {
+        val executableFiles = when (language) {
+            Language.C, Language.CPP -> listOf("tcc", "tinycc")
+            Language.PYTHON -> listOf("python3", "python3.11", "python")
+            Language.JAVA -> emptyList() // Java不需要设置执行权限
+        }
+        
+        executableFiles.forEach { fileName ->
+            val file = File(targetDir, "bin/$fileName").takeIf { it.exists() }
+                ?: File(targetDir, fileName)
+            
+            if (file.exists()) {
+                try {
+                    file.setExecutable(true, false) // 设置所有用户可执行
+                    Log.d(TAG, "Set executable permission for ${file.absolutePath}")
+                } catch (e: Exception) {
+                    Log.w(TAG, "Failed to set executable permission for $file", e)
+                }
+            }
+        }
+    }
+    
+    /**
+     * 验证安装是否成功
+     */
+    private fun verifyInstallation(language: Language, targetDir: File): Boolean {
+        return when (language) {
             Language.C, Language.CPP -> {
-                File(toolchainDir, "bin/clang").setExecutable(true)
-                File(toolchainDir, "bin/clang++").setExecutable(true)
+                val tccFile = File(targetDir, "tcc")
+                tccFile.exists() && tccFile.canExecute()
             }
             Language.JAVA -> {
-                File(toolchainDir, "bin/javac").setExecutable(true)
+                File(targetDir, "ecj.jar").exists()
             }
             Language.PYTHON -> {
-                File(toolchainDir, "bin/python3").setExecutable(true)
+                val pythonFile = File(targetDir, "bin/python3")
+                pythonFile.exists() && pythonFile.canExecute()
             }
         }
     }
 }
 
-// 数据类
+// 更新的数据类
+data class CompilerInfo(
+    val language: Language,
+    val isInstalled: Boolean,
+    val version: String,
+    val path: String,
+    val size: Long = 0
+)
+
+data class CompilerSizeInfo(
+    val language: Language,
+    val compressedSize: Long,
+    val estimatedUncompressedSize: Long,
+    val available: Boolean
+)
 
 data class InstallResult(
     val success: Boolean,
@@ -337,16 +367,11 @@ data class UninstallResult(
     }
 }
 
-data class CompilerSizeInfo(
-    val language: Language,
-    val compressedSize: Long,
-    val estimatedUncompressedSize: Long,
-    val available: Boolean
-)
-
-data class CompilerInfo(
-    val language: Language,
-    val isInstalled: Boolean,
-    val version: String,
-    val path: String
-)
+// 扩展Language枚举
+val Language.displayName: String
+    get() = when (this) {
+        Language.C -> "C"
+        Language.CPP -> "C++"
+        Language.JAVA -> "Java"
+        Language.PYTHON -> "Python"
+    }

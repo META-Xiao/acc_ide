@@ -5,4 +5,10 @@
     <attr name="code_background_light" format="color" />
     <attr name="code_text_light" format="color" />
     <attr name="sidebar_highlight_light" format="color" />
+    
+    <!-- Missing attributes -->
+    <attr name="termuxActivityDrawerBackground" format="color" />
+    <attr name="termuxActivityBackground" format="color" />
+    <attr name="termuxTextColor" format="color" />
+    <attr name="termuxToolbarBackground" format="color" />
 </resources> 

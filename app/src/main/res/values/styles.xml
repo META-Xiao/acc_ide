@@ -81,4 +81,33 @@
         <item name="android:background">@android:color/transparent</item>
         <item name="android:padding">0dp</item>
     </style>
+    
+    <!-- Missing text appearance styles -->
+    <style name="TextAppearance.Widget.BaseToolbar.Title" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textColor">@color/onSurface_light</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    
+    <style name="TextAppearance.Widget.BaseToolbar.Subtitle" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textColor">@color/onSurface_light</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+    
+    <!-- Terminal specific styles -->
+    <style name="TerminalTheme">
+        <item name="termuxActivityDrawerBackground">@color/background_light</item>
+        <item name="termuxActivityBackground">@color/terminal_background</item>
+        <item name="termuxTextColor">@color/terminal_foreground</item>
+        <item name="termuxToolbarBackground">@color/surface_light</item>
+    </style>
+    
+    <!-- Terminal dark theme -->
+    <style name="TerminalTheme.Dark">
+        <item name="termuxActivityDrawerBackground">@color/background_dark</item>
+        <item name="termuxActivityBackground">@color/terminal_background</item>
+        <item name="termuxTextColor">@color/terminal_foreground</item>
+        <item name="termuxToolbarBackground">@color/surface_dark</item>
+    </style>
 </resources> 

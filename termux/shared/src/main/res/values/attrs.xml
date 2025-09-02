@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="extraKeysButtonTextColor" format="color" />
+    <attr name="extraKeysButtonActiveTextColor" format="color" />
+    <attr name="extraKeysButtonBackgroundColor" format="color" />
+    <attr name="extraKeysButtonActiveBackgroundColor" format="color" />
+</resources>

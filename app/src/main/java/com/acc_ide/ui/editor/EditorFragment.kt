@@ -149,6 +149,20 @@ class EditorFragment : Fragment() {
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
+                    R.id.action_compile_run -> {
+                        // Save before compiling and running
+                        saveContent()
+                        compileAndRun()
+                        true
+                    }
+                    
+                    R.id.action_compile_only -> {
+                        // Save before compiling
+                        saveContent()
+                        compileOnly()
+                        true
+                    }
+
                     R.id.action_run -> {
                         if (isIOPanelOpen) {
                             closeIOPanel()
@@ -1011,6 +1025,85 @@ class EditorFragment : Fragment() {
         } catch (e: Exception) {
             android.util.Log.e("EditorFragment", "Failed to configure auto-completion component colors: ${e.message}")
             e.printStackTrace()
+        }
+    }
+    
+    /**
+     * Compile and run current file using termux integration
+     * 使用termux集成编译并运行当前文件
+     */
+    private fun compileAndRun() {
+        val mainActivity = activity as? MainActivity
+        if (mainActivity == null) {
+            Toast.makeText(context, "Activity not available", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
+        // Get current file content
+        val content = editor.text.toString()
+        
+        // Call MainActivity's compile and run method
+        mainActivity.compileAndRun(fileName, content)
+        
+        // Show toast to indicate compilation started
+        Toast.makeText(context, "Starting compilation...", Toast.LENGTH_SHORT).show()
+    }
+    
+    /**
+     * Compile only (without running) using termux integration
+     * 使用termux集成仅编译（不运行）当前文件
+     */
+    private fun compileOnly() {
+        val mainActivity = activity as? MainActivity
+        if (mainActivity == null) {
+            Toast.makeText(context, "Activity not available", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
+        // Get current file content
+        val content = editor.text.toString()
+        
+        // Call MainActivity's compile only method
+        mainActivity.compileOnly(fileName, content)
+        
+        // Show toast to indicate compilation started
+        Toast.makeText(context, "Starting compilation...", Toast.LENGTH_SHORT).show()
+    }
+    
+    /**
+     * Check if current file type supports compilation
+     * 检查当前文件类型是否支持编译
+     */
+    private fun isCompilationSupported(): Boolean {
+        return when {
+            fileName.endsWith(".c") || fileName.endsWith(".cpp") || fileName.endsWith(".cc") -> true
+            fileName.endsWith(".java") -> true
+            fileName.endsWith(".py") -> true
+            else -> false
+        }
+    }
+    
+    /**
+     * Show compilation output in a suitable location
+     * 在适当的位置显示编译输出
+     */
+    fun showCompilationOutput(output: String) {
+        try {
+            // Log the output
+            android.util.Log.d("Compilation", output)
+            
+            // Show in toast for now (can be enhanced to show in a dedicated output panel)
+            if (isAdded && context != null) {
+                if (output.contains("ERROR") || output.contains("failed") || output.contains("✗")) {
+                    // Error message - show longer
+                    Toast.makeText(context, output, Toast.LENGTH_LONG).show()
+                } else if (output.contains("✓") || output.contains("successful")) {
+                    // Success message
+                    Toast.makeText(context, output, Toast.LENGTH_SHORT).show()
+                }
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("EditorFragment", "Error showing compilation output", e)
         }
     }
 

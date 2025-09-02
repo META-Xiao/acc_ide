@@ -21,4 +21,10 @@ dependencyResolutionManagement {
 
 rootProject.name = "acc_ide_android"
 include(":app")
+include(":termux:shared")
+include(":termux:emulator") 
+include(":termux:view")
+include(":termux:application")
+include(":core:common")
+include(":core:resources")
  

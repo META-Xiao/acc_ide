@@ -7,414 +7,262 @@ import java.io.*
 import java.util.concurrent.TimeUnit
 
 /**
- * 编译器服务 - 负责管理各种编译器的调用和执行
+ * 编译器服务 - 负责执行本地编译和运行
+ * 基于TinyCC, ECJ, Python的轻量级实现
  */
 class CompilerService(private val context: Context) {
     
     private val TAG = "CompilerService"
+    private val compilerManager = CompilerManager(context)
+    private val workDir = File(context.filesDir, "workspace")
     private val toolchainDir = File(context.filesDir, "toolchain")
-    private val tempDir = File(context.cacheDir, "compile_temp")
+    
+    // Java专用编译服务
+    private val javaCompilerService = JavaCompilerService(context)
     
     init {
         // 确保必要的目录存在
-        tempDir.mkdirs()
+        workDir.mkdirs()
         toolchainDir.mkdirs()
     }
     
     /**
-     * 编译C/C++代码
+     * 编译并运行代码 - 统一入口
      */
-    suspend fun compileC(sourceCode: String, language: Language = Language.C): CompileResult = withContext(Dispatchers.IO) {
+    suspend fun compileAndRun(
+        code: String,
+        language: Language,
+        onOutput: (String) -> Unit = {},
+        onError: (String) -> Unit = {}
+    ): CompileResult = withContext(Dispatchers.IO) {
+        
+        if (!compilerManager.isCompilerInstalled(language)) {
+            return@withContext CompileResult.error("${language.displayName} compiler is not installed")
+        }
+        
         try {
-            Log.d(TAG, "Compiling ${language.name} code")
-            
-            // 生成临时文件名
-            val extension = if (language == Language.C) "c" else "cpp"
-            val sourceFile = File(tempDir, "main.$extension")
-            val outputFile = File(tempDir, "main.out")
-            
-            // 清理之前的文件
-            sourceFile.delete()
-            outputFile.delete()
-            
-            // 写入源码
-            sourceFile.writeText(sourceCode)
-            
-            // 选择编译器
-            val compiler = getCompilerPath(language)
-            if (!File(compiler).exists()) {
-                return@withContext CompileResult.error("编译器未安装: $compiler")
+            when (language) {
+                Language.C, Language.CPP -> compileCpp(code, language, onOutput, onError)
+                Language.JAVA -> javaCompilerService.executeJava(code, onOutput, onError)
+                Language.PYTHON -> runPython(code, onOutput, onError)
             }
-            
-            // 构建编译命令
-            val command = buildCompileCommand(compiler, sourceFile.absolutePath, outputFile.absolutePath, language)
-            
-            // 执行编译
-            val compileResult = executeCommand(command, tempDir, timeout = 30000)
-            
-            if (compileResult.exitCode == 0) {
-                CompileResult.success(
-                    message = "编译成功",
-                    outputFile = outputFile.absolutePath,
-                    compileOutput = compileResult.output
-                )
-            } else {
-                CompileResult.error(
-                    message = "编译失败",
-                    details = compileResult.error
-                )
-            }
-            
         } catch (e: Exception) {
-            Log.e(TAG, "Compile error", e)
-            CompileResult.error("编译异常: ${e.message}")
+            Log.e(TAG, "Compilation failed for $language", e)
+            CompileResult.error("Compilation failed: ${e.message}")
         }
     }
     
     /**
-     * 编译Java代码
+     * TinyCC C/C++ 编译执行
      */
-    suspend fun compileJava(sourceCode: String): CompileResult = withContext(Dispatchers.IO) {
-        try {
-            Log.d(TAG, "Compiling Java code")
-            
-            // 提取类名
-            val className = extractJavaClassName(sourceCode) ?: "Main"
-            val sourceFile = File(tempDir, "$className.java")
-            val classFile = File(tempDir, "$className.class")
-            
-            // 清理之前的文件
-            sourceFile.delete()
-            classFile.delete()
-            
-            // 写入源码
-            sourceFile.writeText(sourceCode)
-            
-            // 获取Java编译器路径
-            val javacPath = getJavacPath()
-            if (!File(javacPath).exists()) {
-                return@withContext CompileResult.error("Java编译器未找到")
-            }
-            
-            // 构建编译命令
-            val command = listOf(
-                javacPath,
-                "-cp", getAndroidJarPath(),
-                sourceFile.absolutePath
-            )
-            
-            // 执行编译
-            val compileResult = executeCommand(command, tempDir, timeout = 30000)
-            
-            if (compileResult.exitCode == 0 && classFile.exists()) {
-                CompileResult.success(
-                    message = "Java编译成功",
-                    outputFile = classFile.absolutePath,
-                    compileOutput = compileResult.output
-                )
-            } else {
-                CompileResult.error(
-                    message = "Java编译失败",
-                    details = compileResult.error
-                )
-            }
-            
-        } catch (e: Exception) {
-            Log.e(TAG, "Java compile error", e)
-            CompileResult.error("Java编译异常: ${e.message}")
+    private suspend fun compileCpp(
+        code: String, 
+        language: Language, 
+        onOutput: (String) -> Unit,
+        onError: (String) -> Unit
+    ): CompileResult {
+        val sourceFile = File(workDir, "main.${language.extension}")
+        
+        // 写入源代码文件
+        sourceFile.writeText(code)
+        
+        // TinyCC编译命令 - 使用 -run 模式直接执行
+        val tccPath = File(toolchainDir, "tinycc/tcc").absolutePath
+        val compileCmd = listOf(
+            tccPath,
+            "-run", // TinyCC的直接运行模式，无需生成可执行文件
+            sourceFile.absolutePath
+        )
+        
+        return executeCommand(compileCmd, onOutput, onError)
+    }
+    
+    /**
+     * ECJ Java编译执行
+     * 注意：Android上不能直接运行标准Java字节码，这里只做编译检查
+     */
+    private suspend fun compileJava(
+        code: String,
+        onOutput: (String) -> Unit,
+        onError: (String) -> Unit
+    ): CompileResult {
+        val sourceFile = File(workDir, "Main.java")
+        
+        // 写入Java源代码
+        sourceFile.writeText(code)
+        
+        // ECJ编译 - 只检查语法和编译错误
+        val ecjPath = File(toolchainDir, "java/ecj.jar").absolutePath
+        val compileCmd = listOf(
+            "java", "-jar", ecjPath,
+            "-d", workDir.absolutePath,
+            "-classpath", getAndroidClasspath(),
+            "-source", "8", // 兼容Java 8语法
+            "-target", "8",
+            "-nowarn", // 减少警告信息
+            sourceFile.absolutePath
+        )
+        
+        val compileResult = executeCommand(compileCmd, onOutput, onError)
+        
+        if (compileResult.success) {
+            val successMessage = "Java编译成功！\n注意：Android环境下无法直接执行Java字节码，建议转换为Android项目或使用其他语言。"
+            onOutput(successMessage)
+            return CompileResult.success(successMessage)
+        } else {
+            return CompileResult.error("Java编译失败", compileResult.error)
         }
     }
     
     /**
-     * 运行Python代码
+     * 获取Android兼容的类路径
      */
-    suspend fun runPython(sourceCode: String): ExecutionResult = withContext(Dispatchers.IO) {
-        try {
-            Log.d(TAG, "Running Python code")
-            
-            val sourceFile = File(tempDir, "main.py")
-            sourceFile.writeText(sourceCode)
-            
-            val pythonPath = getPythonPath()
-            if (!File(pythonPath).exists()) {
-                return@withContext ExecutionResult.error("Python解释器未安装")
-            }
-            
-            val command = listOf(pythonPath, sourceFile.absolutePath)
-            val result = executeCommand(command, tempDir, timeout = 30000)
-            
-            ExecutionResult(
-                success = result.exitCode == 0,
-                output = result.output,
-                error = result.error,
-                exitCode = result.exitCode
-            )
-            
-        } catch (e: Exception) {
-            Log.e(TAG, "Python execution error", e)
-            ExecutionResult.error("Python执行异常: ${e.message}")
+    private fun getAndroidClasspath(): String {
+        val androidJar = File(toolchainDir, "java/android.jar")
+        return if (androidJar.exists()) {
+            androidJar.absolutePath
+        } else {
+            // 回退到基本的Java运行时类
+            System.getProperty("java.class.path") ?: ""
         }
     }
     
     /**
-     * 运行编译后的程序
+     * Python解释器运行
      */
-    suspend fun runProgram(executablePath: String): ExecutionResult = withContext(Dispatchers.IO) {
-        try {
-            Log.d(TAG, "Running program: $executablePath")
-            
-            val execFile = File(executablePath)
-            if (!execFile.exists()) {
-                return@withContext ExecutionResult.error("可执行文件不存在: $executablePath")
-            }
-            
-            // 确保文件有执行权限
-            execFile.setExecutable(true)
-            
-            val command = listOf(executablePath)
-            val result = executeCommand(command, tempDir, timeout = 30000)
-            
-            ExecutionResult(
-                success = result.exitCode == 0,
-                output = result.output,
-                error = result.error,
-                exitCode = result.exitCode
-            )
-            
-        } catch (e: Exception) {
-            Log.e(TAG, "Program execution error", e)
-            ExecutionResult.error("程序执行异常: ${e.message}")
+    private suspend fun runPython(
+        code: String,
+        onOutput: (String) -> Unit,
+        onError: (String) -> Unit
+    ): CompileResult {
+        val scriptFile = File(workDir, "script.py")
+        scriptFile.writeText(code)
+        
+        // 使用Python包装器脚本，它会设置正确的环境变量
+        val pythonWrapperPath = File(toolchainDir, "python/python").absolutePath
+        val directPythonPath = File(toolchainDir, "python/bin/python3").absolutePath
+        
+        // 优先使用包装器脚本，回退到直接路径
+        val pythonPath = if (File(pythonWrapperPath).exists()) {
+            pythonWrapperPath
+        } else {
+            directPythonPath
         }
+        
+        val runCmd = listOf(pythonPath, scriptFile.absolutePath)
+        
+        return executeCommand(runCmd, onOutput, onError)
     }
     
     /**
      * 检查编译器是否已安装
      */
     fun isCompilerInstalled(language: Language): Boolean {
-        val compilerPath = getCompilerPath(language)
-        return File(compilerPath).exists()
+        return compilerManager.isCompilerInstalled(language)
     }
     
     /**
      * 获取编译器信息
      */
     suspend fun getCompilerInfo(language: Language): CompilerInfo = withContext(Dispatchers.IO) {
-        val compilerPath = getCompilerPath(language)
-        val isInstalled = File(compilerPath).exists()
-        
-        val version = if (isInstalled) {
-            try {
-                val versionCommand = listOf(compilerPath, "--version")
-                val result = executeCommand(versionCommand, tempDir, timeout = 5000)
-                if (result.exitCode == 0) {
-                    result.output.lines().firstOrNull() ?: "Unknown"
-                } else "Unknown"
-            } catch (e: Exception) {
-                "Unknown"
-            }
-        } else "Not installed"
-        
-        CompilerInfo(
-            language = language,
-            isInstalled = isInstalled,
-            version = version,
-            path = compilerPath
-        )
+        return@withContext compilerManager.getCompilerInfo(language)
     }
     
-    // 私有辅助方法
-    
-    private fun getCompilerPath(language: Language): String {
-        return when (language) {
-            Language.C -> "$toolchainDir/bin/clang"
-            Language.CPP -> "$toolchainDir/bin/clang++"
-            Language.JAVA -> getJavacPath()
-            Language.PYTHON -> getPythonPath()
-        }
-    }
-    
-    private fun getJavacPath(): String {
-        // 尝试多个可能的路径
-        val possiblePaths = listOf(
-            "$toolchainDir/bin/javac",
-            "/system/bin/javac",
-            "javac" // 系统PATH中的javac
-        )
-        
-        for (path in possiblePaths) {
-            if (File(path).exists()) {
-                return path
-            }
-        }
-        
-        return "$toolchainDir/bin/javac" // 默认路径
-    }
-    
-    private fun getPythonPath(): String {
-        val possiblePaths = listOf(
-            "$toolchainDir/bin/python3",
-            "$toolchainDir/bin/python",
-            "/system/bin/python3",
-            "python3"
-        )
-        
-        for (path in possiblePaths) {
-            if (File(path).exists()) {
-                return path
-            }
-        }
-        
-        return "$toolchainDir/bin/python3"
-    }
-    
-    private fun getAndroidJarPath(): String {
-        // Android SDK的android.jar路径
-        return "$toolchainDir/platforms/android.jar"
-    }
-    
-    private fun buildCompileCommand(
-        compiler: String,
-        sourceFile: String,
-        outputFile: String,
-        language: Language
-    ): List<String> {
-        val command = mutableListOf(compiler)
-        
-        // 添加通用参数
-        command.addAll(listOf("-o", outputFile, sourceFile))
-        
-        // 添加包含路径
-        val includePath = "$toolchainDir/include"
-        if (File(includePath).exists()) {
-            command.addAll(listOf("-I", includePath))
-        }
-        
-        // 添加库路径
-        val libPath = "$toolchainDir/lib"
-        if (File(libPath).exists()) {
-            command.addAll(listOf("-L", libPath))
-        }
-        
-        // 语言特定参数
-        when (language) {
-            Language.C -> {
-                command.add("-std=c11")
-            }
-            Language.CPP -> {
-                command.add("-std=c++17")
-                command.add("-lstdc++")
-            }
-            else -> { /* 其他语言不需要特殊参数 */ }
-        }
-        
-        return command
-    }
-    
-    private fun extractJavaClassName(sourceCode: String): String? {
-        // 简单的类名提取
-        val classPattern = Regex("""public\s+class\s+(\w+)""")
-        val match = classPattern.find(sourceCode)
-        return match?.groups?.get(1)?.value
-    }
-    
+    /**
+     * 执行系统命令
+     */
     private suspend fun executeCommand(
         command: List<String>,
-        workingDir: File,
-        timeout: Long = 30000
-    ): CommandResult = withContext(Dispatchers.IO) {
+        onOutput: (String) -> Unit,
+        onError: (String) -> Unit
+    ): CompileResult = withContext(Dispatchers.IO) {
         try {
-            Log.d(TAG, "Executing command: ${command.joinToString(" ")}")
-            
             val processBuilder = ProcessBuilder(command)
-            processBuilder.directory(workingDir)
-            processBuilder.redirectErrorStream(false)
+            processBuilder.directory(workDir)
+            
+            // 设置环境变量
+            val env = processBuilder.environment()
+            env["PATH"] = "${toolchainDir.absolutePath}/bin:${env["PATH"]}"
+            env["LD_LIBRARY_PATH"] = "${toolchainDir.absolutePath}/lib:${env["LD_LIBRARY_PATH"] ?: ""}"
+            env["TMPDIR"] = File(context.cacheDir, "tmp").apply { mkdirs() }.absolutePath
+            
+            // Python特殊环境变量设置
+            val pythonDir = File(toolchainDir, "python")
+            if (pythonDir.exists() && command.firstOrNull()?.contains("python") == true) {
+                env["PYTHONHOME"] = pythonDir.absolutePath
+                env["PYTHONPATH"] = "${pythonDir.absolutePath}/lib/python3.11:${pythonDir.absolutePath}/lib/python3.11/site-packages"
+                env["PYTHONDONTWRITEBYTECODE"] = "1" // 避免写入.pyc文件
+                env["PYTHONUNBUFFERED"] = "1" // 确保输出不被缓冲
+                
+                // 创建Python临时目录
+                val pythonTmpDir = File(context.cacheDir, "python_tmp")
+                pythonTmpDir.mkdirs()
+                env["PYTHONUSERBASE"] = pythonTmpDir.absolutePath
+            }
+            
+            Log.d(TAG, "Executing: ${command.joinToString(" ")}")
             
             val process = processBuilder.start()
             
-            // 读取输出
-            val outputBuffer = StringBuilder()
-            val errorBuffer = StringBuilder()
-            
-            val outputReader = BufferedReader(InputStreamReader(process.inputStream))
-            val errorReader = BufferedReader(InputStreamReader(process.errorStream))
-            
-            // 启动读取线程
+            // 异步读取输出
             val outputJob = async {
-                outputReader.use { reader ->
-                    reader.lineSequence().forEach { line ->
-                        outputBuffer.appendLine(line)
+                process.inputStream.bufferedReader().use { reader ->
+                    var line: String?
+                    while (reader.readLine().also { line = it } != null) {
+                        onOutput(line!! + "\n")
                     }
                 }
             }
             
             val errorJob = async {
-                errorReader.use { reader ->
-                    reader.lineSequence().forEach { line ->
-                        errorBuffer.appendLine(line)
+                process.errorStream.bufferedReader().use { reader ->
+                    var line: String?
+                    while (reader.readLine().also { line = it } != null) {
+                        onError(line!! + "\n")
                     }
                 }
             }
             
-            // 等待进程完成或超时
-            val completed = process.waitFor(timeout, TimeUnit.MILLISECONDS)
+            // 等待进程完成，最多30秒
+            val finished = withTimeoutOrNull(30000) {
+                process.waitFor()
+                true
+            }
             
-            if (!completed) {
+            if (finished != true) {
                 process.destroyForcibly()
-                return@withContext CommandResult(-1, "", "进程超时")
+                return@withContext CompileResult.error("Process timeout after 30 seconds")
             }
             
             // 等待输出读取完成
             outputJob.await()
             errorJob.await()
             
-            CommandResult(
-                exitCode = process.exitValue(),
-                output = outputBuffer.toString().trim(),
-                error = errorBuffer.toString().trim()
-            )
+            val exitCode = process.exitValue()
+            if (exitCode == 0) {
+                CompileResult.success("Execution completed successfully")
+            } else {
+                CompileResult.error("Process exited with code $exitCode")
+            }
             
         } catch (e: Exception) {
-            Log.e(TAG, "Command execution error", e)
-            CommandResult(-1, "", "执行异常: ${e.message}")
+            Log.e(TAG, "Command execution failed", e)
+            CompileResult.error("Execution failed: ${e.message}")
         }
     }
 }
 
-// 数据类定义
-
-enum class Language {
-    C, CPP, JAVA, PYTHON
-}
-
+/**
+ * 编译结果数据类
+ */
 data class CompileResult(
     val success: Boolean,
     val message: String,
-    val outputFile: String? = null,
-    val compileOutput: String? = null,
-    val error: String? = null
+    val output: String = "",
+    val error: String = ""
 ) {
     companion object {
-        fun success(message: String, outputFile: String? = null, compileOutput: String? = null) =
-            CompileResult(true, message, outputFile, compileOutput)
-        
-        fun error(message: String, details: String? = null) =
-            CompileResult(false, message, error = details)
+        fun success(message: String, output: String = "") = CompileResult(true, message, output)
+        fun error(message: String, error: String = "") = CompileResult(false, message, "", error)
     }
 }
-
-data class ExecutionResult(
-    val success: Boolean,
-    val output: String,
-    val error: String? = null,
-    val exitCode: Int = 0
-) {
-    companion object {
-        fun error(message: String) = ExecutionResult(false, "", message, -1)
-    }
-}
-
-private data class CommandResult(
-    val exitCode: Int,
-    val output: String,
-    val error: String
-)

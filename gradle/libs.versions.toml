@@ -1,8 +1,26 @@
 [versions]
-agp = "8.11.1"
-kotlin = "2.1.0"
+agp = "8.5.0"
+markwon = "4.6.2"
+kotlin = "1.9.24"
+kotlin-coroutines = "1.8.1"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 
+[libraries]
+# Common
+common-markwon-core = { module = "io.noties.markwon:core", version.ref = "markwon" }
+common-markwon-extStrikethrough = { module = "io.noties.markwon:ext-strikethrough", version.ref = "markwon" }
+common-markwon-linkify = { module = "io.noties.markwon:linkify", version.ref = "markwon" }
+common-markwon-recycler = { module = "io.noties.markwon:recycler", version.ref = "markwon" }
+common-hiddenApiBypass = { module = "org.lsposed.hiddenapibypass:hiddenapibypass", version = "4.3" }
+common-io = { module = "commons-io:commons-io", version = "2.15.1" }
+common-termuxAmLib = { module = "com.termux:termux-am-library", version = "v2.0.0" }
+
+# AndroidX  
+androidx-window-v1alpha9 = { module = "androidx.window:window", version = "1.0.0-alpha09" }
+
+# Google
+google-material = { module = "com.google.android.material:material", version = "1.9.0" }
+google-guava = { module = "com.google.guava:guava", version = "31.1-android" }

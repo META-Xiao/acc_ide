@@ -1,0 +1,3 @@
+com.acc_ide.core.resources
+string msg_cannot_create_terminal_session
+string msg_terminal_new_sessions_disabled

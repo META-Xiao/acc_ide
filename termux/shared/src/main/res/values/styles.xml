@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Termux_Theme_AppCompat_Light_Dialog" parent="Theme.AppCompat.Light.Dialog">
+    </style>
+</resources>

@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.acc_ide.R
 import com.acc_ide.ui.main.MainActivity
-import com.acc_ide.compiler.CompilerService
+import com.acc_ide.compiler.CompilerManager
 import com.acc_ide.compiler.Language
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
@@ -54,7 +54,7 @@ class IOPanelFragment : Fragment() {
     private lateinit var cloudModeChip: Chip
     
     // 本地编译服务
-    private lateinit var compilerService: CompilerService
+    private lateinit var compilerManager: CompilerManager
     
     private var fileName: String = ""
     private var language: String = ""
@@ -143,7 +143,7 @@ class IOPanelFragment : Fragment() {
         cloudModeChip = view.findViewById(R.id.cloud_mode_chip)
         
         // Initialize compiler service
-        compilerService = CompilerService(requireContext())
+        compilerManager = CompilerManager(requireContext())
         
         // Set initial state
         runStatus.text = ""
@@ -240,35 +240,48 @@ class IOPanelFragment : Fragment() {
             return
         }
         
+        val language = getLanguageFromExtension(fileName)
+        if (language == null) {
+            showError("不支持的语言类型: $language")
+            return
+        }
+        
         setRunning(true, "本地编译运行中...")
+        
+        // 清空之前的输出
+        actualOutputText.setText("")
+        
+        val outputBuffer = StringBuilder()
+        val errorBuffer = StringBuilder()
         
         CoroutineScope(Dispatchers.Main).launch {
             try {
-                val result = when (getLanguageFromExtension(fileName)) {
-                    Language.C -> compilerService.compileC(fileContent, Language.C)
-                    Language.CPP -> compilerService.compileC(fileContent, Language.CPP)
-                    Language.JAVA -> compilerService.compileJava(fileContent)
-                    Language.PYTHON -> {
-                        // Python直接执行
-                        val execResult = compilerService.runPython(fileContent)
-                        displayLocalExecutionResult(execResult.output, execResult.error, execResult.success)
-                        return@launch
+                val result = compilerManager.compileAndRun(
+                    code = fileContent,
+                    language = language,
+                    onOutput = { output ->
+                        outputBuffer.append(output)
+                        // 实时显示输出
+                        withContext(Dispatchers.Main) {
+                            actualOutputText.setText(outputBuffer.toString())
+                        }
+                    },
+                    onError = { error ->
+                        errorBuffer.append(error)
+                        // 实时显示错误
+                        withContext(Dispatchers.Main) {
+                            val currentText = actualOutputText.text.toString()
+                            actualOutputText.setText("$currentText$error")
+                        }
                     }
-                    else -> {
-                        showError("不支持的语言类型: $language")
-                        return@launch
-                    }
-                }
+                )
                 
-                if (result.success && result.outputFile != null) {
-                    // 编译成功，运行程序
-                    setRunning(true, "运行程序中...")
-                    val execResult = compilerService.runProgram(result.outputFile)
-                    displayLocalExecutionResult(execResult.output, execResult.error, execResult.success)
-                } else {
-                    // 编译失败
-                    displayLocalExecutionResult("", result.error ?: "编译失败", false)
-                }
+                displayLocalExecutionResult(
+                    output = outputBuffer.toString(),
+                    error = errorBuffer.toString(),
+                    success = result.success,
+                    message = result.message
+                )
                 
             } catch (e: Exception) {
                 Log.e("IOPanel", "本地执行异常", e)
@@ -282,7 +295,7 @@ class IOPanelFragment : Fragment() {
     /**
      * Display local execution result
      */
-    private fun displayLocalExecutionResult(output: String, error: String?, success: Boolean) {
+    private fun displayLocalExecutionResult(output: String, error: String, success: Boolean, message: String = "") {
         val resultText = if (success) {
             if (output.isNotBlank()) output else "(程序执行完成，无输出)"
         } else {

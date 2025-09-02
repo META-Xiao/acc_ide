@@ -11,6 +11,14 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/core/common" />
+            <option value="$PROJECT_DIR$/core/resources" />
+            <option value="$PROJECT_DIR$/termux" />
+            <option value="$PROJECT_DIR$/termux/application" />
+            <option value="$PROJECT_DIR$/termux/emulator" />
+            <option value="$PROJECT_DIR$/termux/shared" />
+            <option value="$PROJECT_DIR$/termux/view" />
           </set>
         </option>
       </GradleProjectSettings>
