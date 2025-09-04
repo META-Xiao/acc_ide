@@ -1,6 +1,6 @@
-package com.acc_ide.termux.app;
+package com.termux.app;
 
-import com.acc_ide.termux.shared.termux.data.TermuxUrlUtils;
+import com.termux.shared.termux.data.TermuxUrlUtils;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import org.junit.Assert;

@@ -1,11 +1,11 @@
-package com.acc_ide.termux.terminal;
+package com.termux.terminal;
 
 import java.io.UnsupportedEncodingException;
 
 public class UnicodeInputTest extends TerminalTestCase {
 
 	public void testIllFormedUtf8SuccessorByteNotConsumed() throws Exception {
-		// The Unicode Standard Version 6.2 �?Core Specification (http://www.unicode.org/versions/Unicode6.2.0/ch03.pdf):
+		// The Unicode Standard Version 6.2 – Core Specification (http://www.unicode.org/versions/Unicode6.2.0/ch03.pdf):
 		// "If the converter encounters an ill-formed UTF-8 code unit sequence which starts with a valid first byte, but which does not
 		// continue with valid successor bytes (see Table 3-7), it must not consume the successor bytes as part of the ill-formed
 		// subsequence whenever those successor bytes themselves constitute part of a well-formed UTF-8 code unit subsequence."
@@ -95,19 +95,19 @@ public class UnicodeInputTest extends TerminalTestCase {
 	public void testWideCharacterInLastColumn() throws Exception {
 		withTerminalSized(3, 2).enterString("  枝\u0302").assertLinesAre("   ", "枝\u0302 ");
 
-		withTerminalSized(3, 2).enterString(" �?).assertLinesAre(" �?, "   ").assertCursorAt(0, 2);
-		enterString("a").assertLinesAre(" �?, "a  ");
+		withTerminalSized(3, 2).enterString(" 枝").assertLinesAre(" 枝", "   ").assertCursorAt(0, 2);
+		enterString("a").assertLinesAre(" 枝", "a  ");
 	}
 
 	public void testWideCharacterDeletion() throws Exception {
 		// CSI Ps D Cursor Backward Ps Times
 		withTerminalSized(3, 2).enterString("枝\033[Da").assertLinesAre(" a ", "   ");
 		withTerminalSized(3, 2).enterString("枝\033[2Da").assertLinesAre("a  ", "   ");
-		withTerminalSized(3, 2).enterString("枝\033[2D�?).assertLinesAre("�?", "   ");
-		withTerminalSized(3, 2).enterString("枝\033[1D�?).assertLinesAre(" �?, "   ");
-		withTerminalSized(5, 2).enterString(" �?\033[Da").assertLinesAre(" 枝a ", "     ");
+		withTerminalSized(3, 2).enterString("枝\033[2D枝").assertLinesAre("枝 ", "   ");
+		withTerminalSized(3, 2).enterString("枝\033[1D枝").assertLinesAre(" 枝", "   ");
+		withTerminalSized(5, 2).enterString(" 枝 \033[Da").assertLinesAre(" 枝a ", "     ");
 		withTerminalSized(5, 2).enterString("a \033[D\u0302").assertLinesAre("a\u0302    ", "     ");
-		withTerminalSized(5, 2).enterString("�?\033[D\u0302").assertLinesAre("枝\u0302   ", "     ");
+		withTerminalSized(5, 2).enterString("枝 \033[D\u0302").assertLinesAre("枝\u0302   ", "     ");
 		enterString("Z").assertLinesAre("枝\u0302Z  ", "     ");
 		enterString("\033[D ").assertLinesAre("枝\u0302   ", "     ");
 		// Go back two columns, standing at the second half of the wide character:
@@ -115,7 +115,7 @@ public class UnicodeInputTest extends TerminalTestCase {
 	}
 
 	public void testWideCharOverwriting() {
-		withTerminalSized(3, 2).enterString("abc\033[3D�?).assertLinesAre("枝c", "   ");
+		withTerminalSized(3, 2).enterString("abc\033[3D枝").assertLinesAre("枝c", "   ");
 	}
 
 	public void testOverlongUtf8Encoding() throws Exception {
@@ -129,8 +129,8 @@ public class UnicodeInputTest extends TerminalTestCase {
 		// With wraparound disabled. The behaviour when a wide character is output with cursor in
 		// the last column when autowrap is disabled is not obvious, but we expect the wide
 		// character to be ignored here.
-		withTerminalSized(3, 3).enterString("\033[?7l").enterString("枝枝�?).assertLinesAre("�?", "   ", "   ");
-		enterString("a�?).assertLinesAre("枝a", "   ", "   ");
+		withTerminalSized(3, 3).enterString("\033[?7l").enterString("枝枝枝").assertLinesAre("枝 ", "   ", "   ");
+		enterString("a枝").assertLinesAre("枝a", "   ", "   ");
 	}
 
 }

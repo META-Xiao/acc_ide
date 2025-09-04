@@ -71,7 +71,7 @@ class JavaCompilerService(private val context: Context) {
             val outputBuffer = StringBuilder()
             val errorBuffer = StringBuilder()
             
-            val outputJob = async {
+            val outputJob = GlobalScope.async {
                 process.inputStream.bufferedReader().use { reader ->
                     reader.lineSequence().forEach { line ->
                         outputBuffer.appendLine(line)
@@ -80,7 +80,7 @@ class JavaCompilerService(private val context: Context) {
                 }
             }
             
-            val errorJob = async {
+            val errorJob = GlobalScope.async {
                 process.errorStream.bufferedReader().use { reader ->
                     reader.lineSequence().forEach { line ->
                         errorBuffer.appendLine(line)

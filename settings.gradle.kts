@@ -16,6 +16,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // 添加JitPack仓库以获取termux相关库
+        maven { url = uri("https://jitpack.io") }
     }
 }
 
@@ -27,4 +29,6 @@ include(":termux:view")
 include(":termux:application")
 include(":core:common")
 include(":core:resources")
+include(":utilities:build-info")
+include(":utilities:preferences")
  

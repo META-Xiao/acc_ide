@@ -1,0 +1,16 @@
+-- Merging decision tree log ---
+manifest
+ADDED from D:\20404\Documents\acc_ide\termux\shared\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest13123233335441913702.xml:2:13-83
+INJECTED from D:\20404\Documents\acc_ide\termux\shared\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest13123233335441913702.xml:2:13-83
+	package
+		INJECTED from D:\20404\Documents\acc_ide\termux\shared\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest13123233335441913702.xml
+	xmlns:android
+		ADDED from D:\20404\Documents\acc_ide\termux\shared\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest13123233335441913702.xml:2:23-81
+uses-sdk
+INJECTED from D:\20404\Documents\acc_ide\termux\shared\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest13123233335441913702.xml reason: use-sdk injection requested
+INJECTED from D:\20404\Documents\acc_ide\termux\shared\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest13123233335441913702.xml
+INJECTED from D:\20404\Documents\acc_ide\termux\shared\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest13123233335441913702.xml
+	android:targetSdkVersion
+		INJECTED from D:\20404\Documents\acc_ide\termux\shared\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest13123233335441913702.xml
+	android:minSdkVersion
+		INJECTED from D:\20404\Documents\acc_ide\termux\shared\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest13123233335441913702.xml

@@ -1,4 +1,4 @@
-package com.acc_ide.termux.view;
+package com.termux.view;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -36,10 +36,10 @@ import android.widget.Scroller;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import com.acc_ide.termux.terminal.KeyHandler;
+import com.termux.terminal.KeyHandler;
 import com.termux.terminal.TerminalEmulator;
 import com.termux.terminal.TerminalSession;
-import com.acc_ide.termux.view.textselection.TextSelectionCursorController;
+import com.termux.view.textselection.TextSelectionCursorController;
 
 /** View displaying and interacting with a {@link TerminalSession}. */
 public final class TerminalView extends View {

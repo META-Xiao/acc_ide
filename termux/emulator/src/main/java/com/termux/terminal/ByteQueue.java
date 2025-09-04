@@ -1,4 +1,4 @@
-package com.acc_ide.termux.terminal;
+package com.termux.terminal;
 
 /** A circular byte buffer allowing one producer and one consumer thread. */
 final class ByteQueue {

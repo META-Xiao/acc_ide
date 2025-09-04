@@ -1,4 +1,4 @@
-package com.acc_ide.termux.app.api.file;
+package com.termux.app.api.file;
 
 import java.util.ArrayList;
 import java.util.List;

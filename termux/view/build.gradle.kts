@@ -15,18 +15,19 @@
  *   along with AndroidIDE.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     id("com.android.library")
     id("kotlin-android")
 }
 
 android {
-    namespace = "com.acc_ide.termux.view"
+    namespace = "com.termux.view"
     compileSdk = 33
-    
+
     defaultConfig {
         minSdk = 24
-        targetSdk = 33
     }
     
     compileOptions {
@@ -40,7 +41,11 @@ android {
 }
 
 dependencies {
-    api(project(":termux:emulator"))
     implementation("androidx.annotation:annotation:1.6.0")
+    implementation("androidx.viewpager:viewpager:1.0.0")
+    implementation("com.google.android.material:material:1.9.0")
+
+    api(project(":termux:emulator"))
+    
     testImplementation("junit:junit:4.13.2")
 }

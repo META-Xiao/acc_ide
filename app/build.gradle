@@ -83,6 +83,9 @@ dependencies {
     implementation project(':termux:emulator')
     implementation project(':termux:view')
     
+    // 直接添加termux-am-library依赖，确保app模块可以访问termux类
+    implementation 'com.github.termux:termux-am-library:v2.0.0'
+    
     // Core modules dependencies
     implementation project(':core:common')
     implementation project(':core:resources')

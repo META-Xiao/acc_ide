@@ -1,4 +1,4 @@
-package com.acc_ide.termux.terminal;
+package com.termux.terminal;
 
 import java.io.UnsupportedEncodingException;
 
@@ -270,9 +270,9 @@ public class TerminalTest extends TerminalTestCase {
 	/** The ncurses library still uses this. */
 	public void testLineDrawing() {
 		// 016 - shift out / G1. 017 - shift in / G0. "ESC ) 0" - use line drawing for G1
-		withTerminalSized(4, 2).enterString("q\033)0q\016q\017q").assertLinesAre("qq-q", "    ");
+		withTerminalSized(4, 2).enterString("q\033)0q\016q\017q").assertLinesAre("qq─q", "    ");
 		// "\0337", saving cursor should save G0, G1 and invoked charset and "ESC 8" should restore.
-		withTerminalSized(4, 2).enterString("\033)0\016qqq\0337\017\0338q").assertLinesAre("----", "    ");
+		withTerminalSized(4, 2).enterString("\033)0\016qqq\0337\017\0338q").assertLinesAre("────", "    ");
 	}
 
 	public void testSoftTerminalReset() {

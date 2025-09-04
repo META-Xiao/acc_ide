@@ -15,23 +15,37 @@
  *   along with AndroidIDE.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     id("com.android.library")
     id("kotlin-android")
 }
 
 android {
-    namespace = "com.acc_ide.termux.emulator"
+    namespace = "com.termux.terminal"
     compileSdk = 33
-    
+
     defaultConfig {
         minSdk = 24
-        targetSdk = 33
-        
+
+        // NDK configuration
         externalNativeBuild {
             ndkBuild {
-                cFlags += arrayOf("-std=c11", "-Wall", "-Wextra", "-Werror", "-Os", "-fno-stack-protector", "-Wl,--gc-sections")
+                cFlags("-std=c11", "-Wall", "-Wextra", "-Werror", "-Os", "-fno-stack-protector", "-Wl,--gc-sections")
             }
+        }
+    }
+
+    externalNativeBuild {
+        ndkBuild {
+            path = file("src/main/jni/Android.mk")
+        }
+    }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
         }
     }
     
@@ -42,22 +56,6 @@ android {
     
     kotlinOptions {
         jvmTarget = "17"
-    }
-
-    externalNativeBuild {
-        ndkBuild {
-            path = file("src/main/jni/Android.mk")
-        }
-    }
-
-    testOptions {
-        unitTests.isReturnDefaultValues = true
-    }
-}
-
-tasks.withType(Test::class.java) {
-    testLogging {
-        events("started", "passed", "skipped", "failed")
     }
 }
 

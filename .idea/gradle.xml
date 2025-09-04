@@ -19,6 +19,9 @@
             <option value="$PROJECT_DIR$/termux/emulator" />
             <option value="$PROJECT_DIR$/termux/shared" />
             <option value="$PROJECT_DIR$/termux/view" />
+            <option value="$PROJECT_DIR$/utilities" />
+            <option value="$PROJECT_DIR$/utilities/build-info" />
+            <option value="$PROJECT_DIR$/utilities/preferences" />
           </set>
         </option>
       </GradleProjectSettings>

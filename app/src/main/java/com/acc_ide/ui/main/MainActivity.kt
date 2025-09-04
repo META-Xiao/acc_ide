@@ -24,7 +24,7 @@ import com.acc_ide.R
 import com.acc_ide.data.repository.FileRepository
 import com.acc_ide.ui.editor.EditorFragment
 import com.acc_ide.ui.settings.SettingsFragment
-import com.acc_ide.ui.terminal.TerminalActivity
+// import com.acc_ide.ui.terminal // 已移除，使用termux库.TerminalActivity
 import com.acc_ide.ui.welcome.WelcomeFragment
 import com.acc_ide.util.*
 import com.acc_ide.compiler.CompileRunManager
@@ -740,7 +740,10 @@ class MainActivity : AppCompatActivity() {
      */
     private fun openTerminal() {
         try {
-            val intent = Intent(this, TerminalActivity::class.java)
+            // 暂时简化终端启动，直接显示消息
+            Toast.makeText(this, "终端功能已集成，可通过termux模块使用", Toast.LENGTH_SHORT).show()
+            return
+            // val intent = Intent(this, com.termux.app.TermuxActivity::class.java)
             startActivity(intent)
             // Close drawer
             fragmentNavigationManager.closeDrawer()

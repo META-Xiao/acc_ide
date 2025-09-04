@@ -1,4 +1,4 @@
-package com.acc_ide.termux.app.models;
+package com.termux.app.models;
 
 public enum UserAction {
   REPORT_ISSUE_FROM_TRANSCRIPT("report issue from transcript");

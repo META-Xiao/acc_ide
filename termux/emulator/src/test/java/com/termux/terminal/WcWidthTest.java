@@ -1,4 +1,4 @@
-package com.acc_ide.termux.terminal;
+package com.termux.terminal;
 
 import junit.framework.TestCase;
 
@@ -23,11 +23,11 @@ public class WcWidthTest extends TestCase {
 	}
 
 	public void testSomeWide() {
-		assertWidthIs(2, 'ï¼?);
-		assertWidthIs(2, 'ï¼?);
-		assertWidthIs(2, 'ï¼?);
-		assertWidthIs(2, 'ä¸?);
-		assertWidthIs(2, 'æ–?);
+		assertWidthIs(2, 'ï¼¡');
+		assertWidthIs(2, 'ï¼¢');
+		assertWidthIs(2, 'ï¼£');
+		assertWidthIs(2, 'ä¸­');
+		assertWidthIs(2, 'æ–‡');
 
 		assertWidthIs(2, 0x679C);
 		assertWidthIs(2, 0x679D);

@@ -15,18 +15,19 @@
  *   along with AndroidIDE.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 plugins {
-    id ("com.android.library")
+    id("com.android.library")
     id("kotlin-android")
 }
 
 android {
-    namespace = "com.acc_ide.termux.shared"
+    namespace = "com.termux.shared"
     compileSdk = 33
-    
+
     defaultConfig {
         minSdk = 24
-        targetSdk = 33
     }
     
     compileOptions {
@@ -37,45 +38,18 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-
-    externalNativeBuild {
-        ndkBuild {
-            path = file("src/main/cpp/Android.mk")
-        }
-    }
-    
-    buildFeatures {
-        buildConfig = true
-        dataBinding = true
-        viewBinding = true
-    }
 }
 
 dependencies {
-    implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.annotation:annotation:1.6.0")
     implementation("androidx.core:core-ktx:1.10.1")
-    implementation("androidx.window:window:1.0.0-alpha09")
+    implementation("androidx.fragment:fragment-ktx:1.6.0")
     implementation("com.google.android.material:material:1.9.0")
     implementation("com.google.guava:guava:31.1-android")
-    
-    // Markdown and text processing
-    implementation("io.noties.markwon:core:4.6.2")
-    implementation("io.noties.markwon:ext-strikethrough:4.6.2")
-    implementation("io.noties.markwon:linkify:4.6.2")
-    implementation("io.noties.markwon:recycler:4.6.2")
-    
-    // Apache Commons IO
-    implementation("commons-io:commons-io:2.11.0")
-    
-    // Hidden API bypass
-    implementation("org.lsposed.hiddenapibypass:hiddenapibypass:4.3")
-    
-    // Termux AM library - commented out as it's not available in public repositories
-    // implementation("com.termux:termux-am-library:v2.0.0")
-    
-    // Project dependencies
+
+    implementation(project(":termux:view"))
     implementation(project(":core:common"))
-    api(project(":termux:emulator"))
-    api(project(":termux:view"))
+    implementation(project(":core:resources"))
+    
+    testImplementation("junit:junit:4.13.2")
 }

@@ -1,4 +1,4 @@
-package com.acc_ide.termux.terminal;
+package com.termux.terminal;
 
 /**
  * ${CSI}${top};${bottom}r" - set Scrolling Region [top;bottom] (default = full size of window) (DECSTBM).
@@ -57,7 +57,7 @@ public class ScrollRegionTest extends TerminalTestCase {
 	}
 
 	public void testDECCOLMResetsScrollMargin() {
-		// DECCOLM â€?Select 80 or 132 Columns per Page (http://www.vt100.net/docs/vt510-rm/DECCOLM) has the important
+		// DECCOLM â€” Select 80 or 132 Columns per Page (http://www.vt100.net/docs/vt510-rm/DECCOLM) has the important
 		// side effect to clear scroll margins, which is useful for e.g. the "reset" utility to clear scroll margins.
 		withTerminalSized(3, 4).enterString("111222333444").assertLinesAre("111", "222", "333", "444");
 		enterString("\033[2r\033[?3h\r\nABCDEFGHIJKL").assertLinesAre("ABC", "DEF", "GHI", "JKL");

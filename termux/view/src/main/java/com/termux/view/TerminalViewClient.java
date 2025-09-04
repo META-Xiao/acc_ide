@@ -1,4 +1,4 @@
-package com.acc_ide.termux.view;
+package com.termux.view;
 
 import android.view.KeyEvent;
 import android.view.MotionEvent;

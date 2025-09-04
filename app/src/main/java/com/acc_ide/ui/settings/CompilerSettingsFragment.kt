@@ -67,11 +67,12 @@ class CompilerSettingsFragment : Fragment() {
         
         // Initialize asset build UI components (will need corresponding layout updates)
         try {
-            buildStatusCard = view.findViewById(R.id.build_status_card)
-            buildStatusText = view.findViewById(R.id.build_status_text)
-            buildAssetsButton = view.findViewById(R.id.build_assets_button)
-            cleanAssetsButton = view.findViewById(R.id.clean_assets_button)  
-            buildProgressBar = view.findViewById(R.id.build_progress_bar)
+            // buildStatusCard = view.findViewById(R.id.build_status_card)
+            // buildStatusText = view.findViewById(R.id.build_status_text)
+            // buildAssetsButton = view.findViewById(R.id.build_assets_button)
+            // cleanAssetsButton = view.findViewById(R.id.clean_assets_button)  
+            // buildProgressBar = view.findViewById(R.id.build_progress_bar)
+            // 临时注释掉，等待布局文件更新
         } catch (e: Exception) {
             // Layout may not include these components yet
             android.util.Log.w("CompilerSettings", "Asset build UI components not found in layout")

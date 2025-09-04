@@ -1,4 +1,4 @@
-package com.acc_ide.termux.terminal;
+package com.termux.terminal;
 
 import android.util.Base64;
 
@@ -524,7 +524,7 @@ public final class TerminalEmulator {
                 // Not a UTF-8 continuation byte so replace the entire sequence up to now with the replacement char:
                 mUtf8Index = mUtf8ToFollow = 0;
                 emitCodePoint(UNICODE_REPLACEMENT_CHAR);
-                // The Unicode Standard Version 6.2 �?Core Specification
+                // The Unicode Standard Version 6.2 – Core Specification
                 // (http://www.unicode.org/versions/Unicode6.2.0/ch03.pdf):
                 // "If the converter encounters an ill-formed UTF-8 code unit sequence which starts with a valid first
                 // byte, but which does not continue with valid successor bytes (see Table 3-7), it must not consume the
@@ -592,10 +592,10 @@ public final class TerminalEmulator {
             case 13: // Carriage return (CR, \r).
                 setCursorCol(mLeftMargin);
                 break;
-            case 14: // Shift Out (Ctrl-N, SO) �?Switch to Alternate Character Set. This invokes the G1 character set.
+            case 14: // Shift Out (Ctrl-N, SO) → Switch to Alternate Character Set. This invokes the G1 character set.
                 mUseLineDrawingUsesG0 = false;
                 break;
-            case 15: // Shift In (Ctrl-O, SI) �?Switch to Standard Character Set. This invokes the G0 character set.
+            case 15: // Shift In (Ctrl-O, SI) → Switch to Standard Character Set. This invokes the G0 character set.
                 mUseLineDrawingUsesG0 = true;
                 break;
             case 24: // CAN.
@@ -1922,7 +1922,7 @@ public final class TerminalEmulator {
                 setTitle(textParameter);
                 break;
             case 4:
-                // P s = 4 ; c ; spec �?Change Color Number c to the color specified by spec. This can be a name or RGB
+                // P s = 4 ; c ; spec → Change Color Number c to the color specified by spec. This can be a name or RGB
                 // specification as per XParseColor. Any number of c name pairs may be given. The color numbers correspond
                 // to the ANSI colors 0-7, their bright versions 8-15, and if supported, the remainder of the 88-color or
                 // 256-color table.
@@ -2001,7 +2001,7 @@ public final class TerminalEmulator {
                 }
                 break;
             case 104:
-                // "104;$c" �?Reset Color Number $c. It is reset to the color specified by the corresponding X
+                // "104;$c" → Reset Color Number $c. It is reset to the color specified by the corresponding X
                 // resource. Any number of c parameters may be given. These parameters correspond to the ANSI colors 0-7,
                 // their bright versions 8-15, and if supported, the remainder of the 88-color or 256-color table. If no
                 // parameters are given, the entire table will be reset.
@@ -2244,100 +2244,100 @@ public final class TerminalEmulator {
                     codePoint = ' '; // Blank.
                     break;
                 case '`':
-                    codePoint = 0x25C6; // Diamond.
+                    codePoint = '◆'; // Diamond.
                     break;
                 case '0':
-                    codePoint = 0x2588; // Solid block;
+                    codePoint = '█'; // Solid block;
                     break;
                 case 'a':
-                    codePoint = 0x2592; // Checker board.
+                    codePoint = '▒'; // Checker board.
                     break;
                 case 'b':
-                    codePoint = 0x2409; // Horizontal tab.
+                    codePoint = '␉'; // Horizontal tab.
                     break;
                 case 'c':
-                    codePoint = 0x240C; // Form feed.
+                    codePoint = '␌'; // Form feed.
                     break;
                 case 'd':
                     codePoint = '\r'; // Carriage return.
                     break;
                 case 'e':
-                    codePoint = 0x000A; // Linefeed.
+                    codePoint = '␊'; // Linefeed.
                     break;
                 case 'f':
-                    codePoint = 0x00B0; // Degree symbol.
+                    codePoint = '°'; // Degree.
                     break;
                 case 'g':
-                    codePoint = 0x00B1; // Plus-minus.
+                    codePoint = '±'; // Plus-minus.
                     break;
                 case 'h':
                     codePoint = '\n'; // Newline.
                     break;
                 case 'i':
-                    codePoint = 0x000B; // Vertical tab.
+                    codePoint = '␋'; // Vertical tab.
                     break;
                 case 'j':
-                    codePoint = 0x2518; // Lower right corner.
+                    codePoint = '┘'; // Lower right corner.
                     break;
                 case 'k':
-                    codePoint = 0x2510; // Upper right corner.
+                    codePoint = '┐'; // Upper right corner.
                     break;
                 case 'l':
-                    codePoint = 0x250C; // Upper left corner.
+                    codePoint = '┌'; // Upper left corner.
                     break;
                 case 'm':
-                    codePoint = 0x2514; // Lower left corner.
+                    codePoint = '└'; // Left left corner.
                     break;
                 case 'n':
-                    codePoint = 0x253C; // Crossing lines.
+                    codePoint = '┼'; // Crossing lines.
                     break;
                 case 'o':
-                    codePoint = 0x23BA; // Horizontal line - scan 1.
+                    codePoint = '⎺'; // Horizontal line - scan 1.
                     break;
                 case 'p':
-                    codePoint = 0x23BB; // Horizontal line - scan 3.
+                    codePoint = '⎻'; // Horizontal line - scan 3.
                     break;
                 case 'q':
-                    codePoint = '-'; // Horizontal line - scan 5.
+                    codePoint = '─'; // Horizontal line - scan 5.
                     break;
                 case 'r':
-                    codePoint = 0x23BD; // Horizontal line - scan 7.
+                    codePoint = '⎼'; // Horizontal line - scan 7.
                     break;
                 case 's':
-                    codePoint = 0x23BC; // Horizontal line - scan 9.
+                    codePoint = '⎽'; // Horizontal line - scan 9.
                     break;
                 case 't':
-                    codePoint = 0x251C; // T facing rightwards.
+                    codePoint = '├'; // T facing rightwards.
                     break;
                 case 'u':
-                    codePoint = 0x2524; // T facing leftwards.
+                    codePoint = '┤'; // T facing leftwards.
                     break;
                 case 'v':
-                    codePoint = 0x2534; // T facing upwards.
+                    codePoint = '┴'; // T facing upwards.
                     break;
                 case 'w':
-                    codePoint = 0x252C; // T facing downwards.
+                    codePoint = '┬'; // T facing downwards.
                     break;
                 case 'x':
-                    codePoint = 0x2502; // Vertical line.
+                    codePoint = '│'; // Vertical line.
                     break;
                 case 'y':
-                    codePoint = 0x2264; // Less than or equal to.
+                    codePoint = '≤'; // Less than or equal to.
                     break;
                 case 'z':
-                    codePoint = 0x2265; // Greater than or equal to.
+                    codePoint = '≥'; // Greater than or equal to.
                     break;
                 case '{':
-                    codePoint = 0x03C0; // Pi.
+                    codePoint = 'π'; // Pi.
                     break;
                 case '|':
-                    codePoint = 0x2260; // Not equal to.
+                    codePoint = '≠'; // Not equal to.
                     break;
                 case '}':
-                    codePoint = 0x00A3; // UK pound.
+                    codePoint = '£'; // UK pound.
                     break;
                 case '~':
-                    codePoint = 0x00B7; // Centered dot.
+                    codePoint = '·'; // Centered dot.
                     break;
             }
         }

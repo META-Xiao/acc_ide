@@ -31,10 +31,10 @@ abstract class BaseIDEActivity : AppCompatActivity() {
   open var enableSystemBarTheming: Boolean = true
 
   open val navigationBarColor: Int
-    get() = getColor(R.color.colorSurface)
+    get() = getColor(android.R.color.black)
 
   open val statusBarColor: Int
-    get() = getColor(R.color.colorSurface)
+    get() = getColor(android.R.color.black)
 
   /**
    * [CoroutineScope] for executing tasks with the [Default][Dispatchers.Default] dispatcher.

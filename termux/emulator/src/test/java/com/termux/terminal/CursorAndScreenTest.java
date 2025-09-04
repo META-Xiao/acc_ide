@@ -1,4 +1,4 @@
-package com.acc_ide.termux.terminal;
+package com.termux.terminal;
 
 import org.junit.Assert;
 
@@ -62,10 +62,10 @@ public class CursorAndScreenTest extends TerminalTestCase {
 		withTerminalSized(5, 2).enterString("n\u0302ice").enterString("\033[G\033[2P").assertLinesAre("ce   ", "     ");
 		withTerminalSized(5, 2).enterString("n\u0302ice").enterString("\033[G\033[P").assertLinesAre("ice  ", "     ");
 		withTerminalSized(5, 2).enterString("n\u0302ice").enterString("\033[2G\033[2P").assertLinesAre("n\u0302e   ", "     ");
-		// With wide �?char, checking that putting char at part replaces other with whitespace:
+		// With wide 枝 char, checking that putting char at part replaces other with whitespace:
 		withTerminalSized(5, 2).enterString("枝ce").enterString("\033[Ga").assertLinesAre("a ce ", "     ");
 		withTerminalSized(5, 2).enterString("枝ce").enterString("\033[2Ga").assertLinesAre(" ace ", "     ");
-		// With wide �?char, deleting either part replaces other with whitespace:
+		// With wide 枝 char, deleting either part replaces other with whitespace:
 		withTerminalSized(5, 2).enterString("枝ce").enterString("\033[G\033[P").assertLinesAre(" ce  ", "     ");
 		withTerminalSized(5, 2).enterString("枝ce").enterString("\033[2G\033[P").assertLinesAre(" ce  ", "     ");
 		withTerminalSized(5, 2).enterString("枝ce").enterString("\033[2G\033[2P").assertLinesAre(" e   ", "     ");
@@ -88,12 +88,12 @@ public class CursorAndScreenTest extends TerminalTestCase {
 		withTerminalSized(5, 2).enterString("n\u0302\u0302i\u0302ce").enterString("\033[GA").assertLinesAre("Ai\u0302ce ", "     ");
 		// ... and in last column:
 		withTerminalSized(5, 2).enterString("n\u0302\u0302ice!\u0302").enterString("\033[5GA").assertLinesAre("n\u0302\u0302iceA", "     ");
-		withTerminalSized(5, 2).enterString("nic\u0302e!\u0302").enterString("\033[4G�?).assertLinesAre("nic\u0302�?, "     ");
+		withTerminalSized(5, 2).enterString("nic\u0302e!\u0302").enterString("\033[4G枝").assertLinesAre("nic\u0302枝", "     ");
 		withTerminalSized(5, 2).enterString("nic枝\u0302").enterString("\033[3GA").assertLinesAre("niA枝\u0302", "     ");
 		withTerminalSized(5, 2).enterString("nic枝\u0302").enterString("\033[3GA").assertLinesAre("niA枝\u0302", "     ");
-		// With wide �?char.
-		withTerminalSized(5, 2).enterString("nice").enterString("\033[G\033[4h�?).assertLinesAre("枝nic", "     ");
-		withTerminalSized(5, 2).enterString("nice").enterString("\033[2G\033[4h�?).assertLinesAre("n枝ic", "     ");
+		// With wide 枝 char.
+		withTerminalSized(5, 2).enterString("nice").enterString("\033[G\033[4h枝").assertLinesAre("枝nic", "     ");
+		withTerminalSized(5, 2).enterString("nice").enterString("\033[2G\033[4h枝").assertLinesAre("n枝ic", "     ");
 		withTerminalSized(5, 2).enterString("n枝ce").enterString("\033[G\033[4ha").assertLinesAre("an枝c", "     ");
 	}
 
@@ -151,7 +151,7 @@ public class CursorAndScreenTest extends TerminalTestCase {
 				assertCursorAt(i, j);
 				// Device Status Report (DSR):
 				assertEnteringStringGivesResponse("\033[6n", "\033[" + (i + 1) + ";" + (j + 1) + "R");
-				// DECXCPR �?Extended Cursor Position. Note that http://www.vt100.net/docs/vt510-rm/DECXCPR says
+				// DECXCPR — Extended Cursor Position. Note that http://www.vt100.net/docs/vt510-rm/DECXCPR says
 				// the response is "${CSI}${LINE};${COLUMN};${PAGE}R" while xterm (http://invisible-island.net/xterm/ctlseqs/ctlseqs.html)
 				// drops the question mark. Expect xterm behaviour here.
 				assertEnteringStringGivesResponse("\033[?6n", "\033[?" + (i + 1) + ";" + (j + 1) + ";1R");

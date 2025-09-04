@@ -17,47 +17,42 @@
 
 @file:Suppress("UnstableApiUsage")
 
+
+
 plugins {
     id("com.android.library")
     id("kotlin-android")
 }
+
+
 
 val packageVariant = System.getenv("TERMUX_PACKAGE_VARIANT") ?: "apt-android-7" // Default: "apt-android-7"
 
 android {
     namespace = "com.termux"
     compileSdk = 33
-    
+
     defaultConfig {
         minSdk = 24
-        
+
         buildConfigField("String", "TERMUX_PACKAGE_VARIANT", "\"" + packageVariant + "\"") // Used by TermuxApplication class
 
         manifestPlaceholders["TERMUX_PACKAGE_NAME"] = "com.acc_ide"
         manifestPlaceholders["TERMUX_APP_NAME"] = "AccIDE"
 
-        // 禁用NDK构建，因为缺少termux-bootstrap-zip.S文件
+        // 禁用 NDK 构建
         // externalNativeBuild {
         //     ndkBuild {
         //         cFlags("-std=c11", "-Wall", "-Wextra", "-Werror", "-Os", "-fno-stack-protector", "-Wl,--gc-sections")
         //     }
         // }
     }
-    
+
     buildFeatures {
         buildConfig = true
     }
-    
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-    
-    kotlinOptions {
-        jvmTarget = "17"
-    }
 
-    // 禁用NDK构建
+    // 禁用 NDK 构建  
     // externalNativeBuild {
     //     ndkBuild {
     //         path = file("src/main/cpp/Android.mk")
@@ -73,6 +68,15 @@ android {
     }
 
     packaging.jniLibs.useLegacyPackaging = true
+    
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    
+    kotlinOptions {
+        jvmTarget = "17"
+    }
 }
 
 dependencies {
@@ -83,10 +87,21 @@ dependencies {
     implementation("androidx.viewpager:viewpager:1.0.0")
     implementation("com.google.android.material:material:1.9.0")
     implementation("com.google.guava:guava:31.1-android")
-
-    api(project(":termux:view"))
-    api(project(":termux:shared"))
-    implementation(project(":core:common"))
     
+    // 使用JitPack上的termux库
+    implementation("com.github.termux:termux-am-library:v2.0.0")
+
+    implementation(project(":core:common"))
+    implementation(project(":core:resources"))
+    implementation(project(":termux:view"))
+    implementation(project(":termux:shared"))
+    implementation(project(":utilities:preferences"))
+
     testImplementation("junit:junit:4.13.2")
+}
+
+tasks.register("versionName") {
+    doLast {
+        print(project.rootProject.version)
+    }
 }

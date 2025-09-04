@@ -1,4 +1,4 @@
-package com.acc_ide.termux.terminal;
+package com.termux.terminal;
 
 import java.util.Arrays;
 
@@ -160,12 +160,12 @@ public final class TerminalBuffer {
      * - Internal coordinate system: the mScreenRows lines starting at mScreenFirstRow comprise the screen, while the
      *   mActiveTranscriptRows lines ending at mScreenFirstRow-1 form the transcript (as a circular buffer).
      *
-     * External → Internal:
+     * External ↔ Internal:
      *
      * [ ...                            ]     [ ...                                     ]
      * [ -mActiveTranscriptRows         ]     [ mScreenFirstRow - mActiveTranscriptRows ]
      * [ ...                            ]     [ ...                                     ]
-     * [ 0 (visible screen starts here) ]  → [ mScreenFirstRow                         ]
+     * [ 0 (visible screen starts here) ]  ↔  [ mScreenFirstRow                         ]
      * [ ...                            ]     [ ...                                     ]
      * [ mScreenRows-1                  ]     [ mScreenFirstRow + mScreenRows-1         ]
      * </pre>

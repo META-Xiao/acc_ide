@@ -1,4 +1,4 @@
-package com.acc_ide.termux.terminal;
+package com.termux.terminal;
 
 /** "\033[" is the Control Sequence Introducer char sequence (CSI). */
 public class ControlSequenceIntroducerTest extends TerminalTestCase {

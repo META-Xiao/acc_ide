@@ -1,4 +1,4 @@
-package com.acc_ide.termux.terminal;
+package com.termux.terminal;
 
 public class ResizeTest extends TerminalTestCase {
 
@@ -205,7 +205,7 @@ public class ResizeTest extends TerminalTestCase {
 		resize(5, rows).assertLinesAre("qqrr ", "     ", "     ", "     ");
 
 		withTerminalSized(cols, rows).enterString("ＱＲ").assertLinesAre("ＱＲ ", "     ", "     ", "     ");
-		resize(2, rows).assertLinesAre("�?, "�?, "  ", "  ");
+		resize(2, rows).assertLinesAre("Ｑ", "Ｒ", "  ", "  ");
 		resize(5, rows).assertLinesAre("ＱＲ ", "     ", "     ", "     ");
 	}
 

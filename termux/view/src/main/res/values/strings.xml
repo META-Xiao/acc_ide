@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="copy">Copy</string>
-    <string name="terminal_more">More</string>
+    <string name="copy">复制</string>
+    <string name="terminal_more">更多</string>
 </resources>
