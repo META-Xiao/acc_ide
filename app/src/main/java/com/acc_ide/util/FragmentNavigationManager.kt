@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import com.acc_ide.R
 import com.acc_ide.ui.editor.EditorFragment
 import com.acc_ide.ui.settings.SettingsFragment
+import com.acc_ide.ui.terminal.TerminalFragment
 import com.acc_ide.ui.welcome.WelcomeFragment
 
 /**
@@ -81,6 +82,23 @@ class FragmentNavigationManager(
     }
     
     /**
+     * Show terminal fragment
+     * 显示终端Fragment
+     */
+    fun showTerminalFragment() {
+        activity.supportFragmentManager.beginTransaction()
+            .replace(R.id.content_frame, TerminalFragment.newInstance())
+            .addToBackStack(null)
+            .commit()
+
+        // Close drawer
+        drawerLayout.closeDrawer(GravityCompat.START)
+
+        // Lock drawer to prevent swipe open on terminal page
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+    }
+    
+    /**
      * Update navigation icon based on current fragment type
      * 更新导航栏状态 - 根据当前Fragment类型设置导航栏图标
      */
@@ -98,6 +116,17 @@ class FragmentNavigationManager(
             // Set title to "Settings"
             activity.supportActionBar?.title = activity.getString(R.string.settings)
             Log.d("FragmentNavigationManager", "Navigation icon: Settings page - back button")
+        } else if (currentFragment is TerminalFragment) {
+            // Terminal page: show back button and lock drawer
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            actionBarDrawerToggle.isDrawerIndicatorEnabled = false
+            activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            actionBarDrawerToggle.setToolbarNavigationClickListener {
+                activity.onBackPressedDispatcher.onBackPressed()
+            }
+            // Set title to "Terminal"
+            activity.supportActionBar?.title = activity.getString(R.string.terminal)
+            Log.d("FragmentNavigationManager", "Navigation icon: Terminal page - back button")
         } else if (currentFragment is EditorFragment) {
             // Editor page: show menu icon
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
@@ -209,6 +238,19 @@ class FragmentNavigationManager(
 
         // If current is settings page, manually handle back logic
         if (currentFragment is SettingsFragment) {
+            // Unlock drawer
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+
+            // Restore menu icon
+            Handler(Looper.getMainLooper()).postDelayed({
+                updateNavigationIcon()
+            }, 100)
+            
+            return false // Let system handle back stack
+        }
+        
+        // If current is terminal page, manually handle back logic
+        if (currentFragment is TerminalFragment) {
             // Unlock drawer
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
 

@@ -162,4 +162,12 @@
     <!-- File list and execution status -->
     <string name="file_name_unsaved">%1$s*</string>
     <string name="execution_status_with_time">%1$s   %2$d ms</string>
+    
+    <!-- Terminal -->
+    <string name="terminal">Terminal</string>
+    <string name="terminal_new_session">New Session</string>
+    <string name="terminal_sessions">Sessions</string>
+    <string name="terminal_session_finished">Session finished</string>
+    <string name="terminal_creating_session">Creating new session...</string>
+    <string name="terminal_failed_create_session">Failed to create terminal session</string>
 </resources>

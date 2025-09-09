@@ -53,6 +53,10 @@ android {
         apiVersion = '2.1'
         languageVersion = '2.1'
     }
+    
+    buildFeatures {
+        viewBinding true
+    }
 
     packaging {
         resources {

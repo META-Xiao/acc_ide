@@ -90,4 +90,10 @@
 
     <color name="switch_thumb_on">#674fa4</color>
     <color name="switch_thumb_off">#BDBDBD</color>
+    
+    <!-- Terminal Colors -->
+    <color name="terminal_background_light">#FFFFFF</color>
+    <color name="terminal_text_light">#1A1A1A</color>
+    <color name="terminal_background_dark">#1E1E1E</color>
+    <color name="terminal_text_dark">#FFFFFF</color>
 </resources>

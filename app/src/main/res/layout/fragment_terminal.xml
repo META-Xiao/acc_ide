@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/black"
+    tools:context=".ui.terminal.TerminalFragment">
+
+    <!-- Terminal Content Area (Full Screen) -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Terminal ScrollView -->
+        <ScrollView
+            android:id="@+id/terminal_scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/black"
+            android:scrollbars="none"
+            android:fadeScrollbars="false"
+            android:fillViewport="true">
+
+            <!-- Terminal Text View -->
+            <TextView
+                android:id="@+id/terminal_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:textIsSelectable="false"
+                android:fontFamily="monospace"
+                android:textSize="14sp"
+                android:textColor="@android:color/white"
+                android:background="@android:color/black"
+                android:lineSpacingExtra="2dp"
+                android:textDirection="ltr"
+                android:gravity="start|top"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:cursorVisible="true"
+                tools:text="Welcome to ACC IDE Terminal\n\n$ " />
+
+        </ScrollView>
+
+        <!-- Invisible Input Field for keyboard handling -->
+        <EditText
+            android:id="@+id/hidden_input"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            android:layout_gravity="bottom|start"
+            android:alpha="0"
+            android:inputType="textNoSuggestions|textMultiLine"
+            android:imeOptions="flagNoExtractUi"
+            android:background="@android:color/transparent"
+            android:textColor="@android:color/transparent"
+            android:textCursorDrawable="@null"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
+
+    </FrameLayout>
+
+</LinearLayout>

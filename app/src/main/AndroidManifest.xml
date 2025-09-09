@@ -34,7 +34,8 @@
         <activity
             android:name="com.acc_ide.ui.main.MainActivity"
             android:configChanges="locale|layoutDirection|uiMode"
-            android:exported="false">
+            android:exported="false"
+            android:windowSoftInputMode="adjustNothing">
         </activity>
     </application>
 

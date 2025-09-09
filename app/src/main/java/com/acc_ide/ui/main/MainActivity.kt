@@ -112,6 +112,12 @@ class MainActivity : AppCompatActivity() {
             settingsItem.setOnClickListener {
                 fragmentNavigationManager.showSettingsFragment()
             }
+            
+            // Set up terminal button
+            val terminalItem = findViewById<LinearLayout>(R.id.terminal_item)
+            terminalItem.setOnClickListener {
+                fragmentNavigationManager.showTerminalFragment()
+            }
 
             // Listen to fragment changes
             setupFragmentLifecycleCallbacks()
