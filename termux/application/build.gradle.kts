@@ -24,6 +24,9 @@ plugins {
     id("kotlin-android")
 }
 
+// 暂时注释掉插件，先确保基本构建工作
+// apply(plugin = "TermuxBootstrapPlugin")
+
 
 
 val packageVariant = System.getenv("TERMUX_PACKAGE_VARIANT") ?: "apt-android-7" // Default: "apt-android-7"
@@ -40,7 +43,7 @@ android {
         manifestPlaceholders["TERMUX_PACKAGE_NAME"] = "com.acc_ide"
         manifestPlaceholders["TERMUX_APP_NAME"] = "AccIDE"
 
-        // 禁用 NDK 构建
+        // 暂时禁用 NDK 构建，使用 assets 中的 bootstrap
         // externalNativeBuild {
         //     ndkBuild {
         //         cFlags("-std=c11", "-Wall", "-Wextra", "-Werror", "-Os", "-fno-stack-protector", "-Wl,--gc-sections")
@@ -52,7 +55,7 @@ android {
         buildConfig = true
     }
 
-    // 禁用 NDK 构建  
+    // 暂时禁用 NDK 构建，使用 assets 中的 bootstrap  
     // externalNativeBuild {
     //     ndkBuild {
     //         path = file("src/main/cpp/Android.mk")
@@ -87,12 +90,14 @@ dependencies {
     implementation("androidx.viewpager:viewpager:1.0.0")
     implementation("com.google.android.material:material:1.9.0")
     implementation("com.google.guava:guava:31.1-android")
+    implementation("androidx.multidex:multidex:2.0.1")
     
     // 使用JitPack上的termux库
     implementation("com.github.termux:termux-am-library:v2.0.0")
 
     implementation(project(":core:common"))
     implementation(project(":core:resources"))
+    implementation(project(":termux:emulator"))
     implementation(project(":termux:view"))
     implementation(project(":termux:shared"))
     implementation(project(":utilities:preferences"))

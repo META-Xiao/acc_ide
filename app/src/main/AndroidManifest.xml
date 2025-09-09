@@ -14,6 +14,7 @@
         android:maxSdkVersion="28" />
 
     <application
+        android:name=".AccIDEApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -50,9 +51,18 @@
             android:configChanges="orientation|screenSize|keyboardHidden">
         </activity>
         
-        <!-- Termux Service -->
+        <!-- Termux components -->
+        <activity
+            android:name="com.termux.app.TermuxActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|density|screenLayout|keyboard|keyboardHidden|navigation"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:resizeableActivity="true"
+            android:theme="@style/Theme.AccIDE.NoActionBar"
+            tools:replace="android:exported" />
+            
         <service 
-            android:name="com.acc_ide.termux.app.TermuxService"
+            android:name="com.termux.app.TermuxService"
             android:exported="false" />
             
     </application>

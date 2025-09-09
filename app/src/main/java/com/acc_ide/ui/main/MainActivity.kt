@@ -740,11 +740,9 @@ class MainActivity : AppCompatActivity() {
      */
     private fun openTerminal() {
         try {
-            // 暂时简化终端启动，直接显示消息
-            Toast.makeText(this, "终端功能已集成，可通过termux模块使用", Toast.LENGTH_SHORT).show()
-            return
-            // val intent = Intent(this, com.termux.app.TermuxActivity::class.java)
-            startActivity(intent)
+            // 使用TerminalUtils启动终端
+            com.acc_ide.util.TerminalUtils.startTerminal(this)
+            
             // Close drawer
             fragmentNavigationManager.closeDrawer()
         } catch (e: Exception) {

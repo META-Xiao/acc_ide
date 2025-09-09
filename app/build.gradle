@@ -86,6 +86,9 @@ dependencies {
     // 直接添加termux-am-library依赖，确保app模块可以访问termux类
     implementation 'com.github.termux:termux-am-library:v2.0.0'
     
+    // MultiDex support for TermuxApplication
+    implementation 'androidx.multidex:multidex:2.0.1'
+    
     // Core modules dependencies
     implementation project(':core:common')
     implementation project(':core:resources')

@@ -44,7 +44,7 @@
         android:dividerHeight="0dp"
         android:descendantFocusability="blocksDescendants"
         android:orientation="vertical"
-        android:background="?attr/termuxActivityDrawerBackground">
+        android:background="@color/black">
 
         <ListView
           android:id="@+id/terminal_sessions_list"
