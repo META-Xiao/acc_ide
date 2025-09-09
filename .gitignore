@@ -19,5 +19,5 @@
 /app/release
 local.properties
 .claude
-/tree-sitter-cpp-master/
-/tree-sitter-master/
+/termux-app-master/
+/AndroidIDE-dev/
