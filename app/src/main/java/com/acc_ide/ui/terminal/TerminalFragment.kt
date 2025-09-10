@@ -60,8 +60,6 @@ class TerminalFragment : Fragment() {
         setupTerminalView()
         setupInputHandling()
         setupGestureDetector()
-        
-        // 确保隐藏输入框在布局完成后处于适当状态
         view.post {
             binding.hiddenInput.clearFocus()
         }
@@ -69,7 +67,6 @@ class TerminalFragment : Fragment() {
 
     private fun loadTerminalFont() {
         try {
-            // 从 assets 加载字体
             terminalTypeface = Typeface.createFromAsset(
                 requireContext().assets,
                 "fonts/AgaveNerdFontMono-Regular.ttf"
@@ -113,37 +110,39 @@ class TerminalFragment : Fragment() {
         
         // 隐藏输入框处理实际的键盘输入
         binding.hiddenInput.addTextChangedListener(object : TextWatcher {
-            private var isUpdating = false
-            
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             
             override fun afterTextChanged(s: Editable?) {
-                if (isUpdating) return
-                
-                val newText = s?.toString() ?: ""
-                
-                // 检查是否包含换行符（回车键）
+                val newText = s?.toString() ?: return
+
+                // 当文本包含换行符时，通常意味着命令已输入完毕（例如，来自软键盘的回车键）
                 if (newText.contains('\n')) {
-                    isUpdating = true
-                    val commandText = newText.replace('\n', ' ').trim()
-                    currentInput = commandText
-                    executeCurrentCommand()
-                    binding.hiddenInput.text.clear()
-                    isUpdating = false
+                    val command = newText.trim()
+                    if (command.isNotEmpty()) {
+                        currentInput = command
+                        executeCurrentCommand()
+                    }
                 } else {
-                    // 正常输入，更新当前输入
                     currentInput = newText
                     updateTerminalDisplay()
+                }
+
+                // 确保输入框在文本更改后仍然有焦点，以防止“断开连接”
+                // 使用 post 来确保它在文本更改事件处理后运行
+                binding.hiddenInput.post {
+                    if (!binding.hiddenInput.isFocused) {
+                        binding.hiddenInput.requestFocus()
+                    }
                 }
             }
         })
         
-        // 处理特殊按键（如回车）
+        // 处理特殊按键（如硬件键盘的回车）
         binding.hiddenInput.setOnKeyListener { _, keyCode, event ->
-            if (keyCode == android.view.KeyEvent.KEYCODE_ENTER && event.action == android.view.KeyEvent.ACTION_DOWN) {
-                currentInput = binding.hiddenInput.text.toString()
+            if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN) {
+                currentInput = binding.hiddenInput.text.toString().trim()
                 executeCurrentCommand()
                 true
             } else {
@@ -448,10 +447,10 @@ class TerminalFragment : Fragment() {
             if (endsWith("_")) {
                 setLength(length - 1)
             }
-            
-            if (command.isNotEmpty()) {
-                appendLine(command)
-            }
+
+            // 命令已经在 currentText 中，所以我们只需要换行
+            appendLine()
+
             if (result.isNotEmpty()) {
                 appendLine(result)
             }
