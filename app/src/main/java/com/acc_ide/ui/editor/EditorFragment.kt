@@ -682,11 +682,13 @@ class EditorFragment : Fragment() {
                     colorScheme.setColor(io.github.rosemoe.sora.widget.schemes.EditorColorScheme.SCROLL_BAR_THUMB, 0x66FFFFFF.toInt())
                     colorScheme.setColor(io.github.rosemoe.sora.widget.schemes.EditorColorScheme.SCROLL_BAR_THUMB_PRESSED, 0x99FFFFFF.toInt())
                     colorScheme.setColor(io.github.rosemoe.sora.widget.schemes.EditorColorScheme.SCROLL_BAR_TRACK, 0x1A000000.toInt())
+                    colorScheme.setColor(io.github.rosemoe.sora.widget.schemes.EditorColorScheme.MATCHED_TEXT_BACKGROUND, 0x4DFFE082)
                 } else {
                     // Set scrollbar colors for light theme
                     colorScheme.setColor(io.github.rosemoe.sora.widget.schemes.EditorColorScheme.SCROLL_BAR_THUMB, 0x66000000.toInt())
                     colorScheme.setColor(io.github.rosemoe.sora.widget.schemes.EditorColorScheme.SCROLL_BAR_THUMB_PRESSED, 0x99000000.toInt())
                     colorScheme.setColor(io.github.rosemoe.sora.widget.schemes.EditorColorScheme.SCROLL_BAR_TRACK, 0x1AFFFFFF.toInt())
+                    colorScheme.setColor(io.github.rosemoe.sora.widget.schemes.EditorColorScheme.MATCHED_TEXT_BACKGROUND, 0x42FFD54F)
                 }
             }
             
