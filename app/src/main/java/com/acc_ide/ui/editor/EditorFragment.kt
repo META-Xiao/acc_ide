@@ -10,14 +10,18 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.HorizontalScrollView
+import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.core.content.ContextCompat
-import androidx.preference.PreferenceManager
 import androidx.core.view.MenuProvider
-import com.google.android.material.button.MaterialButton
+import androidx.core.view.isVisible
+import androidx.preference.PreferenceManager
+import com.google.android.material.textfield.TextInputEditText
 import com.acc_ide.R
 import com.acc_ide.ui.main.MainActivity
 import com.acc_ide.ui.iopanel.IOPanelFragment
@@ -55,9 +59,19 @@ class EditorFragment : Fragment() {
     private var redoMenuItem: MenuItem? = null
     private var hasUnsavedChanges = false
     private var isUpdatingFontSize = false // Prevent zoom listener and settings update from triggering each other
+    private var searchMenuItem: MenuItem? = null
+    private var activeSearchQuery = ""
+    private var activeSearchMatches: List<IntRange> = emptyList()
+    private var activeSearchIndex = -1
 
     // Symbol panel components
     private lateinit var symbolPanel: SymbolPanelView
+    private lateinit var searchPanel: View
+    private lateinit var searchInput: EditText
+    private lateinit var searchCounter: TextView
+    private lateinit var searchPrevButton: ImageButton
+    private lateinit var searchNextButton: ImageButton
+    private lateinit var searchCloseButton: ImageButton
     private var isSymbolPanelVisible = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,6 +86,12 @@ class EditorFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_editor, container, false)
         editor = view.findViewById(R.id.editor_view)
         symbolPanel = view.findViewById(R.id.symbol_panel)
+        searchPanel = view.findViewById(R.id.search_panel)
+        searchInput = view.findViewById(R.id.search_input)
+        searchCounter = view.findViewById(R.id.search_counter)
+        searchPrevButton = view.findViewById(R.id.search_prev_button)
+        searchNextButton = view.findViewById(R.id.search_next_button)
+        searchCloseButton = view.findViewById(R.id.search_close_button)
 
         // Get arguments
         arguments?.let {
@@ -144,6 +164,8 @@ class EditorFragment : Fragment() {
                 runMenuItem = menu.findItem(R.id.action_run)
                 undoMenuItem = menu.findItem(R.id.action_undo)
                 redoMenuItem = menu.findItem(R.id.action_redo)
+                searchMenuItem = menu.findItem(R.id.action_search)
+                updateSearchMenuState()
                 updateUndoRedoMenuState()
             }
 
@@ -170,6 +192,11 @@ class EditorFragment : Fragment() {
                         true
                     }
 
+                    R.id.action_search -> {
+                        toggleSearchPanel()
+                        true
+                    }
+
                     else -> false
                 }
             }
@@ -177,6 +204,7 @@ class EditorFragment : Fragment() {
 
         // Initialize interface views
         initViews()
+        initSearchPanel()
 
         // Configure language support
         configureLanguage()
@@ -281,6 +309,124 @@ class EditorFragment : Fragment() {
         } catch (e: Exception) {
             android.util.Log.e("EditorFragment", "Error initializing views: ${e.message}")
         }
+    }
+
+    private fun initSearchPanel() {
+        searchPrevButton.setOnClickListener {
+            navigateSearchMatch(-1)
+        }
+        searchNextButton.setOnClickListener {
+            navigateSearchMatch(1)
+        }
+        searchCloseButton.setOnClickListener {
+            hideSearchPanel()
+        }
+        searchInput.setOnEditorActionListener { _, _, _ ->
+            performSearch(searchInput.text?.toString().orEmpty(), true)
+            true
+        }
+        searchInput.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                performSearch(s?.toString().orEmpty(), false)
+            }
+            override fun afterTextChanged(s: android.text.Editable?) = Unit
+        })
+        updateSearchCounter()
+    }
+
+    private fun toggleSearchPanel() {
+        if (searchPanel.isVisible) {
+            hideSearchPanel()
+        } else {
+            showSearchPanel()
+        }
+    }
+
+    private fun showSearchPanel() {
+        searchPanel.visibility = View.VISIBLE
+        updateSearchMenuState()
+        searchInput.requestFocus()
+        searchInput.post {
+            searchInput.setSelection(searchInput.text?.length ?: 0)
+        }
+    }
+
+    private fun hideSearchPanel() {
+        searchPanel.visibility = View.GONE
+        updateSearchMenuState()
+        activeSearchQuery = ""
+        activeSearchMatches = emptyList()
+        activeSearchIndex = -1
+        updateSearchCounter()
+        searchInput.setText("")
+    }
+
+    private fun performSearch(query: String, moveToNext: Boolean) {
+        val content = editor.text.toString()
+        activeSearchQuery = query
+        if (query.isBlank() || content.isEmpty()) {
+            activeSearchMatches = emptyList()
+            activeSearchIndex = -1
+            updateSearchCounter()
+            return
+        }
+
+        val matches = mutableListOf<IntRange>()
+        var startIndex = 0
+        while (startIndex <= content.length - query.length) {
+            val foundIndex = content.indexOf(query, startIndex, ignoreCase = false)
+            if (foundIndex < 0) break
+            matches += foundIndex until (foundIndex + query.length)
+            startIndex = foundIndex + maxOf(1, query.length)
+        }
+
+        activeSearchMatches = matches
+        if (matches.isEmpty()) {
+            activeSearchIndex = -1
+            updateSearchCounter()
+            Toast.makeText(requireContext(), getString(R.string.search_no_match), Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        activeSearchIndex = if (moveToNext || activeSearchIndex !in matches.indices) 0 else activeSearchIndex
+        updateSearchCounter()
+        highlightSearchMatch(activeSearchIndex)
+    }
+
+    private fun navigateSearchMatch(direction: Int) {
+        if (activeSearchMatches.isEmpty()) {
+            performSearch(searchInput.text?.toString().orEmpty(), true)
+            return
+        }
+        val size = activeSearchMatches.size
+        activeSearchIndex = (activeSearchIndex + direction + size) % size
+        updateSearchCounter()
+        highlightSearchMatch(activeSearchIndex)
+    }
+
+    private fun highlightSearchMatch(index: Int) {
+        val range = activeSearchMatches.getOrNull(index) ?: return
+        try {
+            editor.setSelection(range.first, range.last + 1)
+        } catch (_: Exception) {
+        }
+    }
+
+    private fun updateSearchCounter() {
+        searchCounter.text = if (activeSearchMatches.isEmpty() || activeSearchIndex < 0) {
+            ""
+        } else {
+            getString(
+                R.string.search_counter,
+                activeSearchIndex + 1,
+                activeSearchMatches.size
+            )
+        }
+    }
+
+    private fun updateSearchMenuState() {
+        searchMenuItem?.isVisible = !searchPanel.isVisible
     }
 
     /**
