@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="search_panel_corner_radius">12dp</dimen>
+    <dimen name="search_panel_elevation">8dp</dimen>
+</resources>
+

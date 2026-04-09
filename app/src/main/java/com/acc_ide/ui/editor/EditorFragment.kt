@@ -10,11 +10,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.EditText
 import android.widget.HorizontalScrollView
-import android.widget.ImageButton
 import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.core.content.ContextCompat
@@ -27,10 +24,12 @@ import com.acc_ide.ui.main.MainActivity
 import com.acc_ide.ui.iopanel.IOPanelFragment
 import com.acc_ide.ui.settings.SettingsFragment
 import com.acc_ide.util.TextMateManager
+import com.acc_ide.view.EditorSearchPanelView
 import com.acc_ide.view.SymbolPanelView
 import com.acc_ide.completion.languages.LanguageManager
 import io.github.rosemoe.sora.lang.EmptyLanguage
 import io.github.rosemoe.sora.widget.CodeEditor
+import io.github.rosemoe.sora.widget.EditorSearcher
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme
 import io.github.rosemoe.sora.widget.schemes.SchemeDarcula
 import io.github.rosemoe.sora.widget.schemes.SchemeVS2019
@@ -66,12 +65,7 @@ class EditorFragment : Fragment() {
 
     // Symbol panel components
     private lateinit var symbolPanel: SymbolPanelView
-    private lateinit var searchPanel: View
-    private lateinit var searchInput: EditText
-    private lateinit var searchCounter: TextView
-    private lateinit var searchPrevButton: ImageButton
-    private lateinit var searchNextButton: ImageButton
-    private lateinit var searchCloseButton: ImageButton
+    private lateinit var searchPanel: EditorSearchPanelView
     private var isSymbolPanelVisible = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,11 +81,6 @@ class EditorFragment : Fragment() {
         editor = view.findViewById(R.id.editor_view)
         symbolPanel = view.findViewById(R.id.symbol_panel)
         searchPanel = view.findViewById(R.id.search_panel)
-        searchInput = view.findViewById(R.id.search_input)
-        searchCounter = view.findViewById(R.id.search_counter)
-        searchPrevButton = view.findViewById(R.id.search_prev_button)
-        searchNextButton = view.findViewById(R.id.search_next_button)
-        searchCloseButton = view.findViewById(R.id.search_close_button)
 
         // Get arguments
         arguments?.let {
@@ -312,26 +301,21 @@ class EditorFragment : Fragment() {
     }
 
     private fun initSearchPanel() {
-        searchPrevButton.setOnClickListener {
+        searchPanel.onPreviousClick = {
             navigateSearchMatch(-1)
         }
-        searchNextButton.setOnClickListener {
+        searchPanel.onNextClick = {
             navigateSearchMatch(1)
         }
-        searchCloseButton.setOnClickListener {
+        searchPanel.onCloseClick = {
             hideSearchPanel()
         }
-        searchInput.setOnEditorActionListener { _, _, _ ->
-            performSearch(searchInput.text?.toString().orEmpty(), true)
-            true
+        searchPanel.onSearchAction = { query ->
+            performSearch(query, true)
         }
-        searchInput.addTextChangedListener(object : android.text.TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                performSearch(s?.toString().orEmpty(), false)
-            }
-            override fun afterTextChanged(s: android.text.Editable?) = Unit
-        })
+        searchPanel.onQueryChanged = { query ->
+            performSearch(query, false)
+        }
         updateSearchCounter()
     }
 
@@ -344,22 +328,18 @@ class EditorFragment : Fragment() {
     }
 
     private fun showSearchPanel() {
-        searchPanel.visibility = View.VISIBLE
+        searchPanel.show()
         updateSearchMenuState()
-        searchInput.requestFocus()
-        searchInput.post {
-            searchInput.setSelection(searchInput.text?.length ?: 0)
-        }
     }
 
     private fun hideSearchPanel() {
-        searchPanel.visibility = View.GONE
+        searchPanel.hide()
         updateSearchMenuState()
         activeSearchQuery = ""
         activeSearchMatches = emptyList()
         activeSearchIndex = -1
+        editor.searcher.stopSearch()
         updateSearchCounter()
-        searchInput.setText("")
     }
 
     private fun performSearch(query: String, moveToNext: Boolean) {
@@ -368,6 +348,7 @@ class EditorFragment : Fragment() {
         if (query.isBlank() || content.isEmpty()) {
             activeSearchMatches = emptyList()
             activeSearchIndex = -1
+            editor.searcher.stopSearch()
             updateSearchCounter()
             return
         }
@@ -382,10 +363,10 @@ class EditorFragment : Fragment() {
         }
 
         activeSearchMatches = matches
+        editor.searcher.search(query, EditorSearcher.SearchOptions(false, false))
         if (matches.isEmpty()) {
             activeSearchIndex = -1
             updateSearchCounter()
-            Toast.makeText(requireContext(), getString(R.string.search_no_match), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -396,7 +377,7 @@ class EditorFragment : Fragment() {
 
     private fun navigateSearchMatch(direction: Int) {
         if (activeSearchMatches.isEmpty()) {
-            performSearch(searchInput.text?.toString().orEmpty(), true)
+            performSearch(searchPanel.getQuery(), true)
             return
         }
         val size = activeSearchMatches.size
@@ -414,15 +395,17 @@ class EditorFragment : Fragment() {
     }
 
     private fun updateSearchCounter() {
-        searchCounter.text = if (activeSearchMatches.isEmpty() || activeSearchIndex < 0) {
-            ""
-        } else {
-            getString(
-                R.string.search_counter,
-                activeSearchIndex + 1,
-                activeSearchMatches.size
-            )
-        }
+        searchPanel.updateCounter(
+            if (activeSearchMatches.isEmpty() || activeSearchIndex < 0) {
+                ""
+            } else {
+                getString(
+                    R.string.search_counter,
+                    activeSearchIndex + 1,
+                    activeSearchMatches.size
+                )
+            }
+        )
     }
 
     private fun updateSearchMenuState() {
