@@ -9,6 +9,7 @@ This document records all official release information for ACC IDE.
 - upgrade AGP to 9.0.0 && correct sora-editor group id && upgrade to 0.24.4
 - enable c++17 for wasm cpp compilation
 - link wasm clang builtins for cpp
+- add search ans replace feature
 
 ## Version 1.4.0 (2025-10-02)
 
