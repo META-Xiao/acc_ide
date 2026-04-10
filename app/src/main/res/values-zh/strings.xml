@@ -69,6 +69,7 @@
     <string name="search_next">下一个匹配</string>
     <string name="search_previous">上一个匹配</string>
     <string name="search_no_match">未找到匹配内容</string>
+    <string name="search_selected_text">搜索选中内容</string>
     <string name="search_counter">%1$d/%2$d</string>
     <string name="save_as">另存为</string>
     

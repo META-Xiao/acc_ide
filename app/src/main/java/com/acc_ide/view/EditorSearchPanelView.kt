@@ -132,6 +132,15 @@ class EditorSearchPanelView @JvmOverloads constructor(
     }
 
     /**
+     * Set search query text
+     * 设置搜索关键字
+     */
+    fun setQuery(query: String) {
+        searchInput.setText(query)
+        searchInput.setSelection(searchInput.text?.length ?: 0)
+    }
+
+    /**
      * Get current search query
      * 获取当前搜索关键字
      */
