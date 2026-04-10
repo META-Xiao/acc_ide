@@ -371,6 +371,12 @@ class EditorFragment : Fragment() {
         searchPanel.onQueryChanged = { query ->
             performSearch(query, false)
         }
+        searchPanel.onReplaceClick = { replacement ->
+            replaceCurrentMatch(replacement)
+        }
+        searchPanel.onReplaceAllClick = { replacement ->
+            replaceAllMatches(replacement)
+        }
         updateSearchCounter()
     }
 
@@ -443,6 +449,28 @@ class EditorFragment : Fragment() {
             }
             updateSearchCounter()
         }
+    }
+
+    private fun replaceCurrentMatch(replacement: String) {
+        if (!editor.searcher.hasQuery()) {
+            performSearch(searchPanel.getQuery(), true)
+            return
+        }
+        val currentIndex = editor.searcher.getCurrentMatchedPositionIndex()
+        if (currentIndex < 0) {
+            return
+        }
+        editor.searcher.replaceThis(replacement)
+        performSearch(searchPanel.getQuery(), false)
+    }
+
+    private fun replaceAllMatches(replacement: String) {
+        val query = searchPanel.getQuery()
+        if (query.isBlank()) {
+            return
+        }
+        editor.searcher.replaceAll(replacement)
+        performSearch(query, false)
     }
 
     private fun updateSearchCounter() {
@@ -1218,45 +1246,72 @@ class EditorFragment : Fragment() {
         }
 
         private var searchBtn: ImageButton? = null
+        private var actionContainer: LinearLayout? = null
+        private var actionScrollView: HorizontalScrollView? = null
 
         init {
             android.util.Log.d(VERIFY_TAG, "[INIT] AccEditorTextActionWindow init start")
             val rootView = view
             android.util.Log.d(VERIFY_TAG, "[INIT] rootView=${rootView.javaClass.name}")
             val scrollView = rootView.findViewById<HorizontalScrollView>(io.github.rosemoe.sora.R.id.panel_hv)
+            // 保存滚动容器引用，后续显示时需要主动刷新其测量结果
+            actionScrollView = scrollView
             if (scrollView == null) {
                 android.util.Log.e(VERIFY_TAG, "[INIT] panel_hv not found")
                 throw IllegalStateException("panel_hv not found in EditorTextActionWindow view")
             }
 
-            // Force the action window to fill width by default
-            // 强制文本操作窗口默认横向铺满
+            // Keep the action window expanded without forcing equal-width buttons,
+
             scrollView.isHorizontalScrollBarEnabled = false
             scrollView.isFillViewport = true
             val container = scrollView.getChildAt(0) as? LinearLayout
                 ?: throw IllegalStateException("panel_hv child is not LinearLayout")
+            actionContainer = container
             android.util.Log.d(VERIFY_TAG, "[INIT] container childCount(before)=${container.childCount}")
-            container.layoutParams = container.layoutParams.apply {
-                width = ViewGroup.LayoutParams.MATCH_PARENT
-            }
+            // 使用内容自适应宽度，避免按钮被平均拉伸后需要横向滑动
+            val containerLayoutParams = container.layoutParams ?: ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            containerLayoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
+            container.layoutParams = containerLayoutParams
+
+            val scrollLayoutParams = scrollView.layoutParams ?: ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            scrollLayoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
+            scrollView.layoutParams = scrollLayoutParams
             container.weightSum = 0f
 
-            // Make every action share the available width equally
-            // 让所有操作按钮平均分配可用宽度
+            // Tighten inner spacing while keeping each action at natural width.
+            // 仅收紧内部留白，不再把所有按钮强制拉伸为等宽，避免出现横向滑动才能看全。
             repeat(container.childCount) { index ->
                 val child = container.getChildAt(index)
                 val params = (child.layoutParams as? LinearLayout.LayoutParams)
-                    ?: LinearLayout.LayoutParams(dp(45), dp(45))
-                params.width = 0
-                params.weight = 1f
+                    ?: LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp(44))
+                params.width = ViewGroup.LayoutParams.WRAP_CONTENT
+                params.height = dp(44)
+                params.weight = 0f
+                params.marginStart = if (index == 0) 0 else dp(2)
+                params.marginEnd = 0
                 child.layoutParams = params
+                child.minimumWidth = dp(40)
+                child.minimumHeight = dp(44)
+                child.setPadding(dp(6), dp(6), dp(6), dp(6))
             }
             searchBtn = ImageButton(editor.context).apply {
                 id = View.generateViewId()
-                layoutParams = LinearLayout.LayoutParams(0, dp(45), 1f)
+                layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp(44)).apply {
+                    marginStart = dp(2)
+                }
+                minimumWidth = dp(40)
+                minimumHeight = dp(44)
                 contentDescription = editor.context.getString(R.string.search_selected_text)
                 setImageResource(R.drawable.baseline_search_24)
                 background = resolveSelectableBackground()
+                setPadding(dp(6), dp(6), dp(6), dp(6))
                 scaleType = android.widget.ImageView.ScaleType.CENTER
                 setOnClickListener(this@AccEditorTextActionWindow)
             }
@@ -1284,16 +1339,22 @@ class EditorFragment : Fragment() {
 
         override fun show() {
             refreshSearchButtonState()
-            android.util.Log.d(VERIFY_TAG, "[SHOW] selected=${editor.cursor.isSelected}")
             super.show()
+            // 首次显示和主题切换后各同步一次宽度，减少父类窗口宽度缓存带来的收起问题
+            syncWindowWidth()
+            view.post { syncWindowWidth() }
+            android.util.Log.d(VERIFY_TAG, "[SHOW] selected=${editor.cursor.isSelected}")
         }
 
         fun refreshSearchButtonState() {
             val button = searchBtn ?: return
+            val container = actionContainer
 
-            // Show search action only when there is a selection
-            // 仅在存在选中文本时显示搜索按钮
+            // 搜索按钮显隐变化后，强制相关容器重新布局
             button.visibility = if (editor.cursor.isSelected) View.VISIBLE else View.GONE
+            container?.requestLayout()
+            actionScrollView?.requestLayout()
+            view.requestLayout()
             android.util.Log.d(VERIFY_TAG, "[STATE] visible=${button.visibility == View.VISIBLE}")
         }
 
@@ -1312,10 +1373,70 @@ class EditorFragment : Fragment() {
                 return
             }
 
-            // Keep the custom action icon color consistent with built-in actions
-            // 让自定义按钮图标颜色与内置操作保持一致
             val color = scheme.getColor(EditorColorScheme.TEXT_ACTION_WINDOW_ICON_COLOR)
             button.drawable?.mutate()?.setTint(color)
+        }
+
+        private fun syncWindowWidth() {
+            val container = actionContainer ?: return
+            val scrollView = actionScrollView ?: return
+            // 以编辑器可用宽度为上限，重新测量操作栏内容宽度
+            val parentWidth = (editor.width - dp(24)).coerceAtLeast(dp(1))
+
+            container.measure(
+                View.MeasureSpec.makeMeasureSpec(parentWidth, View.MeasureSpec.AT_MOST),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            )
+            val contentWidth = container.measuredWidth
+            if (contentWidth <= 0) {
+                return
+            }
+
+            val scrollLayoutParams = scrollView.layoutParams ?: ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            scrollLayoutParams.width = contentWidth
+            scrollView.layoutParams = scrollLayoutParams
+            scrollView.measure(
+                View.MeasureSpec.makeMeasureSpec(contentWidth, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            )
+            view.layoutParams = view.layoutParams.apply {
+                width = contentWidth
+            }
+            view.measure(
+                View.MeasureSpec.makeMeasureSpec(contentWidth, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            )
+
+            updatePopupWindowWidth(contentWidth)
+            android.util.Log.d(VERIFY_TAG, "[WIDTH] contentWidth=$contentWidth parentWidth=$parentWidth")
+        }
+
+        private fun updatePopupWindowWidth(width: Int) {
+            runCatching {
+                var current: Class<*>? = javaClass.superclass
+                while (current != null) {
+                    current.declaredFields.firstOrNull {
+                        PopupWindow::class.java.isAssignableFrom(it.type)
+                    }?.let { field ->
+                        field.isAccessible = true
+                        val popup = field.get(this) as? PopupWindow ?: return@runCatching
+                        // 直接同步父类 PopupWindow 宽度，避免外层窗口仍沿用旧尺寸
+                        popup.width = width
+                        if (popup.isShowing) {
+                            popup.update(width, popup.height)
+                        }
+                        android.util.Log.d(VERIFY_TAG, "[POPUP] width=$width field=${field.name}")
+                        return@runCatching
+                    }
+                    current = current.superclass
+                }
+                android.util.Log.w(VERIFY_TAG, "[POPUP] popup field not found")
+            }.onFailure {
+                android.util.Log.w(VERIFY_TAG, "[POPUP] update width failed: ${it.message}")
+            }
         }
 
         private fun resolveSelectableBackground() = TypedValue().let { typedValue ->
