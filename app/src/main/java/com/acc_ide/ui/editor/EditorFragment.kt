@@ -1,9 +1,11 @@
 package com.acc_ide.ui.editor
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.TypedValue
+import android.view.ContextMenu
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -12,7 +14,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.HorizontalScrollView
+import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuProvider
@@ -28,10 +32,13 @@ import com.acc_ide.util.TextMateManager
 import com.acc_ide.view.EditorSearchPanelView
 import com.acc_ide.view.SymbolPanelView
 import com.google.android.material.textfield.TextInputEditText
+import io.github.rosemoe.sora.event.ColorSchemeUpdateEvent
 import io.github.rosemoe.sora.event.ContentChangeEvent
-import io.github.rosemoe.sora.lang.EmptyLanguage
+import io.github.rosemoe.sora.event.CreateContextMenuEvent
 import io.github.rosemoe.sora.widget.CodeEditor
 import io.github.rosemoe.sora.widget.EditorSearcher
+import io.github.rosemoe.sora.widget.component.EditorContextMenuCreator
+import io.github.rosemoe.sora.widget.component.EditorTextActionWindow
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme
 import io.github.rosemoe.sora.widget.schemes.SchemeDarcula
 import io.github.rosemoe.sora.widget.schemes.SchemeVS2019
@@ -61,6 +68,8 @@ class EditorFragment : Fragment() {
     private var searchMenuItem: MenuItem? = null
     private var activeSearchQuery = ""
     private val searchDebugTag = "SearchDebug"
+    private val textActionVerifyTag = "TextActionVerify"
+    private val searchSelectedMenuItemId = View.generateViewId()
 
     // Symbol panel components
     private lateinit var symbolPanel: SymbolPanelView
@@ -285,18 +294,65 @@ class EditorFragment : Fragment() {
      */
     private fun initViews() {
         try {
-            // Initialize other UI elements of editor view (like toolbar, buttons, etc.)
-            // Add editor-related view initialization code here
-
-            editor.setOnLongClickListener {
-                // Show context menu or perform other operations
-                true
-            }
-
+            installSearchSelectionContextMenu()
+            installSearchTextActionWindow()
             android.util.Log.d("EditorFragment", "View initialization completed")
         } catch (e: Exception) {
             android.util.Log.e("EditorFragment", "Error initializing views: ${e.message}")
+            android.util.Log.e(textActionVerifyTag, "[ERROR] initViews failed", e)
         }
+    }
+
+    private fun installSearchTextActionWindow() {
+        android.util.Log.d(textActionVerifyTag, "[INSTALL] installSearchTextActionWindow() called")
+        val replacement = AccEditorTextActionWindow(this, editor)
+        android.util.Log.d(textActionVerifyTag, "[INSTALL] replacement created=${replacement.javaClass.name}")
+        editor.replaceComponent(EditorTextActionWindow::class.java, replacement)
+        val component = editor.getComponent(EditorTextActionWindow::class.java)
+        android.util.Log.d(textActionVerifyTag, "[INSTALL] current textActionWindow=${component?.javaClass?.name}")
+        android.util.Log.d(textActionVerifyTag, "[INSTALL] sameInstance=${component === replacement}")
+    }
+
+    private fun installSearchSelectionContextMenu() {
+        val replacement = object : EditorContextMenuCreator(editor) {
+            override fun onCreateContextMenu(event: CreateContextMenuEvent) {
+                super.onCreateContextMenu(event)
+                val cursor = editor.cursor
+                val left = cursor.left()
+                val right = cursor.right()
+                if (!editor.isTextSelected || left.index >= right.index) {
+                    return
+                }
+                val selectedText = editor.text.subSequence(left.index, right.index).toString().trim()
+                if (selectedText.isEmpty()) {
+                    return
+                }
+                buildMenu(event.menu) {
+                    item {
+                        itemId = searchSelectedMenuItemId
+                        order = 100
+                        titleRes = R.string.search_selected_text
+                        onClick {
+                            openSearchWithSelection(selectedText)
+                        }
+                    }
+                }
+            }
+        }
+        editor.replaceComponent(EditorContextMenuCreator::class.java, replacement)
+    }
+
+    private fun openSearchWithSelection(selectedText: String) {
+        if (selectedText.isBlank()) {
+            return
+        }
+        val textActionWindow = editor.getComponent(EditorTextActionWindow::class.java)
+        if (textActionWindow is AccEditorTextActionWindow) {
+            textActionWindow.refreshSearchButtonState()
+        }
+        showSearchPanel()
+        searchPanel.setQuery(selectedText)
+        performSearch(selectedText, true)
     }
 
     private fun initSearchPanel() {
@@ -1145,6 +1201,106 @@ class EditorFragment : Fragment() {
         } catch (e: Exception) {
             android.util.Log.e("EditorFragment", "Failed to configure auto-completion component colors: ${e.message}")
             e.printStackTrace()
+        }
+    }
+
+    private class AccEditorTextActionWindow(
+        private val hostFragment: EditorFragment,
+        private val editor: CodeEditor
+    ) : EditorTextActionWindow(editor) {
+
+        companion object {
+            private const val VERIFY_TAG = "TextActionVerify"
+        }
+
+        private var searchBtn: ImageButton? = null
+
+        init {
+            android.util.Log.d(VERIFY_TAG, "[INIT] AccEditorTextActionWindow init start")
+            val rootView = view
+            android.util.Log.d(VERIFY_TAG, "[INIT] rootView=${rootView.javaClass.name}")
+            rootView.setBackgroundColor(0xCCFF5722.toInt())
+            val scrollView = rootView.findViewById<HorizontalScrollView>(io.github.rosemoe.sora.R.id.panel_hv)
+            if (scrollView == null) {
+                android.util.Log.e(VERIFY_TAG, "[INIT] panel_hv not found")
+                throw IllegalStateException("panel_hv not found in EditorTextActionWindow view")
+            }
+            val container = scrollView.getChildAt(0) as? LinearLayout
+                ?: throw IllegalStateException("panel_hv child is not LinearLayout")
+            android.util.Log.d(VERIFY_TAG, "[INIT] container childCount(before)=${container.childCount}")
+            searchBtn = ImageButton(editor.context).apply {
+                id = View.generateViewId()
+                layoutParams = LinearLayout.LayoutParams(dp(45), dp(45))
+                contentDescription = editor.context.getString(R.string.search_selected_text)
+                setImageResource(android.R.drawable.ic_menu_search)
+                background = resolveSelectableBackground()
+                setBackgroundColor(0x6600E676)
+                scaleType = android.widget.ImageView.ScaleType.CENTER
+                setOnClickListener(this@AccEditorTextActionWindow)
+            }
+            container.addView(searchBtn, minOf(2, container.childCount))
+            android.util.Log.d(VERIFY_TAG, "[INIT] container childCount(after)=${container.childCount}, searchBtnId=${searchBtn?.id}")
+            refreshSearchButtonState()
+            applySearchButtonColor()
+        }
+
+        override fun onClick(view: View) {
+            val button = searchBtn
+            android.util.Log.d(VERIFY_TAG, "[CLICK] viewId=${view.id}, searchBtnId=${button?.id}")
+            if (button != null && view.id == button.id) {
+                val cursor = editor.cursor
+                val selectedText = editor.text.subSequence(cursor.left().index, cursor.right().index).toString().trim()
+                android.util.Log.d(VERIFY_TAG, "[CLICK] search button clicked, selected='${'$'}selectedText'")
+                if (selectedText.isNotEmpty()) {
+                    hostFragment.openSearchWithSelection(selectedText)
+                }
+                dismiss()
+                return
+            }
+            super.onClick(view)
+        }
+
+        override fun show() {
+            refreshSearchButtonState()
+            android.util.Log.d(VERIFY_TAG, "[SHOW] selected=${'$'}{editor.cursor.isSelected}")
+            super.show()
+        }
+
+        fun refreshSearchButtonState() {
+            val button = searchBtn ?: return
+            button.visibility = if (editor.cursor.isSelected) View.VISIBLE else View.GONE
+            android.util.Log.d(VERIFY_TAG, "[STATE] visible=${'$'}{button.visibility == View.VISIBLE}")
+        }
+
+        override fun applyColorScheme() {
+            super.applyColorScheme()
+            applySearchButtonColor()
+            android.util.Log.d(VERIFY_TAG, "[COLOR] applyColorScheme()")
+        }
+
+        private fun applySearchButtonColor() {
+            val button = searchBtn ?: return
+            val scheme = try {
+                editor.colorScheme
+            } catch (e: Exception) {
+                android.util.Log.w(VERIFY_TAG, "[COLOR] skip applySearchButtonColor: ${e.message}")
+                return
+            }
+            val color = scheme.getColor(EditorColorScheme.TEXT_ACTION_WINDOW_ICON_COLOR)
+            button.drawable?.mutate()?.setTint(color)
+        }
+
+        private fun resolveSelectableBackground() = TypedValue().let { typedValue ->
+            editor.context.theme.resolveAttribute(android.R.attr.selectableItemBackground, typedValue, true)
+            ContextCompat.getDrawable(editor.context, typedValue.resourceId)
+        }
+
+        private fun dp(value: Int): Int {
+            return TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                value.toFloat(),
+                editor.context.resources.displayMetrics
+            ).toInt()
         }
     }
 
