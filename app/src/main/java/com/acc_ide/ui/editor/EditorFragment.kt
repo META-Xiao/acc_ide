@@ -3,6 +3,7 @@ package com.acc_ide.ui.editor
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -13,33 +14,32 @@ import android.widget.Button
 import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
-import com.google.android.material.textfield.TextInputEditText
 import com.acc_ide.R
-import com.acc_ide.ui.main.MainActivity
+import com.acc_ide.completion.languages.LanguageManager
 import com.acc_ide.ui.iopanel.IOPanelFragment
+import com.acc_ide.ui.main.MainActivity
 import com.acc_ide.ui.settings.SettingsFragment
 import com.acc_ide.util.TextMateManager
 import com.acc_ide.view.EditorSearchPanelView
 import com.acc_ide.view.SymbolPanelView
-import com.acc_ide.completion.languages.LanguageManager
+import com.google.android.material.textfield.TextInputEditText
+import io.github.rosemoe.sora.event.ContentChangeEvent
 import io.github.rosemoe.sora.lang.EmptyLanguage
 import io.github.rosemoe.sora.widget.CodeEditor
 import io.github.rosemoe.sora.widget.EditorSearcher
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme
 import io.github.rosemoe.sora.widget.schemes.SchemeDarcula
 import io.github.rosemoe.sora.widget.schemes.SchemeVS2019
-import io.github.rosemoe.sora.event.ContentChangeEvent
-import android.util.TypedValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.delay
 
 /**
  * Code editor fragment - provides code editing functionality with syntax highlighting
@@ -62,6 +62,7 @@ class EditorFragment : Fragment() {
     private var activeSearchQuery = ""
     private var activeSearchMatches: List<IntRange> = emptyList()
     private var activeSearchIndex = -1
+    private val searchDebugTag = "SearchDebug"
 
     // Symbol panel components
     private lateinit var symbolPanel: SymbolPanelView
@@ -349,6 +350,7 @@ class EditorFragment : Fragment() {
             activeSearchMatches = emptyList()
             activeSearchIndex = -1
             editor.searcher.stopSearch()
+            android.util.Log.d(searchDebugTag, "[SEARCH_CLEAR] query=${query.length} matches=0")
             updateSearchCounter()
             return
         }
@@ -364,33 +366,134 @@ class EditorFragment : Fragment() {
 
         activeSearchMatches = matches
         editor.searcher.search(query, EditorSearcher.SearchOptions(false, false))
-        if (matches.isEmpty()) {
+        if (activeSearchMatches.isEmpty()) {
             activeSearchIndex = -1
+            android.util.Log.d(searchDebugTag, "[SEARCH_NONE] query=${query.length} matches=0")
             updateSearchCounter()
             return
         }
 
-        activeSearchIndex = if (moveToNext || activeSearchIndex !in matches.indices) 0 else activeSearchIndex
+        activeSearchIndex = if (activeSearchIndex in activeSearchMatches.indices) activeSearchIndex else 0
+        val firstRange = activeSearchMatches.first()
+        val firstPos = editor.text.indexer.getCharPosition(firstRange.first)
+        android.util.Log.d(
+            searchDebugTag,
+            "[SEARCH_UPDATE] query=${query.length} matches=${activeSearchMatches.size} index=$activeSearchIndex first=${firstPos.line}:${firstPos.column}"
+        )
         updateSearchCounter()
-        highlightSearchMatch(activeSearchIndex)
+
+        if (moveToNext) {
+            editor.postDelayed({
+                highlightSearchMatch(activeSearchIndex)
+            }, 16)
+        } else {
+            searchPanel.restoreInputFocus()
+        }
     }
 
     private fun navigateSearchMatch(direction: Int) {
         if (activeSearchMatches.isEmpty()) {
+            android.util.Log.d(searchDebugTag, "[NAV_EMPTY] direction=$direction")
             performSearch(searchPanel.getQuery(), true)
             return
         }
         val size = activeSearchMatches.size
         activeSearchIndex = (activeSearchIndex + direction + size) % size
+        val range = activeSearchMatches[activeSearchIndex]
+        android.util.Log.d(
+            searchDebugTag,
+            "[NAV_MOVE] direction=$direction index=$activeSearchIndex size=$size start=${range.first} end=${range.last + 1}"
+        )
         updateSearchCounter()
-        highlightSearchMatch(activeSearchIndex)
+        editor.postDelayed({
+            highlightSearchMatch(activeSearchIndex)
+        }, 16)
     }
 
     private fun highlightSearchMatch(index: Int) {
-        val range = activeSearchMatches.getOrNull(index) ?: return
+        val range = activeSearchMatches.getOrNull(index)
+        if (range == null) {
+            android.util.Log.d(searchDebugTag, "[HIGHLIGHT_SKIP] index=$index size=${activeSearchMatches.size}")
+            return
+        }
         try {
-            editor.setSelection(range.first, range.last + 1)
-        } catch (_: Exception) {
+            val targetStart = range.first
+            val targetEnd = range.last + 1
+            android.util.Log.d(
+                searchDebugTag,
+                "[HIGHLIGHT_APPLY] index=$index start=$targetStart end=$targetEnd"
+            )
+            editor.postDelayed({
+                try {
+                    val startPosition = editor.text.indexer.getCharPosition(targetStart)
+                    val endPosition = editor.text.indexer.getCharPosition(targetEnd)
+                    editor.setSelectionRegion(
+                        startPosition.line,
+                        startPosition.column,
+                        endPosition.line,
+                        endPosition.column,
+                        false
+                    )
+                    val cursor = editor.cursor
+                    android.util.Log.d(
+                        searchDebugTag,
+                        "[SELECTION_STATE] left=${cursor.left()} right=${cursor.right()} selected=${cursor.isSelected}"
+                    )
+                    centerSearchCursorIfNeeded(targetEnd)
+                    searchPanel.restoreInputFocus()
+                } catch (e: Exception) {
+                    android.util.Log.e(searchDebugTag, "[HIGHLIGHT_ERR] ${e.message}")
+                }
+            }, 16)
+        } catch (e: Exception) {
+            android.util.Log.e(searchDebugTag, "[HIGHLIGHT_PREP_ERR] ${e.message}")
+        }
+    }
+
+    /**
+     * Keep current search match comfortably visible
+     * 保持当前搜索命中在可视区域内，并在跨屏跳转时居中显示
+     */
+    private fun centerSearchCursorIfNeeded(targetOffset: Int) {
+        try {
+            val targetPosition = editor.text.indexer.getCharPosition(targetOffset).fromThis()
+            val targetRow = targetPosition.line
+            val rowHeight = editor.rowHeight
+            if (rowHeight <= 0) {
+                android.util.Log.d(searchDebugTag, "[CENTER_SKIP] reason=rowHeight")
+                return
+            }
+
+            val currentOffsetY = editor.offsetY
+            val viewportHeight = editor.height - editor.paddingTop - editor.paddingBottom
+            if (viewportHeight <= 0) {
+                android.util.Log.d(searchDebugTag, "[CENTER_SKIP] reason=viewport")
+                return
+            }
+
+            val targetCenterY = targetRow * rowHeight + rowHeight / 2
+            val visibleTop = currentOffsetY
+            val visibleBottom = currentOffsetY + viewportHeight
+            val isOutsideCurrentViewport = targetCenterY < visibleTop || targetCenterY > visibleBottom
+            android.util.Log.d(
+                searchDebugTag,
+                "[CENTER_CHECK] row=$targetRow targetY=$targetCenterY visibleTop=$visibleTop visibleBottom=$visibleBottom outside=$isOutsideCurrentViewport"
+            )
+            if (!isOutsideCurrentViewport) {
+                return
+            }
+
+            val centeredOffsetY = (targetCenterY - viewportHeight / 2).coerceAtLeast(0)
+            editor.post {
+                try {
+                    android.util.Log.d(searchDebugTag, "[CENTER_SCROLL] x=${editor.offsetX} y=$centeredOffsetY")
+                    editor.scrollTo(editor.offsetX, centeredOffsetY)
+                } catch (e: Exception) {
+                    android.util.Log.e(searchDebugTag, "[CENTER_ERR] ${e.message}")
+                }
+            }
+        } catch (e: Exception) {
+            android.util.Log.e(searchDebugTag, "[CENTER_PREP_ERR] ${e.message}")
         }
     }
 

@@ -103,6 +103,17 @@ class EditorSearchPanelView @JvmOverloads constructor(
     }
 
     /**
+     * Restore focus to search input
+     * 恢复搜索输入框焦点
+     */
+    fun restoreInputFocus() {
+        searchInput.post {
+            searchInput.requestFocus()
+            searchInput.setSelection(searchInput.text?.length ?: 0)
+        }
+    }
+
+    /**
      * Hide search panel and clear input
      * 隐藏搜索面板并清空输入
      */
