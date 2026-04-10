@@ -1204,6 +1204,10 @@ class EditorFragment : Fragment() {
         }
     }
 
+    /**
+     * Custom text action window with integrated search action
+     * 带搜索按钮的自定义文本操作窗口
+     */
     private class AccEditorTextActionWindow(
         private val hostFragment: EditorFragment,
         private val editor: CodeEditor
@@ -1224,12 +1228,32 @@ class EditorFragment : Fragment() {
                 android.util.Log.e(VERIFY_TAG, "[INIT] panel_hv not found")
                 throw IllegalStateException("panel_hv not found in EditorTextActionWindow view")
             }
+
+            // Force the action window to fill width by default
+            // 强制文本操作窗口默认横向铺满
+            scrollView.isHorizontalScrollBarEnabled = false
+            scrollView.isFillViewport = true
             val container = scrollView.getChildAt(0) as? LinearLayout
                 ?: throw IllegalStateException("panel_hv child is not LinearLayout")
             android.util.Log.d(VERIFY_TAG, "[INIT] container childCount(before)=${container.childCount}")
+            container.layoutParams = container.layoutParams.apply {
+                width = ViewGroup.LayoutParams.MATCH_PARENT
+            }
+            container.weightSum = 0f
+
+            // Make every action share the available width equally
+            // 让所有操作按钮平均分配可用宽度
+            repeat(container.childCount) { index ->
+                val child = container.getChildAt(index)
+                val params = (child.layoutParams as? LinearLayout.LayoutParams)
+                    ?: LinearLayout.LayoutParams(dp(45), dp(45))
+                params.width = 0
+                params.weight = 1f
+                child.layoutParams = params
+            }
             searchBtn = ImageButton(editor.context).apply {
                 id = View.generateViewId()
-                layoutParams = LinearLayout.LayoutParams(dp(45), dp(45))
+                layoutParams = LinearLayout.LayoutParams(0, dp(45), 1f)
                 contentDescription = editor.context.getString(R.string.search_selected_text)
                 setImageResource(R.drawable.baseline_search_24)
                 background = resolveSelectableBackground()
@@ -1266,6 +1290,9 @@ class EditorFragment : Fragment() {
 
         fun refreshSearchButtonState() {
             val button = searchBtn ?: return
+
+            // Show search action only when there is a selection
+            // 仅在存在选中文本时显示搜索按钮
             button.visibility = if (editor.cursor.isSelected) View.VISIBLE else View.GONE
             android.util.Log.d(VERIFY_TAG, "[STATE] visible=${button.visibility == View.VISIBLE}")
         }
@@ -1284,6 +1311,9 @@ class EditorFragment : Fragment() {
                 android.util.Log.w(VERIFY_TAG, "[COLOR] skip applySearchButtonColor: ${e.message}")
                 return
             }
+
+            // Keep the custom action icon color consistent with built-in actions
+            // 让自定义按钮图标颜色与内置操作保持一致
             val color = scheme.getColor(EditorColorScheme.TEXT_ACTION_WINDOW_ICON_COLOR)
             button.drawable?.mutate()?.setTint(color)
         }
