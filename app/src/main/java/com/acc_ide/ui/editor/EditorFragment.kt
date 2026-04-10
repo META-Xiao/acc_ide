@@ -1,6 +1,8 @@
 package com.acc_ide.ui.editor
 
 import android.content.Context
+import android.content.res.Configuration
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -19,6 +21,7 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -164,6 +167,7 @@ class EditorFragment : Fragment() {
                 searchMenuItem = menu.findItem(R.id.action_search)
                 updateSearchMenuState()
                 updateUndoRedoMenuState()
+                applyToolbarMenuIconColors()
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -214,6 +218,7 @@ class EditorFragment : Fragment() {
 
         // Configure auto completion component colors
         configureAutoCompletionColors()
+        applyToolbarMenuIconColors()
 
         // Set auto completion component enabled state
         val prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
@@ -497,6 +502,27 @@ class EditorFragment : Fragment() {
 
     private fun updateSearchMenuState() {
         searchMenuItem?.isVisible = !searchPanel.isVisible
+        applyToolbarMenuIconColors()
+    }
+
+    private fun applyToolbarMenuIconColors() {
+        val color = resolveThemeColor(com.google.android.material.R.attr.colorOnSurface)
+        listOf(searchMenuItem, undoMenuItem, redoMenuItem, runMenuItem).forEach { menuItem ->
+            menuItem?.icon?.mutate()?.let { icon ->
+                DrawableCompat.setTint(icon, color)
+                menuItem.icon = icon
+            }
+        }
+    }
+
+    private fun resolveThemeColor(attr: Int): Int {
+        val typedValue = TypedValue()
+        requireContext().theme.resolveAttribute(attr, typedValue, true)
+        return if (typedValue.resourceId != 0) {
+            ContextCompat.getColor(requireContext(), typedValue.resourceId)
+        } else {
+            typedValue.data
+        }
     }
 
     /**
@@ -1002,6 +1028,7 @@ class EditorFragment : Fragment() {
     fun updateCursorWidth(widthInDp: Float) {
         if (::editor.isInitialized) {
             try {
+                applyToolbarMenuIconColors()
                 // Set cursor width
                 setCursorWidth(widthInDp)
 
@@ -1153,6 +1180,8 @@ class EditorFragment : Fragment() {
                 
                 // Reconfigure scrollbars for theme refresh
                 configureScrollbars()
+                searchPanel.applyThemeColors()
+                applyToolbarMenuIconColors()
 
                 // Force redraw editor
                 editor.invalidate()
@@ -1201,6 +1230,14 @@ class EditorFragment : Fragment() {
                     io.github.rosemoe.sora.widget.schemes.EditorColorScheme.COMPLETION_WND_ITEM_CURRENT,
                     0xFF3A3D41.toInt()
                 )
+                scheme.setColor(
+                    io.github.rosemoe.sora.widget.schemes.EditorColorScheme.TEXT_ACTION_WINDOW_BACKGROUND,
+                    0xFF2C2C2C.toInt()
+                )
+                scheme.setColor(
+                    io.github.rosemoe.sora.widget.schemes.EditorColorScheme.TEXT_ACTION_WINDOW_ICON_COLOR,
+                    0xFFEEEEEE.toInt()
+                )
             } else {
                 // Light mode colors
                 scheme.setColor(
@@ -1222,6 +1259,14 @@ class EditorFragment : Fragment() {
                 scheme.setColor(
                     io.github.rosemoe.sora.widget.schemes.EditorColorScheme.COMPLETION_WND_ITEM_CURRENT,
                     0xFFE6D7F2.toInt()
+                )
+                scheme.setColor(
+                    io.github.rosemoe.sora.widget.schemes.EditorColorScheme.TEXT_ACTION_WINDOW_BACKGROUND,
+                    0xFFFEF7FF.toInt()
+                )
+                scheme.setColor(
+                    io.github.rosemoe.sora.widget.schemes.EditorColorScheme.TEXT_ACTION_WINDOW_ICON_COLOR,
+                    0xFF1A1A1A.toInt()
                 )
             }
 
@@ -1375,6 +1420,22 @@ class EditorFragment : Fragment() {
 
             val color = scheme.getColor(EditorColorScheme.TEXT_ACTION_WINDOW_ICON_COLOR)
             button.drawable?.mutate()?.setTint(color)
+
+            val background = resolveTextActionWindowBackground(scheme)
+            view.background?.mutate()?.setTint(background)
+            actionScrollView?.background?.mutate()?.setTint(background)
+        }
+
+        private fun resolveTextActionWindowBackground(scheme: EditorColorScheme): Int {
+            return try {
+                scheme.getColor(EditorColorScheme.TEXT_ACTION_WINDOW_BACKGROUND)
+            } catch (_: Exception) {
+                if ((editor.context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
+                    0xFF2C2C2C.toInt()
+                } else {
+                    0xFFFEF7FF.toInt()
+                }
+            }
         }
 
         private fun syncWindowWidth() {
