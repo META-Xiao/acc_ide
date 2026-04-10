@@ -1219,7 +1219,6 @@ class EditorFragment : Fragment() {
             android.util.Log.d(VERIFY_TAG, "[INIT] AccEditorTextActionWindow init start")
             val rootView = view
             android.util.Log.d(VERIFY_TAG, "[INIT] rootView=${rootView.javaClass.name}")
-            rootView.setBackgroundColor(0xCCFF5722.toInt())
             val scrollView = rootView.findViewById<HorizontalScrollView>(io.github.rosemoe.sora.R.id.panel_hv)
             if (scrollView == null) {
                 android.util.Log.e(VERIFY_TAG, "[INIT] panel_hv not found")
@@ -1232,9 +1231,8 @@ class EditorFragment : Fragment() {
                 id = View.generateViewId()
                 layoutParams = LinearLayout.LayoutParams(dp(45), dp(45))
                 contentDescription = editor.context.getString(R.string.search_selected_text)
-                setImageResource(android.R.drawable.ic_menu_search)
+                setImageResource(R.drawable.baseline_search_24)
                 background = resolveSelectableBackground()
-                setBackgroundColor(0x6600E676)
                 scaleType = android.widget.ImageView.ScaleType.CENTER
                 setOnClickListener(this@AccEditorTextActionWindow)
             }
@@ -1262,14 +1260,14 @@ class EditorFragment : Fragment() {
 
         override fun show() {
             refreshSearchButtonState()
-            android.util.Log.d(VERIFY_TAG, "[SHOW] selected=${'$'}{editor.cursor.isSelected}")
+            android.util.Log.d(VERIFY_TAG, "[SHOW] selected=${editor.cursor.isSelected}")
             super.show()
         }
 
         fun refreshSearchButtonState() {
             val button = searchBtn ?: return
             button.visibility = if (editor.cursor.isSelected) View.VISIBLE else View.GONE
-            android.util.Log.d(VERIFY_TAG, "[STATE] visible=${'$'}{button.visibility == View.VISIBLE}")
+            android.util.Log.d(VERIFY_TAG, "[STATE] visible=${button.visibility == View.VISIBLE}")
         }
 
         override fun applyColorScheme() {
