@@ -60,8 +60,6 @@ class EditorFragment : Fragment() {
     private var isUpdatingFontSize = false // Prevent zoom listener and settings update from triggering each other
     private var searchMenuItem: MenuItem? = null
     private var activeSearchQuery = ""
-    private var activeSearchMatches: List<IntRange> = emptyList()
-    private var activeSearchIndex = -1
     private val searchDebugTag = "SearchDebug"
 
     // Symbol panel components
@@ -337,8 +335,6 @@ class EditorFragment : Fragment() {
         searchPanel.hide()
         updateSearchMenuState()
         activeSearchQuery = ""
-        activeSearchMatches = emptyList()
-        activeSearchIndex = -1
         editor.searcher.stopSearch()
         updateSearchCounter()
     }
@@ -347,169 +343,69 @@ class EditorFragment : Fragment() {
         val content = editor.text.toString()
         activeSearchQuery = query
         if (query.isBlank() || content.isEmpty()) {
-            activeSearchMatches = emptyList()
-            activeSearchIndex = -1
             editor.searcher.stopSearch()
             android.util.Log.d(searchDebugTag, "[SEARCH_CLEAR] query=${query.length} matches=0")
             updateSearchCounter()
             return
         }
 
-        val matches = mutableListOf<IntRange>()
-        var startIndex = 0
-        while (startIndex <= content.length - query.length) {
-            val foundIndex = content.indexOf(query, startIndex, ignoreCase = false)
-            if (foundIndex < 0) break
-            matches += foundIndex until (foundIndex + query.length)
-            startIndex = foundIndex + maxOf(1, query.length)
-        }
-
-        activeSearchMatches = matches
         editor.searcher.search(query, EditorSearcher.SearchOptions(false, false))
-        if (activeSearchMatches.isEmpty()) {
-            activeSearchIndex = -1
-            android.util.Log.d(searchDebugTag, "[SEARCH_NONE] query=${query.length} matches=0")
-            updateSearchCounter()
-            return
-        }
-
-        activeSearchIndex = if (activeSearchIndex in activeSearchMatches.indices) activeSearchIndex else 0
-        val firstRange = activeSearchMatches.first()
-        val firstPos = editor.text.indexer.getCharPosition(firstRange.first)
-        android.util.Log.d(
-            searchDebugTag,
-            "[SEARCH_UPDATE] query=${query.length} matches=${activeSearchMatches.size} index=$activeSearchIndex first=${firstPos.line}:${firstPos.column}"
-        )
-        updateSearchCounter()
 
         if (moveToNext) {
-            editor.postDelayed({
-                highlightSearchMatch(activeSearchIndex)
-            }, 16)
+            editor.post {
+                val jumped = editor.searcher.gotoNext()
+                android.util.Log.d(searchDebugTag, "[SEARCH_NEXT] jumped=$jumped")
+                if (jumped) {
+                    editor.requestFocus()
+                }
+                updateSearchCounter()
+            }
         } else {
             searchPanel.restoreInputFocus()
+            editor.post {
+                updateSearchCounter()
+            }
         }
     }
 
     private fun navigateSearchMatch(direction: Int) {
-        if (activeSearchMatches.isEmpty()) {
+        if (!editor.searcher.hasQuery()) {
             android.util.Log.d(searchDebugTag, "[NAV_EMPTY] direction=$direction")
             performSearch(searchPanel.getQuery(), true)
             return
         }
-        val size = activeSearchMatches.size
-        activeSearchIndex = (activeSearchIndex + direction + size) % size
-        val range = activeSearchMatches[activeSearchIndex]
-        android.util.Log.d(
-            searchDebugTag,
-            "[NAV_MOVE] direction=$direction index=$activeSearchIndex size=$size start=${range.first} end=${range.last + 1}"
-        )
-        updateSearchCounter()
-        editor.postDelayed({
-            highlightSearchMatch(activeSearchIndex)
-        }, 16)
-    }
 
-    private fun highlightSearchMatch(index: Int) {
-        val range = activeSearchMatches.getOrNull(index)
-        if (range == null) {
-            android.util.Log.d(searchDebugTag, "[HIGHLIGHT_SKIP] index=$index size=${activeSearchMatches.size}")
-            return
-        }
-        try {
-            val targetStart = range.first
-            val targetEnd = range.last + 1
-            android.util.Log.d(
-                searchDebugTag,
-                "[HIGHLIGHT_APPLY] index=$index start=$targetStart end=$targetEnd"
-            )
-            editor.postDelayed({
-                try {
-                    val startPosition = editor.text.indexer.getCharPosition(targetStart)
-                    val endPosition = editor.text.indexer.getCharPosition(targetEnd)
-                    editor.setSelectionRegion(
-                        startPosition.line,
-                        startPosition.column,
-                        endPosition.line,
-                        endPosition.column,
-                        false
-                    )
-                    val cursor = editor.cursor
-                    android.util.Log.d(
-                        searchDebugTag,
-                        "[SELECTION_STATE] left=${cursor.left()} right=${cursor.right()} selected=${cursor.isSelected}"
-                    )
-                    centerSearchCursorIfNeeded(targetEnd)
-                    searchPanel.restoreInputFocus()
-                } catch (e: Exception) {
-                    android.util.Log.e(searchDebugTag, "[HIGHLIGHT_ERR] ${e.message}")
-                }
-            }, 16)
-        } catch (e: Exception) {
-            android.util.Log.e(searchDebugTag, "[HIGHLIGHT_PREP_ERR] ${e.message}")
-        }
-    }
-
-    /**
-     * Keep current search match comfortably visible
-     * 保持当前搜索命中在可视区域内，并在跨屏跳转时居中显示
-     */
-    private fun centerSearchCursorIfNeeded(targetOffset: Int) {
-        try {
-            val targetPosition = editor.text.indexer.getCharPosition(targetOffset).fromThis()
-            val targetRow = targetPosition.line
-            val rowHeight = editor.rowHeight
-            if (rowHeight <= 0) {
-                android.util.Log.d(searchDebugTag, "[CENTER_SKIP] reason=rowHeight")
-                return
+        editor.post {
+            val jumped = if (direction > 0) {
+                editor.searcher.gotoNext()
+            } else {
+                editor.searcher.gotoPrevious()
             }
-
-            val currentOffsetY = editor.offsetY
-            val viewportHeight = editor.height - editor.paddingTop - editor.paddingBottom
-            if (viewportHeight <= 0) {
-                android.util.Log.d(searchDebugTag, "[CENTER_SKIP] reason=viewport")
-                return
+            android.util.Log.d(searchDebugTag, "[NAV_MOVE] direction=$direction jumped=$jumped")
+            if (jumped) {
+                editor.requestFocus()
             }
-
-            val targetCenterY = targetRow * rowHeight + rowHeight / 2
-            val visibleTop = currentOffsetY
-            val visibleBottom = currentOffsetY + viewportHeight
-            val isOutsideCurrentViewport = targetCenterY < visibleTop || targetCenterY > visibleBottom
-            android.util.Log.d(
-                searchDebugTag,
-                "[CENTER_CHECK] row=$targetRow targetY=$targetCenterY visibleTop=$visibleTop visibleBottom=$visibleBottom outside=$isOutsideCurrentViewport"
-            )
-            if (!isOutsideCurrentViewport) {
-                return
-            }
-
-            val centeredOffsetY = (targetCenterY - viewportHeight / 2).coerceAtLeast(0)
-            editor.post {
-                try {
-                    android.util.Log.d(searchDebugTag, "[CENTER_SCROLL] x=${editor.offsetX} y=$centeredOffsetY")
-                    editor.scrollTo(editor.offsetX, centeredOffsetY)
-                    editor.post {
-                        editor.invalidate()
-                        editor.postInvalidate()
-                    }
-                } catch (e: Exception) {
-                    android.util.Log.e(searchDebugTag, "[CENTER_ERR] ${e.message}")
-                }
-            }
-        } catch (e: Exception) {
-            android.util.Log.e(searchDebugTag, "[CENTER_PREP_ERR] ${e.message}")
+            updateSearchCounter()
         }
     }
 
     private fun updateSearchCounter() {
+        val hasQuery = editor.searcher.hasQuery()
+        if (!hasQuery) {
+            searchPanel.updateCounter("")
+            return
+        }
+
+        val total = editor.searcher.getMatchedPositionCount()
+        val current = editor.searcher.getCurrentMatchedPositionIndex()
         searchPanel.updateCounter(
-            if (activeSearchMatches.isEmpty() || activeSearchIndex < 0) {
+            if (total <= 0 || current < 0) {
                 ""
             } else {
                 getString(
                     R.string.search_counter,
-                    activeSearchIndex + 1,
-                    activeSearchMatches.size
+                    current + 1,
+                    total
                 )
             }
         )
