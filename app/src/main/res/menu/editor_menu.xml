@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     
     <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/baseline_search_24"
+        android:title="@string/search"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/action_undo"
         android:icon="@drawable/baseline_undo_24"
         android:title="@string/undo"

@@ -1,8 +1,13 @@
 package com.acc_ide.ui.editor
 
+import android.content.Context
+import android.content.res.Configuration
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.TypedValue
+import android.view.ContextMenu
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -11,32 +16,40 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.HorizontalScrollView
+import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.PopupWindow
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.core.content.ContextCompat
-import androidx.preference.PreferenceManager
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.MenuProvider
-import com.google.android.material.button.MaterialButton
+import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import com.acc_ide.R
-import com.acc_ide.ui.main.MainActivity
+import com.acc_ide.completion.languages.LanguageManager
 import com.acc_ide.ui.iopanel.IOPanelFragment
+import com.acc_ide.ui.main.MainActivity
 import com.acc_ide.ui.settings.SettingsFragment
 import com.acc_ide.util.TextMateManager
+import com.acc_ide.view.EditorSearchPanelView
 import com.acc_ide.view.SymbolPanelView
-import com.acc_ide.completion.languages.LanguageManager
-import io.github.rosemoe.sora.lang.EmptyLanguage
+import com.google.android.material.textfield.TextInputEditText
+import io.github.rosemoe.sora.event.ColorSchemeUpdateEvent
+import io.github.rosemoe.sora.event.ContentChangeEvent
+import io.github.rosemoe.sora.event.CreateContextMenuEvent
 import io.github.rosemoe.sora.widget.CodeEditor
+import io.github.rosemoe.sora.widget.EditorSearcher
+import io.github.rosemoe.sora.widget.component.EditorContextMenuCreator
+import io.github.rosemoe.sora.widget.component.EditorTextActionWindow
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme
 import io.github.rosemoe.sora.widget.schemes.SchemeDarcula
 import io.github.rosemoe.sora.widget.schemes.SchemeVS2019
-import io.github.rosemoe.sora.event.ContentChangeEvent
-import android.util.TypedValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.delay
 
 /**
  * Code editor fragment - provides code editing functionality with syntax highlighting
@@ -55,9 +68,15 @@ class EditorFragment : Fragment() {
     private var redoMenuItem: MenuItem? = null
     private var hasUnsavedChanges = false
     private var isUpdatingFontSize = false // Prevent zoom listener and settings update from triggering each other
+    private var searchMenuItem: MenuItem? = null
+    private var activeSearchQuery = ""
+    private val searchDebugTag = "SearchDebug"
+    private val textActionVerifyTag = "TextActionVerify"
+    private val searchSelectedMenuItemId = View.generateViewId()
 
     // Symbol panel components
     private lateinit var symbolPanel: SymbolPanelView
+    private lateinit var searchPanel: EditorSearchPanelView
     private var isSymbolPanelVisible = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,6 +91,7 @@ class EditorFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_editor, container, false)
         editor = view.findViewById(R.id.editor_view)
         symbolPanel = view.findViewById(R.id.symbol_panel)
+        searchPanel = view.findViewById(R.id.search_panel)
 
         // Get arguments
         arguments?.let {
@@ -144,7 +164,10 @@ class EditorFragment : Fragment() {
                 runMenuItem = menu.findItem(R.id.action_run)
                 undoMenuItem = menu.findItem(R.id.action_undo)
                 redoMenuItem = menu.findItem(R.id.action_redo)
+                searchMenuItem = menu.findItem(R.id.action_search)
+                updateSearchMenuState()
                 updateUndoRedoMenuState()
+                applyToolbarMenuIconColors()
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -170,6 +193,11 @@ class EditorFragment : Fragment() {
                         true
                     }
 
+                    R.id.action_search -> {
+                        toggleSearchPanel()
+                        true
+                    }
+
                     else -> false
                 }
             }
@@ -177,6 +205,7 @@ class EditorFragment : Fragment() {
 
         // Initialize interface views
         initViews()
+        initSearchPanel()
 
         // Configure language support
         configureLanguage()
@@ -189,6 +218,7 @@ class EditorFragment : Fragment() {
 
         // Configure auto completion component colors
         configureAutoCompletionColors()
+        applyToolbarMenuIconColors()
 
         // Set auto completion component enabled state
         val prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
@@ -269,17 +299,229 @@ class EditorFragment : Fragment() {
      */
     private fun initViews() {
         try {
-            // Initialize other UI elements of editor view (like toolbar, buttons, etc.)
-            // Add editor-related view initialization code here
-
-            editor.setOnLongClickListener {
-                // Show context menu or perform other operations
-                true
-            }
-
+            installSearchSelectionContextMenu()
+            installSearchTextActionWindow()
             android.util.Log.d("EditorFragment", "View initialization completed")
         } catch (e: Exception) {
             android.util.Log.e("EditorFragment", "Error initializing views: ${e.message}")
+            android.util.Log.e(textActionVerifyTag, "[ERROR] initViews failed", e)
+        }
+    }
+
+    private fun installSearchTextActionWindow() {
+        android.util.Log.d(textActionVerifyTag, "[INSTALL] installSearchTextActionWindow() called")
+        val replacement = AccEditorTextActionWindow(this, editor)
+        android.util.Log.d(textActionVerifyTag, "[INSTALL] replacement created=${replacement.javaClass.name}")
+        editor.replaceComponent(EditorTextActionWindow::class.java, replacement)
+        val component = editor.getComponent(EditorTextActionWindow::class.java)
+        android.util.Log.d(textActionVerifyTag, "[INSTALL] current textActionWindow=${component?.javaClass?.name}")
+        android.util.Log.d(textActionVerifyTag, "[INSTALL] sameInstance=${component === replacement}")
+    }
+
+    private fun installSearchSelectionContextMenu() {
+        val replacement = object : EditorContextMenuCreator(editor) {
+            override fun onCreateContextMenu(event: CreateContextMenuEvent) {
+                super.onCreateContextMenu(event)
+                val cursor = editor.cursor
+                val left = cursor.left()
+                val right = cursor.right()
+                if (!editor.isTextSelected || left.index >= right.index) {
+                    return
+                }
+                val selectedText = editor.text.subSequence(left.index, right.index).toString().trim()
+                if (selectedText.isEmpty()) {
+                    return
+                }
+                buildMenu(event.menu) {
+                    item {
+                        itemId = searchSelectedMenuItemId
+                        order = 100
+                        titleRes = R.string.search_selected_text
+                        onClick {
+                            openSearchWithSelection(selectedText)
+                        }
+                    }
+                }
+            }
+        }
+        editor.replaceComponent(EditorContextMenuCreator::class.java, replacement)
+    }
+
+    private fun openSearchWithSelection(selectedText: String) {
+        if (selectedText.isBlank()) {
+            return
+        }
+        val textActionWindow = editor.getComponent(EditorTextActionWindow::class.java)
+        if (textActionWindow is AccEditorTextActionWindow) {
+            textActionWindow.refreshSearchButtonState()
+        }
+        showSearchPanel()
+        searchPanel.setQuery(selectedText)
+        performSearch(selectedText, true)
+    }
+
+    private fun initSearchPanel() {
+        searchPanel.onPreviousClick = {
+            navigateSearchMatch(-1)
+        }
+        searchPanel.onNextClick = {
+            navigateSearchMatch(1)
+        }
+        searchPanel.onCloseClick = {
+            hideSearchPanel()
+        }
+        searchPanel.onSearchAction = { query ->
+            performSearch(query, true)
+        }
+        searchPanel.onQueryChanged = { query ->
+            performSearch(query, false)
+        }
+        searchPanel.onReplaceClick = { replacement ->
+            replaceCurrentMatch(replacement)
+        }
+        searchPanel.onReplaceAllClick = { replacement ->
+            replaceAllMatches(replacement)
+        }
+        updateSearchCounter()
+    }
+
+    private fun toggleSearchPanel() {
+        if (searchPanel.isVisible) {
+            hideSearchPanel()
+        } else {
+            showSearchPanel()
+        }
+    }
+
+    private fun showSearchPanel() {
+        searchPanel.show()
+        updateSearchMenuState()
+    }
+
+    private fun hideSearchPanel() {
+        searchPanel.hide()
+        updateSearchMenuState()
+        activeSearchQuery = ""
+        editor.searcher.stopSearch()
+        updateSearchCounter()
+    }
+
+    private fun performSearch(query: String, moveToNext: Boolean) {
+        val content = editor.text.toString()
+        activeSearchQuery = query
+        if (query.isBlank() || content.isEmpty()) {
+            editor.searcher.stopSearch()
+            android.util.Log.d(searchDebugTag, "[SEARCH_CLEAR] query=${query.length} matches=0")
+            updateSearchCounter()
+            return
+        }
+
+        editor.searcher.search(query, EditorSearcher.SearchOptions(false, false))
+
+        if (moveToNext) {
+            editor.post {
+                val jumped = editor.searcher.gotoNext()
+                android.util.Log.d(searchDebugTag, "[SEARCH_NEXT] jumped=$jumped")
+                if (jumped) {
+                    editor.requestFocus()
+                }
+                updateSearchCounter()
+            }
+        } else {
+            searchPanel.restoreInputFocus()
+            editor.post {
+                updateSearchCounter()
+            }
+        }
+    }
+
+    private fun navigateSearchMatch(direction: Int) {
+        if (!editor.searcher.hasQuery()) {
+            android.util.Log.d(searchDebugTag, "[NAV_EMPTY] direction=$direction")
+            performSearch(searchPanel.getQuery(), true)
+            return
+        }
+
+        editor.post {
+            val jumped = if (direction > 0) {
+                editor.searcher.gotoNext()
+            } else {
+                editor.searcher.gotoPrevious()
+            }
+            android.util.Log.d(searchDebugTag, "[NAV_MOVE] direction=$direction jumped=$jumped")
+            if (jumped) {
+                editor.requestFocus()
+            }
+            updateSearchCounter()
+        }
+    }
+
+    private fun replaceCurrentMatch(replacement: String) {
+        if (!editor.searcher.hasQuery()) {
+            performSearch(searchPanel.getQuery(), true)
+            return
+        }
+        val currentIndex = editor.searcher.getCurrentMatchedPositionIndex()
+        if (currentIndex < 0) {
+            return
+        }
+        editor.searcher.replaceThis(replacement)
+        performSearch(searchPanel.getQuery(), false)
+    }
+
+    private fun replaceAllMatches(replacement: String) {
+        val query = searchPanel.getQuery()
+        if (query.isBlank()) {
+            return
+        }
+        editor.searcher.replaceAll(replacement)
+        performSearch(query, false)
+    }
+
+    private fun updateSearchCounter() {
+        val hasQuery = editor.searcher.hasQuery()
+        if (!hasQuery) {
+            searchPanel.updateCounter("")
+            return
+        }
+
+        val total = editor.searcher.getMatchedPositionCount()
+        val current = editor.searcher.getCurrentMatchedPositionIndex()
+        searchPanel.updateCounter(
+            if (total <= 0 || current < 0) {
+                ""
+            } else {
+                getString(
+                    R.string.search_counter,
+                    current + 1,
+                    total
+                )
+            }
+        )
+    }
+
+    private fun updateSearchMenuState() {
+        searchMenuItem?.isVisible = !searchPanel.isVisible
+        applyToolbarMenuIconColors()
+    }
+
+    private fun applyToolbarMenuIconColors() {
+        val color = resolveThemeColor(com.google.android.material.R.attr.colorOnSurface)
+        listOf(searchMenuItem, undoMenuItem, redoMenuItem, runMenuItem).forEach { menuItem ->
+            menuItem?.icon?.mutate()?.let { icon ->
+                DrawableCompat.setTint(icon, color)
+                menuItem.icon = icon
+            }
+        }
+    }
+
+    private fun resolveThemeColor(attr: Int): Int {
+        val typedValue = TypedValue()
+        requireContext().theme.resolveAttribute(attr, typedValue, true)
+        return if (typedValue.resourceId != 0) {
+            ContextCompat.getColor(requireContext(), typedValue.resourceId)
+        } else {
+            typedValue.data
         }
     }
 
@@ -553,11 +795,13 @@ class EditorFragment : Fragment() {
                     colorScheme.setColor(io.github.rosemoe.sora.widget.schemes.EditorColorScheme.SCROLL_BAR_THUMB, 0x66FFFFFF.toInt())
                     colorScheme.setColor(io.github.rosemoe.sora.widget.schemes.EditorColorScheme.SCROLL_BAR_THUMB_PRESSED, 0x99FFFFFF.toInt())
                     colorScheme.setColor(io.github.rosemoe.sora.widget.schemes.EditorColorScheme.SCROLL_BAR_TRACK, 0x1A000000.toInt())
+                    colorScheme.setColor(io.github.rosemoe.sora.widget.schemes.EditorColorScheme.MATCHED_TEXT_BACKGROUND, 0x4DFFE082)
                 } else {
                     // Set scrollbar colors for light theme
                     colorScheme.setColor(io.github.rosemoe.sora.widget.schemes.EditorColorScheme.SCROLL_BAR_THUMB, 0x66000000.toInt())
                     colorScheme.setColor(io.github.rosemoe.sora.widget.schemes.EditorColorScheme.SCROLL_BAR_THUMB_PRESSED, 0x99000000.toInt())
                     colorScheme.setColor(io.github.rosemoe.sora.widget.schemes.EditorColorScheme.SCROLL_BAR_TRACK, 0x1AFFFFFF.toInt())
+                    colorScheme.setColor(io.github.rosemoe.sora.widget.schemes.EditorColorScheme.MATCHED_TEXT_BACKGROUND, 0x42FFD54F)
                 }
             }
             
@@ -784,6 +1028,7 @@ class EditorFragment : Fragment() {
     fun updateCursorWidth(widthInDp: Float) {
         if (::editor.isInitialized) {
             try {
+                applyToolbarMenuIconColors()
                 // Set cursor width
                 setCursorWidth(widthInDp)
 
@@ -935,6 +1180,8 @@ class EditorFragment : Fragment() {
                 
                 // Reconfigure scrollbars for theme refresh
                 configureScrollbars()
+                searchPanel.applyThemeColors()
+                applyToolbarMenuIconColors()
 
                 // Force redraw editor
                 editor.invalidate()
@@ -983,6 +1230,14 @@ class EditorFragment : Fragment() {
                     io.github.rosemoe.sora.widget.schemes.EditorColorScheme.COMPLETION_WND_ITEM_CURRENT,
                     0xFF3A3D41.toInt()
                 )
+                scheme.setColor(
+                    io.github.rosemoe.sora.widget.schemes.EditorColorScheme.TEXT_ACTION_WINDOW_BACKGROUND,
+                    0xFF2C2C2C.toInt()
+                )
+                scheme.setColor(
+                    io.github.rosemoe.sora.widget.schemes.EditorColorScheme.TEXT_ACTION_WINDOW_ICON_COLOR,
+                    0xFFEEEEEE.toInt()
+                )
             } else {
                 // Light mode colors
                 scheme.setColor(
@@ -1005,12 +1260,257 @@ class EditorFragment : Fragment() {
                     io.github.rosemoe.sora.widget.schemes.EditorColorScheme.COMPLETION_WND_ITEM_CURRENT,
                     0xFFE6D7F2.toInt()
                 )
+                scheme.setColor(
+                    io.github.rosemoe.sora.widget.schemes.EditorColorScheme.TEXT_ACTION_WINDOW_BACKGROUND,
+                    0xFFFEF7FF.toInt()
+                )
+                scheme.setColor(
+                    io.github.rosemoe.sora.widget.schemes.EditorColorScheme.TEXT_ACTION_WINDOW_ICON_COLOR,
+                    0xFF1A1A1A.toInt()
+                )
             }
 
             android.util.Log.d("EditorFragment", "Configured auto-completion component colors, dark mode: $isDarkMode")
         } catch (e: Exception) {
             android.util.Log.e("EditorFragment", "Failed to configure auto-completion component colors: ${e.message}")
             e.printStackTrace()
+        }
+    }
+
+    /**
+     * Custom text action window with integrated search action
+     * 带搜索按钮的自定义文本操作窗口
+     */
+    private class AccEditorTextActionWindow(
+        private val hostFragment: EditorFragment,
+        private val editor: CodeEditor
+    ) : EditorTextActionWindow(editor) {
+
+        companion object {
+            private const val VERIFY_TAG = "TextActionVerify"
+        }
+
+        private var searchBtn: ImageButton? = null
+        private var actionContainer: LinearLayout? = null
+        private var actionScrollView: HorizontalScrollView? = null
+
+        init {
+            android.util.Log.d(VERIFY_TAG, "[INIT] AccEditorTextActionWindow init start")
+            val rootView = view
+            android.util.Log.d(VERIFY_TAG, "[INIT] rootView=${rootView.javaClass.name}")
+            val scrollView = rootView.findViewById<HorizontalScrollView>(io.github.rosemoe.sora.R.id.panel_hv)
+            // 保存滚动容器引用，后续显示时需要主动刷新其测量结果
+            actionScrollView = scrollView
+            if (scrollView == null) {
+                android.util.Log.e(VERIFY_TAG, "[INIT] panel_hv not found")
+                throw IllegalStateException("panel_hv not found in EditorTextActionWindow view")
+            }
+
+            // Keep the action window expanded without forcing equal-width buttons,
+
+            scrollView.isHorizontalScrollBarEnabled = false
+            scrollView.isFillViewport = true
+            val container = scrollView.getChildAt(0) as? LinearLayout
+                ?: throw IllegalStateException("panel_hv child is not LinearLayout")
+            actionContainer = container
+            android.util.Log.d(VERIFY_TAG, "[INIT] container childCount(before)=${container.childCount}")
+            // 使用内容自适应宽度，避免按钮被平均拉伸后需要横向滑动
+            val containerLayoutParams = container.layoutParams ?: ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            containerLayoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
+            container.layoutParams = containerLayoutParams
+
+            val scrollLayoutParams = scrollView.layoutParams ?: ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            scrollLayoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
+            scrollView.layoutParams = scrollLayoutParams
+            container.weightSum = 0f
+
+            // Tighten inner spacing while keeping each action at natural width.
+            // 仅收紧内部留白，不再把所有按钮强制拉伸为等宽，避免出现横向滑动才能看全。
+            repeat(container.childCount) { index ->
+                val child = container.getChildAt(index)
+                val params = (child.layoutParams as? LinearLayout.LayoutParams)
+                    ?: LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp(44))
+                params.width = ViewGroup.LayoutParams.WRAP_CONTENT
+                params.height = dp(44)
+                params.weight = 0f
+                params.marginStart = if (index == 0) 0 else dp(2)
+                params.marginEnd = 0
+                child.layoutParams = params
+                child.minimumWidth = dp(40)
+                child.minimumHeight = dp(44)
+                child.setPadding(dp(6), dp(6), dp(6), dp(6))
+            }
+            searchBtn = ImageButton(editor.context).apply {
+                id = View.generateViewId()
+                layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp(44)).apply {
+                    marginStart = dp(2)
+                }
+                minimumWidth = dp(40)
+                minimumHeight = dp(44)
+                contentDescription = editor.context.getString(R.string.search_selected_text)
+                setImageResource(R.drawable.baseline_search_24)
+                background = resolveSelectableBackground()
+                setPadding(dp(6), dp(6), dp(6), dp(6))
+                scaleType = android.widget.ImageView.ScaleType.CENTER
+                setOnClickListener(this@AccEditorTextActionWindow)
+            }
+            container.addView(searchBtn, minOf(2, container.childCount))
+            android.util.Log.d(VERIFY_TAG, "[INIT] container childCount(after)=${container.childCount}, searchBtnId=${searchBtn?.id}")
+            refreshSearchButtonState()
+            applySearchButtonColor()
+        }
+
+        override fun onClick(view: View) {
+            val button = searchBtn
+            android.util.Log.d(VERIFY_TAG, "[CLICK] viewId=${view.id}, searchBtnId=${button?.id}")
+            if (button != null && view.id == button.id) {
+                val cursor = editor.cursor
+                val selectedText = editor.text.subSequence(cursor.left().index, cursor.right().index).toString().trim()
+                android.util.Log.d(VERIFY_TAG, "[CLICK] search button clicked, selected='${'$'}selectedText'")
+                if (selectedText.isNotEmpty()) {
+                    hostFragment.openSearchWithSelection(selectedText)
+                }
+                dismiss()
+                return
+            }
+            super.onClick(view)
+        }
+
+        override fun show() {
+            refreshSearchButtonState()
+            super.show()
+            // 首次显示和主题切换后各同步一次宽度，减少父类窗口宽度缓存带来的收起问题
+            syncWindowWidth()
+            view.post { syncWindowWidth() }
+            android.util.Log.d(VERIFY_TAG, "[SHOW] selected=${editor.cursor.isSelected}")
+        }
+
+        fun refreshSearchButtonState() {
+            val button = searchBtn ?: return
+            val container = actionContainer
+
+            // 搜索按钮显隐变化后，强制相关容器重新布局
+            button.visibility = if (editor.cursor.isSelected) View.VISIBLE else View.GONE
+            container?.requestLayout()
+            actionScrollView?.requestLayout()
+            view.requestLayout()
+            android.util.Log.d(VERIFY_TAG, "[STATE] visible=${button.visibility == View.VISIBLE}")
+        }
+
+        override fun applyColorScheme() {
+            super.applyColorScheme()
+            applySearchButtonColor()
+            android.util.Log.d(VERIFY_TAG, "[COLOR] applyColorScheme()")
+        }
+
+        private fun applySearchButtonColor() {
+            val button = searchBtn ?: return
+            val scheme = try {
+                editor.colorScheme
+            } catch (e: Exception) {
+                android.util.Log.w(VERIFY_TAG, "[COLOR] skip applySearchButtonColor: ${e.message}")
+                return
+            }
+
+            val color = scheme.getColor(EditorColorScheme.TEXT_ACTION_WINDOW_ICON_COLOR)
+            button.drawable?.mutate()?.setTint(color)
+
+            val background = resolveTextActionWindowBackground(scheme)
+            view.background?.mutate()?.setTint(background)
+            actionScrollView?.background?.mutate()?.setTint(background)
+        }
+
+        private fun resolveTextActionWindowBackground(scheme: EditorColorScheme): Int {
+            return try {
+                scheme.getColor(EditorColorScheme.TEXT_ACTION_WINDOW_BACKGROUND)
+            } catch (_: Exception) {
+                if ((editor.context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
+                    0xFF2C2C2C.toInt()
+                } else {
+                    0xFFFEF7FF.toInt()
+                }
+            }
+        }
+
+        private fun syncWindowWidth() {
+            val container = actionContainer ?: return
+            val scrollView = actionScrollView ?: return
+            // 以编辑器可用宽度为上限，重新测量操作栏内容宽度
+            val parentWidth = (editor.width - dp(24)).coerceAtLeast(dp(1))
+
+            container.measure(
+                View.MeasureSpec.makeMeasureSpec(parentWidth, View.MeasureSpec.AT_MOST),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            )
+            val contentWidth = container.measuredWidth
+            if (contentWidth <= 0) {
+                return
+            }
+
+            val scrollLayoutParams = scrollView.layoutParams ?: ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            scrollLayoutParams.width = contentWidth
+            scrollView.layoutParams = scrollLayoutParams
+            scrollView.measure(
+                View.MeasureSpec.makeMeasureSpec(contentWidth, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            )
+            view.layoutParams = view.layoutParams.apply {
+                width = contentWidth
+            }
+            view.measure(
+                View.MeasureSpec.makeMeasureSpec(contentWidth, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            )
+
+            updatePopupWindowWidth(contentWidth)
+            android.util.Log.d(VERIFY_TAG, "[WIDTH] contentWidth=$contentWidth parentWidth=$parentWidth")
+        }
+
+        private fun updatePopupWindowWidth(width: Int) {
+            runCatching {
+                var current: Class<*>? = javaClass.superclass
+                while (current != null) {
+                    current.declaredFields.firstOrNull {
+                        PopupWindow::class.java.isAssignableFrom(it.type)
+                    }?.let { field ->
+                        field.isAccessible = true
+                        val popup = field.get(this) as? PopupWindow ?: return@runCatching
+                        // 直接同步父类 PopupWindow 宽度，避免外层窗口仍沿用旧尺寸
+                        popup.width = width
+                        if (popup.isShowing) {
+                            popup.update(width, popup.height)
+                        }
+                        android.util.Log.d(VERIFY_TAG, "[POPUP] width=$width field=${field.name}")
+                        return@runCatching
+                    }
+                    current = current.superclass
+                }
+                android.util.Log.w(VERIFY_TAG, "[POPUP] popup field not found")
+            }.onFailure {
+                android.util.Log.w(VERIFY_TAG, "[POPUP] update width failed: ${it.message}")
+            }
+        }
+
+        private fun resolveSelectableBackground() = TypedValue().let { typedValue ->
+            editor.context.theme.resolveAttribute(android.R.attr.selectableItemBackground, typedValue, true)
+            ContextCompat.getDrawable(editor.context, typedValue.resourceId)
+        }
+
+        private fun dp(value: Int): Int {
+            return TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                value.toFloat(),
+                editor.context.resources.displayMetrics
+            ).toInt()
         }
     }
 

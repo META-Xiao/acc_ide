@@ -64,6 +64,17 @@
     <string name="open_file">打开文件</string>
     <string name="undo">撤销</string>
     <string name="redo">重做</string>
+    <string name="search">搜索</string>
+    <string name="search_hint">在当前文件中查找</string>
+    <string name="search_next">下一个匹配</string>
+    <string name="search_previous">上一个匹配</string>
+    <string name="search_no_match">未找到匹配内容</string>
+    <string name="search_selected_text">搜索选中内容</string>
+    <string name="search_counter">%1$d/%2$d</string>
+    <string name="toggle_replace">切换替换面板</string>
+    <string name="replace">替换</string>
+    <string name="replace_all">全部替换</string>
+    <string name="replace_hint">替换为</string>
     <string name="save_as">另存为</string>
     
     <!-- Splash Activity Log Messages -->

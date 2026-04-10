@@ -64,6 +64,17 @@
     <string name="open_file">Open file</string>
     <string name="undo">Undo</string>
     <string name="redo">Redo</string>
+    <string name="search">Search</string>
+    <string name="search_hint">Find in current file</string>
+    <string name="search_next">Next match</string>
+    <string name="search_previous">Previous match</string>
+    <string name="search_no_match">No matches found</string>
+    <string name="search_selected_text">Search selection</string>
+    <string name="search_counter">%1$d/%2$d</string>
+    <string name="toggle_replace">Toggle replace panel</string>
+    <string name="replace">Replace</string>
+    <string name="replace_all">Replace all</string>
+    <string name="replace_hint">Replace with</string>
     <string name="save_as">Save as</string>
 
     <!-- Splash Activity Log Messages -->
