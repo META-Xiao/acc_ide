@@ -1,4 +1,4 @@
-![Display1](img/Display_cn.png)
+![Display1](img/Display_en.png)
 
 # ACC IDE
 
