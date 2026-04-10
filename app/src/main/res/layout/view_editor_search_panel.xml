@@ -113,7 +113,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/replace"
                 android:padding="8dp"
-                android:src="@drawable/baseline_keyboard_arrow_down_24" />
+                android:src="@drawable/ic_replace_24" />
 
             <ImageButton
                 android:id="@+id/replace_all_button"
@@ -122,7 +122,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/replace_all"
                 android:padding="8dp"
-                android:src="@drawable/baseline_redo_24" />
+                android:src="@drawable/ic_replace_all_24" />
         </LinearLayout>
     </LinearLayout>
 
