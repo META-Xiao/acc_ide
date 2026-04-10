@@ -488,6 +488,10 @@ class EditorFragment : Fragment() {
                 try {
                     android.util.Log.d(searchDebugTag, "[CENTER_SCROLL] x=${editor.offsetX} y=$centeredOffsetY")
                     editor.scrollTo(editor.offsetX, centeredOffsetY)
+                    editor.post {
+                        editor.invalidate()
+                        editor.postInvalidate()
+                    }
                 } catch (e: Exception) {
                     android.util.Log.e(searchDebugTag, "[CENTER_ERR] ${e.message}")
                 }
