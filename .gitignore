@@ -3,6 +3,10 @@
 .idea/
 .gradle/
 
+# Local Gradle caches (do not sync)
+.gradle-local/
+.gradle-local/**
+
 # Local configuration
 local.properties
 
