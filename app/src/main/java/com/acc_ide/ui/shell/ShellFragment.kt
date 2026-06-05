@@ -47,7 +47,8 @@ class ShellFragment : Fragment() {
         loadThemeColors()
         view.setBackgroundColor(bgColor)
 
-        bridge = TermuxBridge(requireContext()).also {
+        val workDir = requireContext().filesDir.absolutePath
+        bridge = TermuxBridge(requireContext(), cwd = workDir).also {
             it.applyColors(bgColor, fgColor, cursorColor)
             it.initialize(rows = 40, cols = 80)
         }

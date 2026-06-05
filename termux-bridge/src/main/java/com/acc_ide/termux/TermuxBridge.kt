@@ -178,7 +178,7 @@ class TermuxBridge(
 
     companion object {
         const val DEFAULT_SHELL = "/system/bin/sh"
-        const val DEFAULT_CWD = "/"
+        const val DEFAULT_CWD = "/data/data/com.acc_ide/files"
         const val DEFAULT_TEXT_SIZE_SP = 14
         private const val COLOR_IDX_FG = TextStyle.NUM_INDEXED_COLORS - 3
         private const val COLOR_IDX_BG = TextStyle.NUM_INDEXED_COLORS - 2
