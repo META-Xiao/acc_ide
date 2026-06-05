@@ -125,6 +125,12 @@ class MainActivity : AppCompatActivity() {
                 fragmentNavigationManager.showSettingsFragment()
             }
 
+            // Set up shell button
+            val shellItem = findViewById<LinearLayout>(R.id.shell_item)
+            shellItem.setOnClickListener {
+                fragmentNavigationManager.showShellFragment()
+            }
+
             // Listen to fragment changes
             setupFragmentLifecycleCallbacks()
 

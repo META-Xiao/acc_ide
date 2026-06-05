@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/shell_background">
+
+    <!-- Scrollable terminal output -->
+    <ScrollView
+        android:id="@+id/shell_output_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:focusable="true"
+        android:clickable="true">
+
+        <TextView
+            android:id="@+id/shell_output"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:textSize="14sp"
+            android:textColor="@color/shell_foreground"
+            android:text="@string/shell_welcome"
+            android:lineSpacingExtra="1dp"
+            android:isScrollContainer="false"
+            android:focusable="true"
+            android:clickable="true" />
+    </ScrollView>
+
+    <!-- Invisible text input to capture keyboard -->
+    <EditText
+        android:id="@+id/shell_hidden_input"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:layout_gravity="bottom"
+        android:background="@null"
+        android:textColor="#FF000000"
+        android:textColorHint="#FF000000"
+        android:cursorVisible="false"
+        android:inputType="textNoSuggestions|textVisiblePassword"
+        android:imeOptions="flagNoExtractUi|actionSend"
+        android:maxLines="1"
+        android:importantForAutofill="no"
+        android:focusable="true"
+        android:focusableInTouchMode="true" />
+
+</FrameLayout>

@@ -6,6 +6,13 @@
     <string name="navigation_drawer_close">关闭导航抽屉</string>
     <string name="new_file">新建文件</string>
     <string name="settings">设置</string>
+    <string name="shell">终端</string>
+    <string name="shell_welcome">ACC IDE 终端 — Termux 后端\n输入命令后按回车执行。</string>
+    <string name="shell_input_hint">输入命令…</string>
+    <string name="shell_send">发送</string>
+    <string name="shell_clear">清屏</string>
+    <string name="shell_help">帮助</string>
+    <string name="shell_connect">连接</string>
     <string name="files">文件</string>
     <string name="actions">操作</string>
     <string name="no_files">没有文件，请创建新文件</string>

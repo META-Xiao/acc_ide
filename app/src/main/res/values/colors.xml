@@ -90,4 +90,8 @@
 
     <color name="switch_thumb_on">#674fa4</color>
     <color name="switch_thumb_off">#BDBDBD</color>
+
+    <color name="shell_background">#fef7ff</color>
+    <color name="shell_foreground">#212121</color>
+    <color name="shell_cursor">#212121</color>
 </resources>

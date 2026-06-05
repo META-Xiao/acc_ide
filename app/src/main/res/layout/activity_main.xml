@@ -53,32 +53,76 @@
                 android:layout_width="match_parent"
                 android:layout_height="220dp" />
             
-            <!-- 设置项 -->
+            <!-- Settings & Shell -->
             <LinearLayout
-                android:id="@+id/settings_item"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:background="?attr/selectableItemBackground"
-                android:paddingHorizontal="16dp">
-                
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_settings_gear"
-                    android:layout_marginEnd="16dp"
-                    android:contentDescription="@string/settings"
-                    app:tint="?attr/colorPrimary"/>
-                
-                <TextView
-                    android:id="@+id/settings_text"
+                android:paddingHorizontal="12dp">
+
+                <!-- Settings -->
+                <LinearLayout
+                    android:id="@+id/settings_item"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="@string/settings"
-                    android:textSize="15sp"
-                    android:textColor="?attr/colorOnSurface"/>
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="4dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_settings_gear"
+                        android:layout_marginEnd="8dp"
+                        android:contentDescription="@string/settings"
+                        app:tint="?attr/colorPrimary"/>
+
+                    <TextView
+                        android:id="@+id/settings_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/settings"
+                        android:textSize="15sp"
+                        android:textColor="?attr/colorOnSurface"/>
+                </LinearLayout>
+
+                <!-- Divider between settings and shell -->
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="32dp"
+                    android:background="?android:attr/listDivider"
+                    android:layout_marginHorizontal="4dp"/>
+
+                <!-- Shell -->
+                <LinearLayout
+                    android:id="@+id/shell_item"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="4dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_shell"
+                        android:layout_marginEnd="8dp"
+                        android:contentDescription="@string/shell"
+                        app:tint="?attr/colorPrimary"/>
+
+                    <TextView
+                        android:id="@+id/shell_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/shell"
+                        android:textSize="15sp"
+                        android:textColor="?attr/colorOnSurface"/>
+                </LinearLayout>
             </LinearLayout>
             
             <View

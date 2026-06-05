@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import com.acc_ide.R
 import com.acc_ide.ui.editor.EditorFragment
 import com.acc_ide.ui.settings.SettingsFragment
+import com.acc_ide.ui.shell.ShellFragment
 import com.acc_ide.ui.welcome.WelcomeFragment
 
 /**
@@ -79,6 +80,19 @@ class FragmentNavigationManager(
         // Lock drawer to prevent swipe open on settings page
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
     }
+
+    /**
+     * Show shell fragment with terminal UI
+     * 显示终端Fragment — 行为与编辑器一致，保留汉堡菜单
+     */
+    fun showShellFragment() {
+        activity.supportFragmentManager.beginTransaction()
+            .replace(R.id.content_frame, ShellFragment())
+            .commit()
+
+        activity.supportActionBar?.title = activity.getString(R.string.shell)
+        drawerLayout.closeDrawer(GravityCompat.START)
+    }
     
     /**
      * Update navigation icon based on current fragment type
@@ -120,6 +134,9 @@ class FragmentNavigationManager(
             // If welcome page, set title to "Welcome"
             if (currentFragment is WelcomeFragment) {
                 activity.supportActionBar?.title = activity.getString(R.string.welcome)
+            }
+            if (currentFragment is ShellFragment) {
+                activity.supportActionBar?.title = activity.getString(R.string.shell)
             }
 
             Log.d(
@@ -216,7 +233,7 @@ class FragmentNavigationManager(
             Handler(Looper.getMainLooper()).postDelayed({
                 updateNavigationIcon()
             }, 100)
-            
+
             return false // Let system handle back stack
         }
 

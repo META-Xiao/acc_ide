@@ -16,4 +16,9 @@
     <color name="symbol_panel_text">#674fa4</color>
     <color name="switch_thumb_on">#674fa4</color>
     <color name="switch_thumb_off">#BDBDBD</color>
+
+    <!-- Shell / Terminal colors — match TextMate editor theme (dark) -->
+    <color name="shell_background">@color/background_dark</color>
+    <color name="shell_foreground">#E0E0E0</color>
+    <color name="shell_cursor">#E0E0E0</color>
 </resources> 
