@@ -45,3 +45,42 @@ dependencies {
     // Kotlin Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
 }
+
+// Download bootstrap archive at build time instead of storing it in git.
+// Host the .zip as a GitHub Release asset and set BOOTSTRAP_URL in
+// gradle.properties or via -P flag:
+//   ./gradlew assembleDebug -PBOOTSTRAP_URL=https://...
+//
+// If the file already exists locally (e.g. from a prior build), the
+// download is skipped. Delete the file manually to force redownload.
+def bootstrapAssetDir = layout.projectDirectory.dir('src/main/assets')
+def bootstrapFile = bootstrapAssetDir.file('bootstrap-aarch64.zip')
+
+tasks.register('downloadBootstrap') {
+    description = 'Download Termux bootstrap-aarch64.zip for com.acc_ide'
+    group = 'bootstrap'
+
+    onlyIf {
+        if (bootstrapFile.asFile.exists() && bootstrapFile.asFile.length() > 0) {
+            logger.lifecycle("Bootstrap archive already exists (${bootstrapFile.asFile.length()} bytes), skipping download.")
+            return false
+        }
+        return true
+    }
+
+    doLast {
+        def url = project.findProperty('BOOTSTRAP_URL')
+                ?: providers.gradleProperty('bootstrap.url').orNull
+                ?: 'https://github.com/META-Xiao/acc_ide/releases/download/bootstrap/bootstrap-aarch64.zip'
+
+        logger.lifecycle("Downloading bootstrap from: $url")
+        bootstrapAssetDir.asFile.mkdirs()
+        bootstrapFile.asFile.withOutputStream { out ->
+            out << new URL(url).openStream()
+        }
+        logger.lifecycle("Downloaded bootstrap: ${bootstrapFile.asFile.length()} bytes")
+    }
+}
+
+// Automatically download before merging assets
+tasks.named('preBuild') { dependsOn 'downloadBootstrap' }
