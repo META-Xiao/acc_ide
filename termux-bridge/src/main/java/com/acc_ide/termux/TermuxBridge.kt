@@ -1,5 +1,7 @@
 package com.acc_ide.termux
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.Color
 import android.util.Log
@@ -12,9 +14,6 @@ import com.termux.terminal.TextStyle
 import com.termux.view.TerminalView
 import com.termux.view.TerminalViewClient
 
-/**
- * Bridge between ACC IDE and the Termux terminal-emulator / terminal-view libraries.
- */
 class TermuxBridge(
     private val context: Context,
     private val shellPath: String = DEFAULT_SHELL,
@@ -36,15 +35,14 @@ class TermuxBridge(
             Log.w(tag, "initialize: session already running, skipping")
             return
         }
-
         Log.d(tag, "initialize: shell=$shellPath cwd=$cwd rows=$rows cols=$cols")
+        if (env.isNotEmpty()) Log.d(tag, "env: ${env.joinToString(" ")}")
 
         val client = BridgeSessionClient()
         bridgeClient = client
         session = TerminalSession(shellPath, cwd, args, env, null, client)
         session!!.updateSize(cols, rows, cellWidthPx, cellHeightPx)
-
-        Log.d(tag, "initialize: running=${isRunning}")
+        Log.d(tag, "initialize: running=$isRunning")
     }
 
     fun createView(): TerminalView {
@@ -52,17 +50,14 @@ class TermuxBridge(
         val view = TerminalView(context, null)
         terminalView = view
 
-        // Forward session output → TerminalView.onScreenUpdated()
         bridgeClient?.attachView(view)
-
         view.setTerminalViewClient(BridgeViewClient())
         view.attachSession(s)
         view.setTextSize(DEFAULT_TEXT_SIZE_SP)
         view.isFocusable = true
         view.isFocusableInTouchMode = true
         view.requestFocus()
-
-        Log.d(tag, "createView: TerminalView created, session=${s.mHandle}")
+        Log.d(tag, "createView: done")
         return view
     }
 
@@ -76,27 +71,21 @@ class TermuxBridge(
     }
 
     fun destroy() {
-        Log.d(tag, "destroy: finishing session")
+        Log.d(tag, "destroy")
         session?.finishIfRunning()
         session = null
         terminalView = null
     }
 
     fun applyColors(bgColor: Int, fgColor: Int, cursorColor: Int) {
-        Log.d(tag, "applyColors: bg=#${Integer.toHexString(bgColor)} fg=#${Integer.toHexString(fgColor)}")
-
         val cs = TerminalColors.COLOR_SCHEME
         cs.mDefaultColors[COLOR_IDX_FG] = fgColor
         cs.mDefaultColors[COLOR_IDX_BG] = bgColor
         cs.mDefaultColors[COLOR_IDX_CURSOR] = cursorColor
 
-        // OSC sequences for live update on running session
         val s = session ?: return
-        arrayOf(
-            oscColor(10, fgColor),
-            oscColor(11, bgColor),
-            oscColor(12, cursorColor)
-        ).forEach { s.write(it, 0, it.size) }
+        arrayOf(oscColor(10, fgColor), oscColor(11, bgColor), oscColor(12, cursorColor))
+            .forEach { s.write(it, 0, it.size) }
     }
 
     fun resize(rows: Int, cols: Int, cellWidthPx: Int = 9, cellHeightPx: Int = 18) {
@@ -107,45 +96,65 @@ class TermuxBridge(
 
     private inner class BridgeSessionClient : TerminalSessionClient {
         private var view: TerminalView? = null
-
-        fun attachView(v: TerminalView) {
-            view = v
-        }
+        fun attachView(v: TerminalView) { view = v }
 
         override fun onTextChanged(changedSession: TerminalSession) {
             view?.onScreenUpdated()
         }
 
-        override fun onTitleChanged(changedSession: TerminalSession) {
-            Log.d(tag, "title: ${changedSession.title}")
-        }
+        override fun onTitleChanged(changedSession: TerminalSession) {}
 
         override fun onSessionFinished(finishedSession: TerminalSession) {
+            // Log terminal transcript to debug why the shell exited
+            val emulator = finishedSession.getEmulator()
+            val transcript = emulator?.getScreen()?.getTranscriptTextWithFullLinesJoined() ?: "(null)"
             Log.d(tag, "session finished: exit=${finishedSession.getExitStatus()}")
+            Log.d(tag, "transcript:\n$transcript")
         }
 
-        override fun onCopyTextToClipboard(session: TerminalSession, text: String) {}
-        override fun onPasteTextFromClipboard(session: TerminalSession?) {}
+        override fun onCopyTextToClipboard(session: TerminalSession, text: String) {
+            val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            cm.setPrimaryClip(ClipData.newPlainText("termux", text))
+            Log.d(tag, "copy: ${text.take(80)}")
+        }
+
+        override fun onPasteTextFromClipboard(session: TerminalSession?) {
+            val s = session ?: return
+            val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = cm.primaryClip ?: return
+            val text = clip.getItemAt(0)?.text?.toString() ?: return
+            s.write(text)
+            Log.d(tag, "paste: ${text.take(80)}")
+        }
+
         override fun onBell(session: TerminalSession) {}
         override fun onColorsChanged(session: TerminalSession) {}
         override fun onTerminalCursorStateChange(state: Boolean) {}
         override fun getTerminalCursorStyle(): Int? = null
 
-        override fun logError(tag: String, message: String) { Log.e("$this@TermuxBridge.tag:$tag", message) }
-        override fun logWarn(tag: String, message: String) { Log.w("$this@TermuxBridge.tag:$tag", message) }
-        override fun logInfo(tag: String, message: String) { Log.i("$this@TermuxBridge.tag:$tag", message) }
-        override fun logDebug(tag: String, message: String) { Log.d("$this@TermuxBridge.tag:$tag", message) }
-        override fun logVerbose(tag: String, message: String) { Log.v("$this@TermuxBridge.tag:$tag", message) }
-        override fun logStackTraceWithMessage(tag: String, message: String, e: Exception) { Log.e("$this@TermuxBridge.tag:$tag", "$message", e) }
+        override fun logError(tag: String, msg: String) { Log.e("$this@TermuxBridge.tag:$tag", msg) }
+        override fun logWarn(tag: String, msg: String)  { Log.w("$this@TermuxBridge.tag:$tag", msg) }
+        override fun logInfo(tag: String, msg: String)   { Log.i("$this@TermuxBridge.tag:$tag", msg) }
+        override fun logDebug(tag: String, msg: String)  { Log.d("$this@TermuxBridge.tag:$tag", msg) }
+        override fun logVerbose(tag: String, msg: String){}
+        override fun logStackTraceWithMessage(tag: String, msg: String, e: Exception) { Log.e("$this@TermuxBridge.tag:$tag", msg, e) }
         override fun logStackTrace(tag: String, e: Exception) { Log.e("$this@TermuxBridge.tag:$tag", "${e.message}", e) }
     }
 
-    private class BridgeViewClient : TerminalViewClient {
+    private inner class BridgeViewClient : TerminalViewClient {
+        override fun onCodePoint(codePoint: Int, ctrlDown: Boolean, session: TerminalSession): Boolean {
+            // Log printable characters only, for debugging
+            Log.d(tag, "input: cp=$codePoint ctrl=$ctrlDown")
+            return false // let TerminalView handle it
+        }
+
+        override fun onKeyDown(keyCode: Int, e: KeyEvent, session: TerminalSession): Boolean {
+            if (keyCode == KeyEvent.KEYCODE_ENTER) Log.d(tag, "input: ENTER")
+            return false
+        }
+        override fun onKeyUp(keyCode: Int, e: KeyEvent): Boolean = false
         override fun onEmulatorSet() {}
         override fun onSingleTapUp(e: MotionEvent) {}
-        override fun onKeyDown(keyCode: Int, e: KeyEvent, session: TerminalSession): Boolean = false
-        override fun onKeyUp(keyCode: Int, e: KeyEvent): Boolean = false
-        override fun onCodePoint(codePoint: Int, ctrlDown: Boolean, session: TerminalSession): Boolean = false
         override fun onLongPress(event: MotionEvent): Boolean = false
         override fun onScale(scale: Float): Float = scale
         override fun copyModeChanged(copyMode: Boolean) {}
@@ -157,19 +166,17 @@ class TermuxBridge(
         override fun readAltKey(): Boolean = false
         override fun readShiftKey(): Boolean = false
         override fun readFnKey(): Boolean = false
-        override fun logError(tag: String, message: String) {}
-        override fun logWarn(tag: String, message: String) {}
-        override fun logInfo(tag: String, message: String) {}
-        override fun logDebug(tag: String, message: String) {}
-        override fun logVerbose(tag: String, message: String) {}
-        override fun logStackTraceWithMessage(tag: String, message: String, e: Exception) {}
+        override fun logError(tag: String, msg: String) {}
+        override fun logWarn(tag: String, msg: String) {}
+        override fun logInfo(tag: String, msg: String) {}
+        override fun logDebug(tag: String, msg: String) {}
+        override fun logVerbose(tag: String, msg: String) {}
+        override fun logStackTraceWithMessage(tag: String, msg: String, e: Exception) {}
         override fun logStackTrace(tag: String, e: Exception) {}
     }
 
     private fun oscColor(param: Int, colorArgb: Int): ByteArray {
-        val r = Color.red(colorArgb)
-        val g = Color.green(colorArgb)
-        val b = Color.blue(colorArgb)
+        val r = Color.red(colorArgb); val g = Color.green(colorArgb); val b = Color.blue(colorArgb)
         val r4 = String.format("%04x", (r shl 8) or r)
         val g4 = String.format("%04x", (g shl 8) or g)
         val b4 = String.format("%04x", (b shl 8) or b)
@@ -183,5 +190,36 @@ class TermuxBridge(
         private const val COLOR_IDX_FG = TextStyle.NUM_INDEXED_COLORS - 3
         private const val COLOR_IDX_BG = TextStyle.NUM_INDEXED_COLORS - 2
         private const val COLOR_IDX_CURSOR = TextStyle.NUM_INDEXED_COLORS - 1
+
+        fun create(context: Context): TermuxBridge {
+            return if (TermuxPaths.isInstalled) {
+                Log.d("termux-bridge", "Bootstrap found, using Termux bash")
+                TermuxBridge(
+                    context = context,
+                    shellPath = TermuxPaths.BIN + "/bash",
+                    cwd = TermuxPaths.HOME,
+                    args = arrayOf("--login"),
+                    env = arrayOf(
+                        "PREFIX=${TermuxPaths.PREFIX}",
+                        "HOME=${TermuxPaths.HOME}",
+                        "PATH=${TermuxPaths.BIN}",
+                        "LD_LIBRARY_PATH=${TermuxPaths.LIB}",
+                        "LD_PRELOAD=${TermuxPaths.LIB}/libtermux-exec-ld-preload.so",
+                        "TERM=xterm-256color",
+                        "LANG=en_US.UTF-8",
+                        "TMPDIR=${TermuxPaths.TMP}",
+                        "TERMUX_VERSION=0.119.0",
+                        "TERMUX_APP_PACKAGE_MANAGER=apt"
+                    )
+                )
+            } else {
+                Log.d("termux-bridge", "Bootstrap not found, using system sh")
+                TermuxBridge(
+                    context = context,
+                    shellPath = DEFAULT_SHELL,
+                    cwd = context.filesDir?.absolutePath ?: DEFAULT_CWD
+                )
+            }
+        }
     }
 }

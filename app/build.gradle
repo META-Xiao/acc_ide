@@ -9,7 +9,7 @@ android {
     defaultConfig {
         applicationId "com.acc_ide"
         minSdk 24
-        targetSdk 35
+        targetSdk 28
         versionCode 141
         versionName "1.4.1"
 

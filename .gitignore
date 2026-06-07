@@ -30,6 +30,9 @@ local.properties
 # System files
 .DS_Store
 
+# Large assets — downloaded at build time (see termux-bridge/build.gradle)
+termux-bridge/src/main/assets/bootstrap-*.zip
+
 # AI/Development tools
 .specstory/
 .cursorindexingignore
